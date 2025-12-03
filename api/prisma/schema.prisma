@@ -12,3 +12,25 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum RoleType {
+  CUSTOMER
+  EVENT_ORGANIZER
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar(50)
+  username     String   @unique @db.VarChar(20)
+  email        String   @unique @db.VarChar(100)
+  password     String   @db.VarChar(255)
+  bio          String?  @db.VarChar(500)
+  role         RoleType @default(CUSTOMER)
+  referralCode String   @unique @db.VarChar(20)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("users")
+}
