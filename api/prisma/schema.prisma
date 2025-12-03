@@ -78,7 +78,7 @@ model Ticket {
   id      String  @id @default(uuid())
   orderId String
   code    String // namaEvent-(random angka)
-  used    Boolean
+  used    Boolean @default(false)
 
   createdAt DateTime  @default(now())
   usedAt    DateTime?
