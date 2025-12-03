@@ -6,10 +6,174 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum RoleType {
+  CUSTOMER
+  EVENT_ORGANIZER
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String   @db.VarChar(50)
+  username     String   @unique @db.VarChar(20)
+  email        String   @unique @db.VarChar(100)
+  password     String   @db.VarChar(255)
+  bio          String?  @db.VarChar(500)
+  role         RoleType @default(CUSTOMER)
+  referralCode String   @unique @db.VarChar(20)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  wallets Wallet?
+  orders  Order[]
+  events  Event[]
+
+  @@map("users")
+}
+
+model Wallet {
+  id      String @id @default(uuid())
+  userId  String @unique
+  balance Float
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("wallets")
+}
+
+model Event {
+  id               String @id @default(uuid())
+  eventOrganizerId String
+  venueId          String
+  categoryId       String
+  name             String @db.VarChar(255)
+  price            Float
+  totalSeats       Int
+  availableSeats   Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  eventOrganizer User     @relation(fields: [eventOrganizerId], references: [id])
+  venue          Vanues   @relation(fields: [venueId], references: [id])
+  category       Category @relation(fields: [categoryId], references: [id])
+
+  orders Order[]
+
+  @@map("events")
+}
+
+model Ticket {
+  id      String  @id @default(uuid())
+  orderId String
+  code    String // namaEvent-(random angka)
+  used    Boolean @default(true)
+
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+}
+
+enum StatusOrder {
+  WAITING_PAYMENT
+  WAITING_CONFIRMATION
+  REJECTED
+  CANCELLED
+  EXPIRED
+  DONE
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  customerId   String
+  eventId      String
+  quantity     Int
+  totalAmount  Float
+  status       StatusOrder @default(WAITING_PAYMENT)
+  paymentProof String
+  paidAt       DateTime
+  verifiedAt   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer User  @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("order")
+}
+
+enum categoryOption {
+  // entertainment
+  FESTIVAL
+  MUSIC
+  CONCERT
+  THEATER
+  COMEDY_SHOW
+  MOVIE_SCREENING
+  DANCE
+  // education / seminar
+  SEMINAR
+  WORKSHOP
+  CONFERENCE
+  WEBINAR
+  TRAINING
+  // business / professional
+  EXPO
+  TRADE_SHOW
+  NETWORKING_EVENT
+  PRODUCT_LAUNCH
+  // sport
+  SPORTS_EVENT
+  MARATHON
+  TOURNAMENT
+  FITNESS_CLASS
+  // community
+  COMMUNITY_MEETUP
+  CHARITY
+  VOLUNTEER
+  SOCIAL_EVENT
+  // culture & lifestyle
+  CULTURAL_EVENT
+  FASHION_SHOW
+  FOOD_FEST
+  ART_EXHIBITION
+  // family & personal
+  BIRTHDAY
+  FAMILY_GATHERING
+  KIDS_EVENT
+}
+
+model Category {
+  id   String         @id @default(uuid())
+  name categoryOption
+
+  events Event[]
+}
+
+model Vanues {
+  id        String @id @default(uuid())
+  name      String
+  city      String
+  address   String
+  latitude  Float?
+  longitude Float?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  events Event[]
 }
 
 // enum Role {
@@ -126,164 +290,3 @@ datasource db {
 //   used      Boolean  @default(false)
 //   createdAt DateTime @default(now())
 // }
-
-enum RoleType {
-  CUSTOMER
-  EVENT_ORGANIZER
-}
-
-model User {
-  id           String   @id @default(uuid())
-  name         String   @db.VarChar(50)
-  username     String   @unique @db.VarChar(20)
-  email        String   @unique @db.VarChar(100)
-  password     String   @db.VarChar(255)
-  bio          String?  @db.VarChar(500)
-  role         RoleType @default(CUSTOMER)
-  referralCode String   @unique @db.VarChar(20)
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  wallets Wallet?
-  orders  Order[]
-  events  Event[]
-
-  @@map("users")
-}
-
-model Wallet {
-  id      String @id @default(uuid())
-  userId  String @unique
-  balance Float
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("wallets")
-}
-
-model Event {
-  id               String @id @default(uuid())
-  eventOrganizerId String
-  venueId          String
-  categoryId       String
-  name             String @db.VarChar(255)
-  price            Float
-  totalSeats       Int
-  availableSeats   Int
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  eventOrganizer User     @relation(fields: [eventOrganizerId], references: [id])
-  venue          Vanues   @relation(fields: [venueId], references: [id])
-  category       Category @relation(fields: [categoryId], references: [id])
-
-  orders Order[]
-
-  @@map("events")
-}
-
-model Ticket {
-  id      String  @id @default(uuid())
-  orderId String
-  code    String // namaEvent-(random angka)
-  used    Boolean
-
-  createdAt DateTime  @default(now())
-  usedAt    DateTime?
-}
-
-enum StatusOrder {
-  WAITING_PAYMENT
-  WAITING_CONFIRMATION
-  REJECTED
-  CANCELLED
-  EXPIRED
-  DONE
-}
-
-model Order {
-  id           String      @id @default(uuid())
-  customerId   String
-  eventId      String
-  quantity     Int
-  totalAmount  Float
-  status       StatusOrder @default(WAITING_PAYMENT)
-  paymentProof String
-  paidAt       DateTime
-  verifiedAt   DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  customer User  @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("order")
-}
-
-enum categoryOption {
-  // entertainment
-  FESTIVAL
-  MUSIC
-  CONCERT
-  THEATER
-  COMEDY_SHOW
-  MOVIE_SCREENING
-  DANCE
-  // education / seminar
-  SEMINAR
-  WORKSHOP
-  CONFERENCE
-  WEBINAR
-  TRAINING
-  // business / professional
-  EXPO
-  TRADE_SHOW
-  NETWORKING_EVENT
-  PRODUCT_LAUNCH
-  // sport
-  SPORTS_EVENT
-  MARATHON
-  TOURNAMENT
-  FITNESS_CLASS
-  // community
-  COMMUNITY_MEETUP
-  CHARITY
-  VOLUNTEER
-  SOCIAL_EVENT
-  // culture & lifestyle
-  CULTURAL_EVENT
-  FASHION_SHOW
-  FOOD_FEST
-  ART_EXHIBITION
-  // family & personal
-  BIRTHDAY
-  FAMILY_GATHERING
-  KIDS_EVENT
-}
-
-model Category {
-  id   String         @id @default(uuid())
-  name categoryOption
-
-  events Event[]
-}
-
-model Vanues {
-  id        String @id @default(uuid())
-  name      String
-  city      String
-  address   String
-  latitude  Float?
-  longitude Float?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  events Event[]
-}
