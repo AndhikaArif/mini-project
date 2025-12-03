@@ -15,121 +15,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// enum Role {
-//   CUSTOMER
-//   ORGANIZER
-// }
-
-// model User {
-//   id             Int      @id @default(autoincrement())
-//   name           String
-//   email          String   @unique
-//   password       String
-//   role           Role
-//   referralCode   String   @unique
-//   referredById   Int?
-//   referredBy     User?    @relation("UserReferrals", fields: [referredById], references: [id])
-//   referrals      User[]   @relation("UserReferrals")
-//   points         Int      @default(0)
-//   profilePicture String?
-//   createdAt      DateTime @default(now())
-//   updatedAt      DateTime @updatedAt
-
-//   pointsHistory  PointsHistory[]
-//   coupons        Coupon[]
-//   events         Event[]
-//   transactions   Transaction[]
-//   passwordResets PasswordReset[]
-// }
-
-// enum PointsType {
-//   REFERRAL_REWARD
-// }
-
-// model PointsHistory {
-//   id        Int        @id @default(autoincrement())
-//   userId    Int
-//   user      User       @relation(fields: [userId], references: [id])
-//   points    Int
-//   type      PointsType
-//   expiredAt DateTime
-//   createdAt DateTime   @default(now())
-// }
-
-// model Coupon {
-//   id        Int      @id @default(autoincrement())
-//   userId    Int
-//   user      User     @relation(fields: [userId], references: [id])
-//   code      String   @unique
-//   discount  Int
-//   expiredAt DateTime
-//   used      Boolean  @default(false)
-//   createdAt DateTime @default(now())
-// }
-
-// model Event {
-//   id          Int  @id @default(autoincrement())
-//   organizerId Int
-//   organizer   User @relation(fields: [organizerId], references: [id])
-
-//   name           String
-//   description    String?
-//   price          Int
-//   startDate      DateTime
-//   endDate        DateTime
-//   availableSeats Int
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-
-//   transactions Transaction[]
-// }
-
-// model Transaction {
-//   id      Int   @id @default(autoincrement())
-//   userId  Int
-//   eventId Int
-//   user    User  @relation(fields: [userId], references: [id])
-//   event   Event @relation(fields: [eventId], references: [id])
-
-//   quantity     Int
-//   totalPrice   Int
-//   paymentProof String?
-//   status       TransactionStatus
-
-//   expiresAt DateTime
-//   createdAt DateTime @default(now())
-
-//   histories TransactionHistory[]
-// }
-
-// enum TransactionStatus {
-//   WAITING_PAYMENT
-//   WAITING_CONFIRMATION
-//   DONE
-//   REJECTED
-//   EXPIRED
-//   CANCELED
-// }
-
-// model TransactionHistory {
-//   id            Int         @id @default(autoincrement())
-//   transactionId Int
-//   transaction   Transaction @relation(fields: [transactionId], references: [id])
-//   action        String
-//   createdAt     DateTime    @default(now())
-// }
-
-// model PasswordReset {
-//   id        Int      @id @default(autoincrement())
-//   userId    Int
-//   user      User     @relation(fields: [userId], references: [id])
-//   token     String
-//   expiresAt DateTime
-//   used      Boolean  @default(false)
-//   createdAt DateTime @default(now())
-// }
-
 enum RoleType {
   CUSTOMER
   EVENT_ORGANIZER
@@ -290,3 +175,118 @@ model Vanues {
 
   events Event[]
 }
+
+// enum Role {
+//   CUSTOMER
+//   ORGANIZER
+// }
+
+// model User {
+//   id             Int      @id @default(autoincrement())
+//   name           String
+//   email          String   @unique
+//   password       String
+//   role           Role
+//   referralCode   String   @unique
+//   referredById   Int?
+//   referredBy     User?    @relation("UserReferrals", fields: [referredById], references: [id])
+//   referrals      User[]   @relation("UserReferrals")
+//   points         Int      @default(0)
+//   profilePicture String?
+//   createdAt      DateTime @default(now())
+//   updatedAt      DateTime @updatedAt
+
+//   pointsHistory  PointsHistory[]
+//   coupons        Coupon[]
+//   events         Event[]
+//   transactions   Transaction[]
+//   passwordResets PasswordReset[]
+// }
+
+// enum PointsType {
+//   REFERRAL_REWARD
+// }
+
+// model PointsHistory {
+//   id        Int        @id @default(autoincrement())
+//   userId    Int
+//   user      User       @relation(fields: [userId], references: [id])
+//   points    Int
+//   type      PointsType
+//   expiredAt DateTime
+//   createdAt DateTime   @default(now())
+// }
+
+// model Coupon {
+//   id        Int      @id @default(autoincrement())
+//   userId    Int
+//   user      User     @relation(fields: [userId], references: [id])
+//   code      String   @unique
+//   discount  Int
+//   expiredAt DateTime
+//   used      Boolean  @default(false)
+//   createdAt DateTime @default(now())
+// }
+
+// model Event {
+//   id          Int  @id @default(autoincrement())
+//   organizerId Int
+//   organizer   User @relation(fields: [organizerId], references: [id])
+
+//   name           String
+//   description    String?
+//   price          Int
+//   startDate      DateTime
+//   endDate        DateTime
+//   availableSeats Int
+
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   transactions Transaction[]
+// }
+
+// model Transaction {
+//   id      Int   @id @default(autoincrement())
+//   userId  Int
+//   eventId Int
+//   user    User  @relation(fields: [userId], references: [id])
+//   event   Event @relation(fields: [eventId], references: [id])
+
+//   quantity     Int
+//   totalPrice   Int
+//   paymentProof String?
+//   status       TransactionStatus
+
+//   expiresAt DateTime
+//   createdAt DateTime @default(now())
+
+//   histories TransactionHistory[]
+// }
+
+// enum TransactionStatus {
+//   WAITING_PAYMENT
+//   WAITING_CONFIRMATION
+//   DONE
+//   REJECTED
+//   EXPIRED
+//   CANCELED
+// }
+
+// model TransactionHistory {
+//   id            Int         @id @default(autoincrement())
+//   transactionId Int
+//   transaction   Transaction @relation(fields: [transactionId], references: [id])
+//   action        String
+//   createdAt     DateTime    @default(now())
+// }
+
+// model PasswordReset {
+//   id        Int      @id @default(autoincrement())
+//   userId    Int
+//   user      User     @relation(fields: [userId], references: [id])
+//   token     String
+//   expiresAt DateTime
+//   used      Boolean  @default(false)
+//   createdAt DateTime @default(now())
+// }
