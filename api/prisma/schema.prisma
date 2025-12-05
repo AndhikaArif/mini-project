@@ -6,10 +6,13 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // enum Role {
@@ -164,14 +167,16 @@ model Wallet {
 }
 
 model Event {
-  id               String @id @default(uuid())
+  id               String   @id @default(uuid())
   eventOrganizerId String
   venueId          String
   categoryId       String
-  name             String @db.VarChar(255)
+  name             String   @db.VarChar(255)
   price            Float
   totalSeats       Int
   availableSeats   Int
+  startTime        DateTime
+  endTime          DateTime
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
