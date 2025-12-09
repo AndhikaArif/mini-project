@@ -30,8 +30,10 @@ model User {
   role         RoleType @default(CUSTOMER)
   referralCode String   @unique @db.VarChar(20)
   referredById String?
+  userId       String?
 
   referredBy User? @relation("Referrals", fields: [referredById], references: [id])
+  user       User? @relation(fields: [userId], references: [id])
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -41,10 +43,8 @@ model User {
   orders   Order[]
   events   Event[]
   users    User[]
-  users    User[]
-  user     User?     @relation(fields: [userId], references: [id])
-  userId   String?
   vouchers Voucher[]
+  users    User[]
 
   @@map("users")
 }
