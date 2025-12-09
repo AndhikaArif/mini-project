@@ -37,14 +37,13 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  wallets  Wallet?
-  orders   Order[]
-  events   Event[]
-  users    User[]
-  users    User[]
-  user     User?     @relation(fields: [userId], references: [id])
+  wallets Wallet?
+  orders  Order[]
+  events  Event[]
+
   userId   String?
   vouchers Voucher[]
+  users    User[]    @relation("Referrals")
 
   @@map("users")
 }
