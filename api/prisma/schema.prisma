@@ -40,9 +40,7 @@ model User {
   wallets  Wallet?
   orders   Order[]
   events   Event[]
-  users    User[]
-  users    User[]
-  user     User?     @relation(fields: [userId], references: [id])
+  users    User[]    @relation("Referrals")
   userId   String?
   vouchers Voucher[]
 
