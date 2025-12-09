@@ -37,10 +37,14 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  wallets Wallet?
-  orders  Order[]
-  events  Event[]
-  users   User[]
+  wallets  Wallet?
+  orders   Order[]
+  events   Event[]
+  users    User[]
+  users    User[]
+  user     User?     @relation(fields: [userId], references: [id])
+  userId   String?
+  vouchers Voucher[]
 
   @@map("users")
 }
@@ -73,7 +77,8 @@ model Event {
   venue          Vanues   @relation(fields: [venueId], references: [id])
   category       Category @relation(fields: [categoryId], references: [id])
 
-  orders Order[]
+  orders   Order[]
+  vouchers Voucher[]
 
   @@map("events")
 }
@@ -86,6 +91,25 @@ model Ticket {
 
   createdAt DateTime  @default(now())
   usedAt    DateTime?
+}
+
+model Voucher {
+  id         String    @id @default(uuid())
+  eventId    String
+  customerId String?
+  code       String // namaEvent-(random number), generate otomatis
+  value      Float
+  validFrom  DateTime  @default(now())
+  validUntil DateTime
+  isUsed     Boolean?  @default(false)
+  usedAt     DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  event    Event @relation(fields: [eventId], references: [id])
+  customer User? @relation(fields: [customerId], references: [id])
 }
 
 enum StatusOrder {

@@ -149,9 +149,16 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
+<<<<<<< HEAD
+  wallets  Wallet?
+  orders   Order[]
+  events   Event[]
+  vouchers Voucher[]
+=======
   wallets Wallet?
   orders  Order[]
   events  Event[]
+>>>>>>> main
 
   @@map("users")
 }
@@ -167,6 +174,18 @@ model Wallet {
 }
 
 model Event {
+<<<<<<< HEAD
+  id               String   @id @default(uuid())
+  eventOrganizerId String
+  venueId          String
+  categoryId       String
+  name             String   @db.VarChar(255)
+  price            Float
+  totalSeats       Int
+  availableSeats   Int
+  startTime        DateTime
+  endTime          DateTime
+=======
   id               String @id @default(uuid())
   eventOrganizerId String
   venueId          String
@@ -175,6 +194,7 @@ model Event {
   price            Float
   totalSeats       Int
   availableSeats   Int
+>>>>>>> main
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -184,7 +204,12 @@ model Event {
   venue          Vanues   @relation(fields: [venueId], references: [id])
   category       Category @relation(fields: [categoryId], references: [id])
 
+<<<<<<< HEAD
+  orders   Order[]
+  vouchers Voucher[]
+=======
   orders Order[]
+>>>>>>> main
 
   @@map("events")
 }
@@ -199,6 +224,28 @@ model Ticket {
   usedAt    DateTime?
 }
 
+<<<<<<< HEAD
+model Voucher {
+  id         String    @id @default(uuid())
+  eventId    String
+  customerId String?
+  code       String // namaEvent-(random number), generate otomatis
+  value      Float
+  validFrom  DateTime  @default(now())
+  validUntil DateTime
+  isUsed     Boolean?  @default(false)
+  usedAt     DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  event    Event @relation(fields: [eventId], references: [id])
+  customer User? @relation(fields: [customerId], references: [id])
+}
+
+=======
+>>>>>>> main
 enum StatusOrder {
   WAITING_PAYMENT
   WAITING_CONFIRMATION

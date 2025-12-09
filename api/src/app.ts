@@ -6,6 +6,9 @@ import express, {
   type Response,
 } from "express";
 
+import eventRoutes from "./routes/event.route.js";
+import voucherRoutes from "./routes/voucher.route.js";
+
 class App {
   public app: Application;
   private readonly PORT: number;
@@ -28,6 +31,11 @@ class App {
         .status(200)
         .json({ message: "API Running", uptime: Math.round(process.uptime()) });
     });
+  }
+
+  private initializeRoutes(): void {
+    this.app.use("/api/events", eventRoutes);
+    this.app.use("/api/vouchers", voucherRoutes);
   }
 
   public listen(): void {
