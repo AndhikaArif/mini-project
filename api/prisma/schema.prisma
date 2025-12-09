@@ -38,13 +38,13 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  referrals       User[]           @relation("Referrals")
-  wallets         Wallet?
-  orders          Order[]
-  events          Event[]
-  vouchers        Voucher[]
-  referralPoints  ReferralPoint[]
-  discountCoupons DiscountCoupon[]
+  referrals User[]    @relation("Referrals")
+  wallets   Wallet?
+  orders    Order[]
+  events    Event[]
+  vouchers  Voucher[]
+  points    Point[]
+  coupons   Coupon[]
 
   @@map("users")
 }
@@ -58,7 +58,7 @@ model Point {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("referral_points")
+  @@map("points")
 }
 
 model Coupon {
