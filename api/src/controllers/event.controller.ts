@@ -54,7 +54,7 @@ export class EventController {
 
   async getEventById(req: Request, res: Response) {
     try {
-      const id = String(req.params.id);
+      const id = req.params.id;
 
       if (!id) return res.status(400).json({ message: "Id is missing" });
 

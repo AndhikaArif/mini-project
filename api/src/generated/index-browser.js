@@ -165,6 +165,21 @@ exports.Prisma.TicketScalarFieldEnum = {
   usedAt: 'usedAt'
 };
 
+exports.Prisma.VoucherScalarFieldEnum = {
+  id: 'id',
+  eventId: 'eventId',
+  customerId: 'customerId',
+  code: 'code',
+  value: 'value',
+  validFrom: 'validFrom',
+  validUntil: 'validUntil',
+  isUsed: 'isUsed',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
 exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   customerId: 'customerId',
@@ -263,6 +278,7 @@ exports.Prisma.ModelName = {
   Wallet: 'Wallet',
   Event: 'Event',
   Ticket: 'Ticket',
+  Voucher: 'Voucher',
   Order: 'Order',
   Category: 'Category',
   Vanues: 'Vanues'
