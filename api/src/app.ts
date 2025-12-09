@@ -10,6 +10,9 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.route.js";
 import { ErrorMiddleware } from "./middlewares/error.middleware.js";
 
+import eventRoutes from "./routes/event.route.js";
+import voucherRoutes from "./routes/voucher.route.js";
+
 class App {
   public app: Application;
   private readonly PORT: number;
@@ -37,12 +40,17 @@ class App {
   }
 
   private initializeRoutes(): void {
+<<<<<<< HEAD
     this.app.use("api/auth", authRoutes);
   }
 
   private initializeErrorHandle(): void {
     this.app.use(ErrorMiddleware.notFound);
     this.app.use(ErrorMiddleware.global);
+=======
+    this.app.use("/api/events", eventRoutes);
+    this.app.use("/api/vouchers", voucherRoutes);
+>>>>>>> main
   }
 
   public listen(): void {

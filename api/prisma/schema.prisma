@@ -21,15 +21,16 @@ enum RoleType {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String   @db.VarChar(50)
-  username     String   @unique @db.VarChar(20)
-  email        String   @unique @db.VarChar(100)
-  password     String   @db.VarChar(255)
-  bio          String?  @db.VarChar(500)
-  role         RoleType @default(CUSTOMER)
-  referralCode String   @unique @db.VarChar(20)
-  referredById String?
+  id             String   @id @default(uuid())
+  name           String   @db.VarChar(50)
+  username       String   @unique @db.VarChar(20)
+  email          String   @unique @db.VarChar(100)
+  password       String   @db.VarChar(255)
+  bio            String?  @db.VarChar(500)
+  role           RoleType @default(CUSTOMER)
+  referralCode   String   @unique @db.VarChar(20)
+  referredById   String?
+  profilePicture String?  @db.VarChar(255)
 
   referredBy User? @relation("Referrals", fields: [referredById], references: [id])
 
@@ -37,12 +38,43 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  referrals User[]  @relation("Referrals")
+  referrals User[]    @relation("Referrals")
   wallets   Wallet?
   orders    Order[]
   events    Event[]
+  vouchers  Voucher[]
+  points    Point[]
+  coupons   Coupon[]
 
   @@map("users")
+}
+
+model Point {
+  id        String   @id @default(uuid())
+  userId    String
+  amount    Float
+  createdAt DateTime @default(now())
+  expiredAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("points")
+}
+
+model Coupon {
+  id       String  @id @default(uuid())
+  userId   String
+  code     String  @unique
+  discount Float
+  used     Boolean @default(false)
+
+  createdAt DateTime  @default(now())
+  expiredAt DateTime
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("coupons")
 }
 
 model Wallet {
@@ -73,7 +105,8 @@ model Event {
   venue          Vanues   @relation(fields: [venueId], references: [id])
   category       Category @relation(fields: [categoryId], references: [id])
 
-  orders Order[]
+  orders   Order[]
+  vouchers Voucher[]
 
   @@map("events")
 }
@@ -86,6 +119,25 @@ model Ticket {
 
   createdAt DateTime  @default(now())
   usedAt    DateTime?
+}
+
+model Voucher {
+  id         String    @id @default(uuid())
+  eventId    String
+  customerId String?
+  code       String // namaEvent-(random number), generate otomatis
+  value      Float
+  validFrom  DateTime  @default(now())
+  validUntil DateTime
+  isUsed     Boolean?  @default(false)
+  usedAt     DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  event    Event @relation(fields: [eventId], references: [id])
+  customer User? @relation(fields: [customerId], references: [id])
 }
 
 enum StatusOrder {
