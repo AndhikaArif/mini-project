@@ -37,10 +37,10 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  wallets Wallet?
-  orders  Order[]
-  events  Event[]
-  users   User[]
+  referrals User[]  @relation("Referrals")
+  wallets   Wallet?
+  orders    Order[]
+  events    Event[]
 
   @@map("users")
 }

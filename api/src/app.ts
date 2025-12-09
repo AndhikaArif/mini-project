@@ -5,6 +5,10 @@ import express, {
   type Request,
   type Response,
 } from "express";
+import cookieParser from "cookie-parser";
+
+import authRoutes from "./routes/auth.route.js";
+import { ErrorMiddleware } from "./middlewares/error.middleware.js";
 
 class App {
   public app: Application;
@@ -16,10 +20,12 @@ class App {
 
     this.initializeMiddleware();
     this.initializeStatus();
+    this.initializeRoutes();
   }
 
   private initializeMiddleware(): void {
     this.app.use(express.json());
+    this.app.use(cookieParser());
   }
 
   private initializeStatus(): void {
@@ -28,6 +34,15 @@ class App {
         .status(200)
         .json({ message: "API Running", uptime: Math.round(process.uptime()) });
     });
+  }
+
+  private initializeRoutes(): void {
+    this.app.use("api/auth", authRoutes);
+  }
+
+  private initializeErrorHandle(): void {
+    this.app.use(ErrorMiddleware.notFound);
+    this.app.use(ErrorMiddleware.global);
   }
 
   public listen(): void {

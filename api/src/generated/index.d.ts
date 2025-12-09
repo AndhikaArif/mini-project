@@ -1481,11 +1481,13 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    referrals: number
     orders: number
     events: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    referrals?: boolean | UserCountOutputTypeCountReferralsArgs
     orders?: boolean | UserCountOutputTypeCountOrdersArgs
     events?: boolean | UserCountOutputTypeCountEventsArgs
   }
@@ -1499,6 +1501,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReferralsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
   /**
@@ -1625,13 +1634,14 @@ export namespace Prisma {
 
   export type UserMinAggregateOutputType = {
     id: string | null
-    name: string | null
+    fullName: string | null
     username: string | null
     email: string | null
     password: string | null
     bio: string | null
     role: $Enums.RoleType | null
     referralCode: string | null
+    referredById: string | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -1639,13 +1649,14 @@ export namespace Prisma {
 
   export type UserMaxAggregateOutputType = {
     id: string | null
-    name: string | null
+    fullName: string | null
     username: string | null
     email: string | null
     password: string | null
     bio: string | null
     role: $Enums.RoleType | null
     referralCode: string | null
+    referredById: string | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -1653,13 +1664,14 @@ export namespace Prisma {
 
   export type UserCountAggregateOutputType = {
     id: number
-    name: number
+    fullName: number
     username: number
     email: number
     password: number
     bio: number
     role: number
     referralCode: number
+    referredById: number
     createdAt: number
     updatedAt: number
     deletedAt: number
@@ -1669,13 +1681,14 @@ export namespace Prisma {
 
   export type UserMinAggregateInputType = {
     id?: true
-    name?: true
+    fullName?: true
     username?: true
     email?: true
     password?: true
     bio?: true
     role?: true
     referralCode?: true
+    referredById?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -1683,13 +1696,14 @@ export namespace Prisma {
 
   export type UserMaxAggregateInputType = {
     id?: true
-    name?: true
+    fullName?: true
     username?: true
     email?: true
     password?: true
     bio?: true
     role?: true
     referralCode?: true
+    referredById?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -1697,13 +1711,14 @@ export namespace Prisma {
 
   export type UserCountAggregateInputType = {
     id?: true
-    name?: true
+    fullName?: true
     username?: true
     email?: true
     password?: true
     bio?: true
     role?: true
     referralCode?: true
+    referredById?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -1784,13 +1799,14 @@ export namespace Prisma {
 
   export type UserGroupByOutputType = {
     id: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
     bio: string | null
     role: $Enums.RoleType
     referralCode: string
+    referredById: string | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -1815,16 +1831,19 @@ export namespace Prisma {
 
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
+    fullName?: boolean
     username?: boolean
     email?: boolean
     password?: boolean
     bio?: boolean
     role?: boolean
     referralCode?: boolean
+    referredById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
+    referredBy?: boolean | User$referredByArgs<ExtArgs>
+    referrals?: boolean | User$referralsArgs<ExtArgs>
     wallets?: boolean | User$walletsArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     events?: boolean | User$eventsArgs<ExtArgs>
@@ -1833,72 +1852,86 @@ export namespace Prisma {
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
+    fullName?: boolean
     username?: boolean
     email?: boolean
     password?: boolean
     bio?: boolean
     role?: boolean
     referralCode?: boolean
+    referredById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
+    referredBy?: boolean | User$referredByArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    name?: boolean
+    fullName?: boolean
     username?: boolean
     email?: boolean
     password?: boolean
     bio?: boolean
     role?: boolean
     referralCode?: boolean
+    referredById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
+    referredBy?: boolean | User$referredByArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
-    name?: boolean
+    fullName?: boolean
     username?: boolean
     email?: boolean
     password?: boolean
     bio?: boolean
     role?: boolean
     referralCode?: boolean
+    referredById?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "username" | "email" | "password" | "bio" | "role" | "referralCode" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fullName" | "username" | "email" | "password" | "bio" | "role" | "referralCode" | "referredById" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    referredBy?: boolean | User$referredByArgs<ExtArgs>
+    referrals?: boolean | User$referralsArgs<ExtArgs>
     wallets?: boolean | User$walletsArgs<ExtArgs>
     orders?: boolean | User$ordersArgs<ExtArgs>
     events?: boolean | User$eventsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    referredBy?: boolean | User$referredByArgs<ExtArgs>
+  }
+  export type UserIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    referredBy?: boolean | User$referredByArgs<ExtArgs>
+  }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      referredBy: Prisma.$UserPayload<ExtArgs> | null
+      referrals: Prisma.$UserPayload<ExtArgs>[]
       wallets: Prisma.$WalletPayload<ExtArgs> | null
       orders: Prisma.$OrderPayload<ExtArgs>[]
       events: Prisma.$EventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      name: string
+      fullName: string
       username: string
       email: string
       password: string
       bio: string | null
       role: $Enums.RoleType
       referralCode: string
+      referredById: string | null
       createdAt: Date
       updatedAt: Date
       deletedAt: Date | null
@@ -2296,6 +2329,8 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    referredBy<T extends User$referredByArgs<ExtArgs> = {}>(args?: Subset<T, User$referredByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    referrals<T extends User$referralsArgs<ExtArgs> = {}>(args?: Subset<T, User$referralsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     wallets<T extends User$walletsArgs<ExtArgs> = {}>(args?: Subset<T, User$walletsArgs<ExtArgs>>): Prisma__WalletClient<$Result.GetResult<Prisma.$WalletPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     orders<T extends User$ordersArgs<ExtArgs> = {}>(args?: Subset<T, User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     events<T extends User$eventsArgs<ExtArgs> = {}>(args?: Subset<T, User$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2329,13 +2364,14 @@ export namespace Prisma {
    */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
-    readonly name: FieldRef<"User", 'String'>
+    readonly fullName: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly bio: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'RoleType'>
     readonly referralCode: FieldRef<"User", 'String'>
+    readonly referredById: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly deletedAt: FieldRef<"User", 'DateTime'>
@@ -2588,6 +2624,10 @@ export namespace Prisma {
      */
     data: UserCreateManyInput | UserCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2658,6 +2698,10 @@ export namespace Prisma {
      * Limit how many Users to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2724,6 +2768,49 @@ export namespace Prisma {
      * Limit how many Users to delete.
      */
     limit?: number
+  }
+
+  /**
+   * User.referredBy
+   */
+  export type User$referredByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * User.referrals
+   */
+  export type User$referralsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -9499,13 +9586,14 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    name: 'name',
+    fullName: 'fullName',
     username: 'username',
     email: 'email',
     password: 'password',
     bio: 'bio',
     role: 'role',
     referralCode: 'referralCode',
+    referredById: 'referredById',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     deletedAt: 'deletedAt'
@@ -9734,16 +9822,19 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
-    name?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
     username?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     bio?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleTypeFilter<"User"> | $Enums.RoleType
     referralCode?: StringFilter<"User"> | string
+    referredById?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    referredBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    referrals?: UserListRelationFilter
     wallets?: XOR<WalletNullableScalarRelationFilter, WalletWhereInput> | null
     orders?: OrderListRelationFilter
     events?: EventListRelationFilter
@@ -9751,16 +9842,19 @@ export namespace Prisma {
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
-    name?: SortOrder
+    fullName?: SortOrder
     username?: SortOrder
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrderInput | SortOrder
     role?: SortOrder
     referralCode?: SortOrder
+    referredById?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
+    referredBy?: UserOrderByWithRelationInput
+    referrals?: UserOrderByRelationAggregateInput
     wallets?: WalletOrderByWithRelationInput
     orders?: OrderOrderByRelationAggregateInput
     events?: EventOrderByRelationAggregateInput
@@ -9774,13 +9868,16 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
-    name?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     bio?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleTypeFilter<"User"> | $Enums.RoleType
+    referredById?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    referredBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    referrals?: UserListRelationFilter
     wallets?: XOR<WalletNullableScalarRelationFilter, WalletWhereInput> | null
     orders?: OrderListRelationFilter
     events?: EventListRelationFilter
@@ -9788,13 +9885,14 @@ export namespace Prisma {
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
-    name?: SortOrder
+    fullName?: SortOrder
     username?: SortOrder
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrderInput | SortOrder
     role?: SortOrder
     referralCode?: SortOrder
+    referredById?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
@@ -9808,13 +9906,14 @@ export namespace Prisma {
     OR?: UserScalarWhereWithAggregatesInput[]
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
-    name?: StringWithAggregatesFilter<"User"> | string
+    fullName?: StringWithAggregatesFilter<"User"> | string
     username?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
     bio?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleTypeWithAggregatesFilter<"User"> | $Enums.RoleType
     referralCode?: StringWithAggregatesFilter<"User"> | string
+    referredById?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -10229,7 +10328,7 @@ export namespace Prisma {
 
   export type UserCreateInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
@@ -10239,6 +10338,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferredByInput
     wallets?: WalletCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutCustomerInput
     events?: EventCreateNestedManyWithoutEventOrganizerInput
@@ -10246,16 +10347,18 @@ export namespace Prisma {
 
   export type UserUncheckedCreateInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
     bio?: string | null
     role?: $Enums.RoleType
     referralCode: string
+    referredById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
     wallets?: WalletUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
     events?: EventUncheckedCreateNestedManyWithoutEventOrganizerInput
@@ -10263,7 +10366,7 @@ export namespace Prisma {
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -10273,6 +10376,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
     wallets?: WalletUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutCustomerNestedInput
     events?: EventUpdateManyWithoutEventOrganizerNestedInput
@@ -10280,16 +10385,18 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     referralCode?: StringFieldUpdateOperationsInput | string
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
     wallets?: WalletUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
     events?: EventUncheckedUpdateManyWithoutEventOrganizerNestedInput
@@ -10297,13 +10404,14 @@ export namespace Prisma {
 
   export type UserCreateManyInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
     bio?: string | null
     role?: $Enums.RoleType
     referralCode: string
+    referredById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -10311,7 +10419,7 @@ export namespace Prisma {
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -10325,13 +10433,14 @@ export namespace Prisma {
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     referralCode?: StringFieldUpdateOperationsInput | string
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -10481,7 +10590,7 @@ export namespace Prisma {
     id?: string
     orderId: string
     code: string
-    used: boolean
+    used?: boolean
     createdAt?: Date | string
     usedAt?: Date | string | null
   }
@@ -10490,7 +10599,7 @@ export namespace Prisma {
     id?: string
     orderId: string
     code: string
-    used: boolean
+    used?: boolean
     createdAt?: Date | string
     usedAt?: Date | string | null
   }
@@ -10517,7 +10626,7 @@ export namespace Prisma {
     id?: string
     orderId: string
     code: string
-    used: boolean
+    used?: boolean
     createdAt?: Date | string
     usedAt?: Date | string | null
   }
@@ -10822,6 +10931,17 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
   export type WalletNullableScalarRelationFilter = {
     is?: WalletWhereInput | null
     isNot?: WalletWhereInput | null
@@ -10844,6 +10964,10 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
+  export type UserOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type OrderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -10854,13 +10978,14 @@ export namespace Prisma {
 
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
+    fullName?: SortOrder
     username?: SortOrder
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrder
     role?: SortOrder
     referralCode?: SortOrder
+    referredById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -10868,13 +10993,14 @@ export namespace Prisma {
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
+    fullName?: SortOrder
     username?: SortOrder
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrder
     role?: SortOrder
     referralCode?: SortOrder
+    referredById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -10882,13 +11008,14 @@ export namespace Prisma {
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
-    name?: SortOrder
+    fullName?: SortOrder
     username?: SortOrder
     email?: SortOrder
     password?: SortOrder
     bio?: SortOrder
     role?: SortOrder
     referralCode?: SortOrder
+    referredById?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -11336,6 +11463,19 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type UserCreateNestedOneWithoutReferralsInput = {
+    create?: XOR<UserCreateWithoutReferralsInput, UserUncheckedCreateWithoutReferralsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReferralsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedManyWithoutReferredByInput = {
+    create?: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput> | UserCreateWithoutReferredByInput[] | UserUncheckedCreateWithoutReferredByInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutReferredByInput | UserCreateOrConnectWithoutReferredByInput[]
+    createMany?: UserCreateManyReferredByInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
   export type WalletCreateNestedOneWithoutUserInput = {
     create?: XOR<WalletCreateWithoutUserInput, WalletUncheckedCreateWithoutUserInput>
     connectOrCreate?: WalletCreateOrConnectWithoutUserInput
@@ -11354,6 +11494,13 @@ export namespace Prisma {
     connectOrCreate?: EventCreateOrConnectWithoutEventOrganizerInput | EventCreateOrConnectWithoutEventOrganizerInput[]
     createMany?: EventCreateManyEventOrganizerInputEnvelope
     connect?: EventWhereUniqueInput | EventWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutReferredByInput = {
+    create?: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput> | UserCreateWithoutReferredByInput[] | UserUncheckedCreateWithoutReferredByInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutReferredByInput | UserCreateOrConnectWithoutReferredByInput[]
+    createMany?: UserCreateManyReferredByInputEnvelope
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type WalletUncheckedCreateNestedOneWithoutUserInput = {
@@ -11396,6 +11543,30 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
+  export type UserUpdateOneWithoutReferralsNestedInput = {
+    create?: XOR<UserCreateWithoutReferralsInput, UserUncheckedCreateWithoutReferralsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReferralsInput
+    upsert?: UserUpsertWithoutReferralsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReferralsInput, UserUpdateWithoutReferralsInput>, UserUncheckedUpdateWithoutReferralsInput>
+  }
+
+  export type UserUpdateManyWithoutReferredByNestedInput = {
+    create?: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput> | UserCreateWithoutReferredByInput[] | UserUncheckedCreateWithoutReferredByInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutReferredByInput | UserCreateOrConnectWithoutReferredByInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutReferredByInput | UserUpsertWithWhereUniqueWithoutReferredByInput[]
+    createMany?: UserCreateManyReferredByInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutReferredByInput | UserUpdateWithWhereUniqueWithoutReferredByInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutReferredByInput | UserUpdateManyWithWhereWithoutReferredByInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type WalletUpdateOneWithoutUserNestedInput = {
     create?: XOR<WalletCreateWithoutUserInput, WalletUncheckedCreateWithoutUserInput>
     connectOrCreate?: WalletCreateOrConnectWithoutUserInput
@@ -11432,6 +11603,20 @@ export namespace Prisma {
     update?: EventUpdateWithWhereUniqueWithoutEventOrganizerInput | EventUpdateWithWhereUniqueWithoutEventOrganizerInput[]
     updateMany?: EventUpdateManyWithWhereWithoutEventOrganizerInput | EventUpdateManyWithWhereWithoutEventOrganizerInput[]
     deleteMany?: EventScalarWhereInput | EventScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutReferredByNestedInput = {
+    create?: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput> | UserCreateWithoutReferredByInput[] | UserUncheckedCreateWithoutReferredByInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutReferredByInput | UserCreateOrConnectWithoutReferredByInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutReferredByInput | UserUpsertWithWhereUniqueWithoutReferredByInput[]
+    createMany?: UserCreateManyReferredByInputEnvelope
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutReferredByInput | UserUpdateWithWhereUniqueWithoutReferredByInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutReferredByInput | UserUpdateManyWithWhereWithoutReferredByInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type WalletUncheckedUpdateOneWithoutUserNestedInput = {
@@ -11986,6 +12171,93 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type UserCreateWithoutReferralsInput = {
+    id?: string
+    fullName: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    role?: $Enums.RoleType
+    referralCode: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    wallets?: WalletCreateNestedOneWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+    events?: EventCreateNestedManyWithoutEventOrganizerInput
+  }
+
+  export type UserUncheckedCreateWithoutReferralsInput = {
+    id?: string
+    fullName: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    role?: $Enums.RoleType
+    referralCode: string
+    referredById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    wallets?: WalletUncheckedCreateNestedOneWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+    events?: EventUncheckedCreateNestedManyWithoutEventOrganizerInput
+  }
+
+  export type UserCreateOrConnectWithoutReferralsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReferralsInput, UserUncheckedCreateWithoutReferralsInput>
+  }
+
+  export type UserCreateWithoutReferredByInput = {
+    id?: string
+    fullName: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    role?: $Enums.RoleType
+    referralCode: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    referrals?: UserCreateNestedManyWithoutReferredByInput
+    wallets?: WalletCreateNestedOneWithoutUserInput
+    orders?: OrderCreateNestedManyWithoutCustomerInput
+    events?: EventCreateNestedManyWithoutEventOrganizerInput
+  }
+
+  export type UserUncheckedCreateWithoutReferredByInput = {
+    id?: string
+    fullName: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    role?: $Enums.RoleType
+    referralCode: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
+    wallets?: WalletUncheckedCreateNestedOneWithoutUserInput
+    orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
+    events?: EventUncheckedCreateNestedManyWithoutEventOrganizerInput
+  }
+
+  export type UserCreateOrConnectWithoutReferredByInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput>
+  }
+
+  export type UserCreateManyReferredByInputEnvelope = {
+    data: UserCreateManyReferredByInput | UserCreateManyReferredByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type WalletCreateWithoutUserInput = {
     id?: string
     balance: number
@@ -12073,6 +12345,87 @@ export namespace Prisma {
   export type EventCreateManyEventOrganizerInputEnvelope = {
     data: EventCreateManyEventOrganizerInput | EventCreateManyEventOrganizerInput[]
     skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutReferralsInput = {
+    update: XOR<UserUpdateWithoutReferralsInput, UserUncheckedUpdateWithoutReferralsInput>
+    create: XOR<UserCreateWithoutReferralsInput, UserUncheckedCreateWithoutReferralsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReferralsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReferralsInput, UserUncheckedUpdateWithoutReferralsInput>
+  }
+
+  export type UserUpdateWithoutReferralsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    referralCode?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    wallets?: WalletUpdateOneWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+    events?: EventUpdateManyWithoutEventOrganizerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReferralsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    referralCode?: StringFieldUpdateOperationsInput | string
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    wallets?: WalletUncheckedUpdateOneWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+    events?: EventUncheckedUpdateManyWithoutEventOrganizerNestedInput
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutReferredByInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutReferredByInput, UserUncheckedUpdateWithoutReferredByInput>
+    create: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutReferredByInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutReferredByInput, UserUncheckedUpdateWithoutReferredByInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutReferredByInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutReferredByInput>
+  }
+
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    username?: StringFilter<"User"> | string
+    email?: StringFilter<"User"> | string
+    password?: StringFilter<"User"> | string
+    bio?: StringNullableFilter<"User"> | string | null
+    role?: EnumRoleTypeFilter<"User"> | $Enums.RoleType
+    referralCode?: StringFilter<"User"> | string
+    referredById?: StringNullableFilter<"User"> | string | null
+    createdAt?: DateTimeFilter<"User"> | Date | string
+    updatedAt?: DateTimeFilter<"User"> | Date | string
+    deletedAt?: DateTimeNullableFilter<"User"> | Date | string | null
   }
 
   export type WalletUpsertWithoutUserInput = {
@@ -12164,7 +12517,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutWalletsInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
@@ -12174,22 +12527,26 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferredByInput
     orders?: OrderCreateNestedManyWithoutCustomerInput
     events?: EventCreateNestedManyWithoutEventOrganizerInput
   }
 
   export type UserUncheckedCreateWithoutWalletsInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
     bio?: string | null
     role?: $Enums.RoleType
     referralCode: string
+    referredById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
     orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
     events?: EventUncheckedCreateNestedManyWithoutEventOrganizerInput
   }
@@ -12212,7 +12569,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutWalletsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -12222,29 +12579,33 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
     orders?: OrderUpdateManyWithoutCustomerNestedInput
     events?: EventUpdateManyWithoutEventOrganizerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWalletsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     referralCode?: StringFieldUpdateOperationsInput | string
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
     orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
     events?: EventUncheckedUpdateManyWithoutEventOrganizerNestedInput
   }
 
   export type UserCreateWithoutEventsInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
@@ -12254,22 +12615,26 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferredByInput
     wallets?: WalletCreateNestedOneWithoutUserInput
     orders?: OrderCreateNestedManyWithoutCustomerInput
   }
 
   export type UserUncheckedCreateWithoutEventsInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
     bio?: string | null
     role?: $Enums.RoleType
     referralCode: string
+    referredById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
     wallets?: WalletUncheckedCreateNestedOneWithoutUserInput
     orders?: OrderUncheckedCreateNestedManyWithoutCustomerInput
   }
@@ -12372,7 +12737,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -12382,22 +12747,26 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
     wallets?: WalletUpdateOneWithoutUserNestedInput
     orders?: OrderUpdateManyWithoutCustomerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEventsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     referralCode?: StringFieldUpdateOperationsInput | string
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
     wallets?: WalletUncheckedUpdateOneWithoutUserNestedInput
     orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
   }
@@ -12476,7 +12845,7 @@ export namespace Prisma {
 
   export type UserCreateWithoutOrdersInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
@@ -12486,22 +12855,26 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferredByInput
     wallets?: WalletCreateNestedOneWithoutUserInput
     events?: EventCreateNestedManyWithoutEventOrganizerInput
   }
 
   export type UserUncheckedCreateWithoutOrdersInput = {
     id?: string
-    name: string
+    fullName: string
     username: string
     email: string
     password: string
     bio?: string | null
     role?: $Enums.RoleType
     referralCode: string
+    referredById?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
     wallets?: WalletUncheckedCreateNestedOneWithoutUserInput
     events?: EventUncheckedCreateNestedManyWithoutEventOrganizerInput
   }
@@ -12557,7 +12930,7 @@ export namespace Prisma {
 
   export type UserUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -12567,22 +12940,26 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
     wallets?: WalletUpdateOneWithoutUserNestedInput
     events?: EventUpdateManyWithoutEventOrganizerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOrdersInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
     referralCode?: StringFieldUpdateOperationsInput | string
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
     wallets?: WalletUncheckedUpdateOneWithoutUserNestedInput
     events?: EventUncheckedUpdateManyWithoutEventOrganizerNestedInput
   }
@@ -12734,6 +13111,20 @@ export namespace Prisma {
     data: XOR<EventUpdateManyMutationInput, EventUncheckedUpdateManyWithoutVenueInput>
   }
 
+  export type UserCreateManyReferredByInput = {
+    id?: string
+    fullName: string
+    username: string
+    email: string
+    password: string
+    bio?: string | null
+    role?: $Enums.RoleType
+    referralCode: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
   export type OrderCreateManyCustomerInput = {
     id?: string
     eventId: string
@@ -12758,6 +13149,56 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+  }
+
+  export type UserUpdateWithoutReferredByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    referralCode?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
+    wallets?: WalletUpdateOneWithoutUserNestedInput
+    orders?: OrderUpdateManyWithoutCustomerNestedInput
+    events?: EventUpdateManyWithoutEventOrganizerNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReferredByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    referralCode?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
+    wallets?: WalletUncheckedUpdateOneWithoutUserNestedInput
+    orders?: OrderUncheckedUpdateManyWithoutCustomerNestedInput
+    events?: EventUncheckedUpdateManyWithoutEventOrganizerNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutReferredByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleTypeFieldUpdateOperationsInput | $Enums.RoleType
+    referralCode?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OrderUpdateWithoutCustomerInput = {
