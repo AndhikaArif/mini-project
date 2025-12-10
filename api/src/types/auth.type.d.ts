@@ -12,10 +12,11 @@ export interface IRegister {
   username: string;
   email: string;
   password: string;
-  referralCode: string?;
+  referralCode?: string | undefined;
 }
 
 export interface IExistingUser {
+  id: string;
   name: string;
   email: string;
   role: string;

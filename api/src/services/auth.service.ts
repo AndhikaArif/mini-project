@@ -9,7 +9,7 @@ export class AuthService {
   async register({ name, username, email, password, referralCode }: IRegister) {
     // Cek apakah username atau email sudah dipakai
     const existingUser = await prisma.user.findFirst({
-      where: { OR: [{ username, email }] },
+      where: { OR: [{ username }, { email }] },
     });
 
     if (existingUser) throw new AppError(400, "User already exist");
@@ -81,11 +81,13 @@ export class AuthService {
     if (!isValidPassword)
       throw new AppError(400, "Username or password is wrong");
 
-    return existingUser;
+    const { password: _, ...safeUser } = existingUser;
+    return safeUser;
   }
 
   async generateToken(existingUser: IExistingUser) {
     const payload = {
+      id: existingUser.id,
       name: existingUser.name,
       email: existingUser.email,
       role: existingUser.role,

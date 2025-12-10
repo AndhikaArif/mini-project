@@ -3,17 +3,14 @@
 import { useTheme } from "@/context/theme-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useThemeClass } from "@/components/theme";
-import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-
-const loginSchema = z.object({
-  username: z.string().min(1, "Username wajib diisi"),
-  password: z.string().min(1, "Password wajib diisi"),
-});
+import { loginSchemaFront } from "@/validation/login.validation";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const { isDark } = useTheme();
   const themeClass = useThemeClass();
+  const router = useRouter();
 
   return (
     <main>
@@ -22,18 +19,28 @@ export default function LoginPage() {
 
         <Formik
           initialValues={{ username: "", password: "" }}
-          validationSchema={toFormikValidationSchema(loginSchema)}
-          onSubmit={async (values) => {
-            const res = await fetch("/api/auth.login", {
+          validationSchema={toFormikValidationSchema(loginSchemaFront)}
+          onSubmit={async (values, { setErrors }) => {
+            const res = await fetch("/api/auth/login", {
               method: "POST",
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify(values),
             });
 
             const data = await res.json();
-            console.log(data);
+
+            // cek apakah username tidak ada / password salah
+            if (!res.ok && data.field) {
+              setErrors({ [data.field]: data.message });
+              return;
+            }
+
+            // Kalau login sukses lempar user ke homepage
+            router.push("/");
           }}
         >
           <Form className="flex flex-col gap-4">
+            {/* USERNAME */}
             <div className="flex flex-col gap-1">
               <label className="font-medium">Username</label>
 
@@ -50,6 +57,7 @@ export default function LoginPage() {
               />
             </div>
 
+            {/* PASSWORD */}
             <div className="flex flex-col gap-1">
               <label className="font-medium">Password</label>
 

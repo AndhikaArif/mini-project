@@ -24,6 +24,7 @@ class App {
     this.initializeMiddleware();
     this.initializeStatus();
     this.initializeRoutes();
+    this.initializeErrorHandle();
   }
 
   private initializeMiddleware(): void {
@@ -40,17 +41,14 @@ class App {
   }
 
   private initializeRoutes(): void {
-<<<<<<< HEAD
-    this.app.use("api/auth", authRoutes);
+    this.app.use("/api/auth", authRoutes);
+    this.app.use("/api/events", eventRoutes);
+    this.app.use("/api/vouchers", voucherRoutes);
   }
 
   private initializeErrorHandle(): void {
     this.app.use(ErrorMiddleware.notFound);
     this.app.use(ErrorMiddleware.global);
-=======
-    this.app.use("/api/events", eventRoutes);
-    this.app.use("/api/vouchers", voucherRoutes);
->>>>>>> main
   }
 
   public listen(): void {

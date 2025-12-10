@@ -39,14 +39,20 @@ export class AuthController {
           secure: process.env.NODE_ENV === "production",
           maxAge: 1000 * 60 * 60 * 24, // 1 hari
         })
-        .json({ message: "Login success" });
+        .json({
+          message: "Login success",
+          user: {
+            id: user.id,
+            name: user.name,
+            role: user.role,
+          },
+        });
     } catch (error) {
       next(error);
     }
   }
 
   async logout(req: Request, res: Response) {
-    req.currentUser = null;
     res
       .status(200)
       .clearCookie("authenticationToken")
