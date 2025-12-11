@@ -8,6 +8,7 @@ import express, {
 
 import eventRoutes from "./routes/event.route.js";
 import voucherRoutes from "./routes/voucher.route.js";
+import orderRoutes from "./routes/order.route.js";
 
 class App {
   public app: Application;
@@ -36,6 +37,7 @@ class App {
   private initializeRoutes(): void {
     this.app.use("/api/events", eventRoutes);
     this.app.use("/api/vouchers", voucherRoutes);
+    this.app.use("/api/orders", orderRoutes);
   }
 
   public listen(): void {
