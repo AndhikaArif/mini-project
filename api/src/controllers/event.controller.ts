@@ -18,17 +18,22 @@ export class EventController {
         endTime,
       } = req.body;
 
-      const event = await eventService.createEvent({
-        name,
-        categoryId,
-        price,
-        totalSeats,
-        availableSeats,
-        startTime,
-        endTime,
-        venueId,
-        eventOrganizerId,
-      });
+      const user = req.currentUser.id;
+
+      const event = await eventService.createEvent(
+        {
+          name,
+          categoryId,
+          price,
+          totalSeats,
+          availableSeats,
+          startTime,
+          endTime,
+          venueId,
+          eventOrganizerId,
+        },
+        user
+      );
 
       res.status(201).json({ message: "Event has been created", event });
     } catch (error) {
