@@ -18,13 +18,13 @@ export class EventService {
     }: IEvent,
     eoId: string
   ) {
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
-    });
+    // const user = await prisma.user.findFirst({
+    //   where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+    // });
 
-    if (!user) throw new Error("Event organizer not found");
-    if (user.role !== "EVENT_ORGANIZER")
-      throw new Error("Only Event Organizer can create event");
+    // if (!user) throw new Error("Event organizer not found");
+    // if (user.role !== "EVENT_ORGANIZER")
+    //   throw new Error("Only Event Organizer can create event");
 
     const event = await prisma.event.create({
       data: {

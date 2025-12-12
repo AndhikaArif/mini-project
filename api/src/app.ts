@@ -21,6 +21,7 @@ class App {
 
     this.initializeMiddleware();
     this.initializeStatus();
+    this.initializeRoutes();
   }
 
   private initializeMiddleware(): void {

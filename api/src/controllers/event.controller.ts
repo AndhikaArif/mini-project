@@ -18,7 +18,7 @@ export class EventController {
         endTime,
       } = req.body;
 
-      const user = req.currentUser.id;
+      // const user = req.currentUser.id;
 
       const event = await eventService.createEvent(
         {
