@@ -89,12 +89,33 @@ model Wallet {
   @@map("wallets")
 }
 
+enum CategoryOption {
+  ENTERTAINMENT
+  SPORTS_AND_COMPETITION
+  EDUCATION_AND_WORKSHOP
+  BUSSINESS_AND_NETWORKING
+  ART_AND_CULTURE
+}
+
+enum LocationOption {
+  JAKARTA
+  SURABAYA
+  BANDUNG
+  MEDAN
+  SEMARANG
+  YOGYAKARTA
+  MAKASSAR
+  BALI
+  PALEMBANG
+  BALIKPAPAN
+}
+
 model Event {
-  id               String   @id @default(uuid())
+  id               String         @id @default(uuid())
   eventOrganizerId String
-  venueId          String
-  categoryId       String
-  name             String   @db.VarChar(255)
+  name             String         @db.VarChar(255)
+  category         CategoryOption
+  location         LocationOption
   price            Float
   totalSeats       Int
   availableSeats   Int
@@ -105,9 +126,7 @@ model Event {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  eventOrganizer User     @relation(fields: [eventOrganizerId], references: [id])
-  venue          Vanues   @relation(fields: [venueId], references: [id])
-  category       Category @relation(fields: [categoryId], references: [id])
+  eventOrganizer User @relation(fields: [eventOrganizerId], references: [id])
 
   orders   Order[]
   vouchers Voucher[]
@@ -205,69 +224,6 @@ model Payment {
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("payment")
-}
-
-enum categoryOption {
-  // entertainment
-  FESTIVAL
-  MUSIC
-  CONCERT
-  THEATER
-  COMEDY_SHOW
-  MOVIE_SCREENING
-  DANCE
-  // education / seminar
-  SEMINAR
-  WORKSHOP
-  CONFERENCE
-  WEBINAR
-  TRAINING
-  // business / professional
-  EXPO
-  TRADE_SHOW
-  NETWORKING_EVENT
-  PRODUCT_LAUNCH
-  // sport
-  SPORTS_EVENT
-  MARATHON
-  TOURNAMENT
-  FITNESS_CLASS
-  // community
-  COMMUNITY_MEETUP
-  CHARITY
-  VOLUNTEER
-  SOCIAL_EVENT
-  // culture & lifestyle
-  CULTURAL_EVENT
-  FASHION_SHOW
-  FOOD_FEST
-  ART_EXHIBITION
-  // family & personal
-  BIRTHDAY
-  FAMILY_GATHERING
-  KIDS_EVENT
-}
-
-model Category {
-  id   String         @id @default(uuid())
-  name categoryOption
-
-  events Event[]
-}
-
-model Vanues {
-  id        String @id @default(uuid())
-  name      String
-  city      String
-  address   String
-  latitude  Float?
-  longitude Float?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  events Event[]
 }
 
 // enum Role {

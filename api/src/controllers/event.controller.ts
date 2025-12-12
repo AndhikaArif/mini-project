@@ -8,9 +8,9 @@ export class EventController {
     try {
       const {
         eventOrganizerId,
-        venueId,
-        categoryId,
         name,
+        category,
+        location,
         price,
         totalSeats,
         availableSeats,
@@ -18,18 +18,18 @@ export class EventController {
         endTime,
       } = req.body;
 
-      // const user = req.currentUser.id;
+      const user = req.currentUser.id;
 
       const event = await eventService.createEvent(
         {
           name,
-          categoryId,
+          category,
+          location,
           price,
           totalSeats,
           availableSeats,
           startTime,
           endTime,
-          venueId,
           eventOrganizerId,
         },
         user
