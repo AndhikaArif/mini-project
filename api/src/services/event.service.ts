@@ -4,17 +4,28 @@ import type { IEvent } from "../types/event.js";
 const prisma = new PrismaClient();
 
 export class EventService {
-  async createEvent({
-    eventOrganizerId,
-    venueId,
-    categoryId,
-    name,
-    price,
-    totalSeats,
-    availableSeats,
-    startTime,
-    endTime,
-  }: IEvent) {
+  async createEvent(
+    {
+      eventOrganizerId,
+      venueId,
+      categoryId,
+      name,
+      price,
+      totalSeats,
+      availableSeats,
+      startTime,
+      endTime,
+    }: IEvent,
+    eoId: string
+  ) {
+    const user = await prisma.user.findFirst({
+      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+    });
+
+    if (!user) throw new Error("Event organizer not found");
+    if (user.role !== "EVENT_ORGANIZER")
+      throw new Error("Only Event Organizer can create event");
+
     const event = await prisma.event.create({
       data: {
         name,
