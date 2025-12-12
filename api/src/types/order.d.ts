@@ -1,8 +1,14 @@
-export interface IOrder {
+import { type StatusOrder } from "../generated/client.d.ts";
+
+export interface ICreateOrder {
   eventId: string;
-  costumerId: string;
+  customerId: string;
   voucherId: string;
+  pointUsed: number;
+  couponId: string;
   quantity: number;
-  totalAmount: number;
-  totalPaid: number;
+}
+
+export interface IUpdateOrder {
+  status: StatusOrder;
 }

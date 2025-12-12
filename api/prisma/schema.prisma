@@ -56,7 +56,8 @@ model Point {
   createdAt DateTime @default(now())
   expiredAt DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
 
   @@map("points")
 }
@@ -72,7 +73,8 @@ model Coupon {
   expiredAt DateTime
   usedAt    DateTime?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
 
   @@map("coupons")
 }
@@ -87,12 +89,33 @@ model Wallet {
   @@map("wallets")
 }
 
+enum CategoryOption {
+  ENTERTAINMENT
+  SPORTS_AND_COMPETITION
+  EDUCATION_AND_WORKSHOP
+  BUSSINESS_AND_NETWORKING
+  ART_AND_CULTURE
+}
+
+enum LocationOption {
+  JAKARTA
+  SURABAYA
+  BANDUNG
+  MEDAN
+  SEMARANG
+  YOGYAKARTA
+  MAKASSAR
+  BALI
+  PALEMBANG
+  BALIKPAPAN
+}
+
 model Event {
-  id               String   @id @default(uuid())
+  id               String         @id @default(uuid())
   eventOrganizerId String
-  venueId          String
-  categoryId       String
-  name             String   @db.VarChar(255)
+  name             String         @db.VarChar(255)
+  category         CategoryOption
+  location         LocationOption
   price            Float
   totalSeats       Int
   availableSeats   Int
@@ -103,9 +126,7 @@ model Event {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  eventOrganizer User     @relation(fields: [eventOrganizerId], references: [id])
-  venue          Vanues   @relation(fields: [venueId], references: [id])
-  category       Category @relation(fields: [categoryId], references: [id])
+  eventOrganizer User @relation(fields: [eventOrganizerId], references: [id])
 
   orders   Order[]
   vouchers Voucher[]
@@ -121,6 +142,8 @@ model Ticket {
 
   createdAt DateTime  @default(now())
   usedAt    DateTime?
+
+  @@map("ticket")
 }
 
 model Voucher {
@@ -141,29 +164,29 @@ model Voucher {
   event    Event   @relation(fields: [eventId], references: [id])
   customer User?   @relation(fields: [customerId], references: [id])
   orders   Order[]
+
+  @@map("voucher")
 }
 
 enum StatusOrder {
   WAITING_PAYMENT
-  WAITING_CONFIRMATION
   REJECTED
-  CANCELLED
   EXPIRED
-  DONE
+  PAID
 }
 
 model Order {
-  id           String      @id @default(uuid())
-  customerId   String
-  eventId      String
-  voucherId    String?
-  quantity     Int
-  totalAmount  Float
-  totalPaid    Float
-  status       StatusOrder @default(WAITING_PAYMENT)
-  paymentProof String?
-  paidAt       DateTime?
-  verifiedAt   DateTime?
+  id          String      @id @default(uuid())
+  customerId  String
+  eventId     String
+  voucherId   String?
+  pointId     String?
+  couponId    String?
+  quantity    Int
+  totalAmount Float
+  totalPaid   Float
+  status      StatusOrder @default(WAITING_PAYMENT)
+  verifiedAt  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -171,71 +194,36 @@ model Order {
   customer User     @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   voucher  Voucher? @relation(fields: [voucherId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  point    Point?   @relation(fields: [pointId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  coupon   Coupon?  @relation(fields: [couponId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  payments Payment[]
 
   @@map("order")
 }
 
-enum categoryOption {
-  // entertainment
-  FESTIVAL
-  MUSIC
-  CONCERT
-  THEATER
-  COMEDY_SHOW
-  MOVIE_SCREENING
-  DANCE
-  // education / seminar
-  SEMINAR
-  WORKSHOP
-  CONFERENCE
-  WEBINAR
-  TRAINING
-  // business / professional
-  EXPO
-  TRADE_SHOW
-  NETWORKING_EVENT
-  PRODUCT_LAUNCH
-  // sport
-  SPORTS_EVENT
-  MARATHON
-  TOURNAMENT
-  FITNESS_CLASS
-  // community
-  COMMUNITY_MEETUP
-  CHARITY
-  VOLUNTEER
-  SOCIAL_EVENT
-  // culture & lifestyle
-  CULTURAL_EVENT
-  FASHION_SHOW
-  FOOD_FEST
-  ART_EXHIBITION
-  // family & personal
-  BIRTHDAY
-  FAMILY_GATHERING
-  KIDS_EVENT
+enum StatusPayment {
+  PENDING
+  WAITING_CONFIRMATION
+  CANCELLED
+  EXPIRED
+  REJECTED
+  DONE
 }
 
-model Category {
-  id   String         @id @default(uuid())
-  name categoryOption
+model Payment {
+  id           String        @id @default(uuid())
+  orderId      String
+  status       StatusPayment @default(PENDING)
+  paymentProof String?
+  paidAt       DateTime?
 
-  events Event[]
-}
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-model Vanues {
-  id        String @id @default(uuid())
-  name      String
-  city      String
-  address   String
-  latitude  Float?
-  longitude Float?
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  events Event[]
+  @@map("payment")
 }
 
 // enum Role {

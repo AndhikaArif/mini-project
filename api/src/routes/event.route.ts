@@ -9,8 +9,8 @@ router.route("/").get(eventController.getAllEvents);
 router
   .route("/:id")
   .get(eventController.getEventById)
-  .patch(eventController.updateEvent) // pakai put atau patch?
-  .patch(eventController.deleteEvent);
+  .put(eventController.updateEvent)
+  .put(eventController.deleteEvent);
 router.route("/create").post(eventController.createEvent);
 
 export default router;
