@@ -8,9 +8,9 @@ export class EventController {
     try {
       const {
         eventOrganizerId,
-        venueId,
-        categoryId,
         name,
+        category,
+        location,
         price,
         totalSeats,
         availableSeats,
@@ -23,13 +23,13 @@ export class EventController {
       const event = await eventService.createEvent(
         {
           name,
-          categoryId,
+          category,
+          location,
           price,
           totalSeats,
           availableSeats,
           startTime,
           endTime,
-          venueId,
           eventOrganizerId,
         },
         user

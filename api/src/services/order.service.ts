@@ -1,5 +1,5 @@
 import { PrismaClient } from "../generated/client.js";
-import { type ICreateOrder, type IUpdateOrder } from "../types/order.js";
+import { type ICreateOrder, type IUpdateOrder } from "../types/order.d.js";
 
 const prisma = new PrismaClient();
 
