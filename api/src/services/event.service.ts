@@ -1,5 +1,5 @@
 import { PrismaClient } from "../generated/client.js";
-import type { IEvent } from "../types/event.js";
+import type { IEvent } from "../types/event.d.js";
 
 const prisma = new PrismaClient();
 
