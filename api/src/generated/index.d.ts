@@ -1866,6 +1866,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type VoucherCountOutputType
+   */
+
+  export type VoucherCountOutputType = {
+    orders: number
+  }
+
+  export type VoucherCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    orders?: boolean | VoucherCountOutputTypeCountOrdersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * VoucherCountOutputType without action
+   */
+  export type VoucherCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VoucherCountOutputType
+     */
+    select?: VoucherCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * VoucherCountOutputType without action
+   */
+  export type VoucherCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderWhereInput
+  }
+
+
+  /**
    * Count Type CategoryCountOutputType
    */
 
@@ -6627,6 +6658,8 @@ export namespace Prisma {
     price: number | null
     totalSeats: number | null
     availableSeats: number | null
+    startTime: Date | null
+    endTime: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -6641,6 +6674,8 @@ export namespace Prisma {
     price: number | null
     totalSeats: number | null
     availableSeats: number | null
+    startTime: Date | null
+    endTime: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     deletedAt: Date | null
@@ -6655,6 +6690,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: number
+    endTime: number
     createdAt: number
     updatedAt: number
     deletedAt: number
@@ -6683,6 +6720,8 @@ export namespace Prisma {
     price?: true
     totalSeats?: true
     availableSeats?: true
+    startTime?: true
+    endTime?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -6697,6 +6736,8 @@ export namespace Prisma {
     price?: true
     totalSeats?: true
     availableSeats?: true
+    startTime?: true
+    endTime?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -6711,6 +6752,8 @@ export namespace Prisma {
     price?: true
     totalSeats?: true
     availableSeats?: true
+    startTime?: true
+    endTime?: true
     createdAt?: true
     updatedAt?: true
     deletedAt?: true
@@ -6812,6 +6855,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date
+    endTime: Date
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -6845,6 +6890,8 @@ export namespace Prisma {
     price?: boolean
     totalSeats?: boolean
     availableSeats?: boolean
+    startTime?: boolean
+    endTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -6865,6 +6912,8 @@ export namespace Prisma {
     price?: boolean
     totalSeats?: boolean
     availableSeats?: boolean
+    startTime?: boolean
+    endTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -6882,6 +6931,8 @@ export namespace Prisma {
     price?: boolean
     totalSeats?: boolean
     availableSeats?: boolean
+    startTime?: boolean
+    endTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
@@ -6899,12 +6950,14 @@ export namespace Prisma {
     price?: boolean
     totalSeats?: boolean
     availableSeats?: boolean
+    startTime?: boolean
+    endTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     deletedAt?: boolean
   }
 
-  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "eventOrganizerId" | "venueId" | "categoryId" | "name" | "price" | "totalSeats" | "availableSeats" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["event"]>
+  export type EventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "eventOrganizerId" | "venueId" | "categoryId" | "name" | "price" | "totalSeats" | "availableSeats" | "startTime" | "endTime" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["event"]>
   export type EventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     eventOrganizer?: boolean | UserDefaultArgs<ExtArgs>
     venue?: boolean | VanuesDefaultArgs<ExtArgs>
@@ -6942,6 +6995,8 @@ export namespace Prisma {
       price: number
       totalSeats: number
       availableSeats: number
+      startTime: Date
+      endTime: Date
       createdAt: Date
       updatedAt: Date
       deletedAt: Date | null
@@ -7381,6 +7436,8 @@ export namespace Prisma {
     readonly price: FieldRef<"Event", 'Float'>
     readonly totalSeats: FieldRef<"Event", 'Int'>
     readonly availableSeats: FieldRef<"Event", 'Int'>
+    readonly startTime: FieldRef<"Event", 'DateTime'>
+    readonly endTime: FieldRef<"Event", 'DateTime'>
     readonly createdAt: FieldRef<"Event", 'DateTime'>
     readonly updatedAt: FieldRef<"Event", 'DateTime'>
     readonly deletedAt: FieldRef<"Event", 'DateTime'>
@@ -9110,6 +9167,8 @@ export namespace Prisma {
     deletedAt?: boolean
     event?: boolean | EventDefaultArgs<ExtArgs>
     customer?: boolean | Voucher$customerArgs<ExtArgs>
+    orders?: boolean | Voucher$ordersArgs<ExtArgs>
+    _count?: boolean | VoucherCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["voucher"]>
 
   export type VoucherSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9165,6 +9224,8 @@ export namespace Prisma {
   export type VoucherInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     event?: boolean | EventDefaultArgs<ExtArgs>
     customer?: boolean | Voucher$customerArgs<ExtArgs>
+    orders?: boolean | Voucher$ordersArgs<ExtArgs>
+    _count?: boolean | VoucherCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type VoucherIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     event?: boolean | EventDefaultArgs<ExtArgs>
@@ -9180,6 +9241,7 @@ export namespace Prisma {
     objects: {
       event: Prisma.$EventPayload<ExtArgs>
       customer: Prisma.$UserPayload<ExtArgs> | null
+      orders: Prisma.$OrderPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9590,6 +9652,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     event<T extends EventDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventDefaultArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     customer<T extends Voucher$customerArgs<ExtArgs> = {}>(args?: Subset<T, Voucher$customerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    orders<T extends Voucher$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Voucher$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10046,6 +10109,30 @@ export namespace Prisma {
   }
 
   /**
+   * Voucher.orders
+   */
+  export type Voucher$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    where?: OrderWhereInput
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    cursor?: OrderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
+  }
+
+  /**
    * Voucher without action
    */
   export type VoucherDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10079,19 +10166,23 @@ export namespace Prisma {
   export type OrderAvgAggregateOutputType = {
     quantity: number | null
     totalAmount: number | null
+    totalPaid: number | null
   }
 
   export type OrderSumAggregateOutputType = {
     quantity: number | null
     totalAmount: number | null
+    totalPaid: number | null
   }
 
   export type OrderMinAggregateOutputType = {
     id: string | null
     customerId: string | null
     eventId: string | null
+    voucherId: string | null
     quantity: number | null
     totalAmount: number | null
+    totalPaid: number | null
     status: $Enums.StatusOrder | null
     paymentProof: string | null
     paidAt: Date | null
@@ -10104,8 +10195,10 @@ export namespace Prisma {
     id: string | null
     customerId: string | null
     eventId: string | null
+    voucherId: string | null
     quantity: number | null
     totalAmount: number | null
+    totalPaid: number | null
     status: $Enums.StatusOrder | null
     paymentProof: string | null
     paidAt: Date | null
@@ -10118,8 +10211,10 @@ export namespace Prisma {
     id: number
     customerId: number
     eventId: number
+    voucherId: number
     quantity: number
     totalAmount: number
+    totalPaid: number
     status: number
     paymentProof: number
     paidAt: number
@@ -10133,19 +10228,23 @@ export namespace Prisma {
   export type OrderAvgAggregateInputType = {
     quantity?: true
     totalAmount?: true
+    totalPaid?: true
   }
 
   export type OrderSumAggregateInputType = {
     quantity?: true
     totalAmount?: true
+    totalPaid?: true
   }
 
   export type OrderMinAggregateInputType = {
     id?: true
     customerId?: true
     eventId?: true
+    voucherId?: true
     quantity?: true
     totalAmount?: true
+    totalPaid?: true
     status?: true
     paymentProof?: true
     paidAt?: true
@@ -10158,8 +10257,10 @@ export namespace Prisma {
     id?: true
     customerId?: true
     eventId?: true
+    voucherId?: true
     quantity?: true
     totalAmount?: true
+    totalPaid?: true
     status?: true
     paymentProof?: true
     paidAt?: true
@@ -10172,8 +10273,10 @@ export namespace Prisma {
     id?: true
     customerId?: true
     eventId?: true
+    voucherId?: true
     quantity?: true
     totalAmount?: true
+    totalPaid?: true
     status?: true
     paymentProof?: true
     paidAt?: true
@@ -10273,12 +10376,14 @@ export namespace Prisma {
     id: string
     customerId: string
     eventId: string
+    voucherId: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date
-    verifiedAt: Date
+    paymentProof: string | null
+    paidAt: Date | null
+    verifiedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: OrderCountAggregateOutputType | null
@@ -10306,8 +10411,10 @@ export namespace Prisma {
     id?: boolean
     customerId?: boolean
     eventId?: boolean
+    voucherId?: boolean
     quantity?: boolean
     totalAmount?: boolean
+    totalPaid?: boolean
     status?: boolean
     paymentProof?: boolean
     paidAt?: boolean
@@ -10316,14 +10423,17 @@ export namespace Prisma {
     updatedAt?: boolean
     customer?: boolean | UserDefaultArgs<ExtArgs>
     event?: boolean | EventDefaultArgs<ExtArgs>
+    voucher?: boolean | Order$voucherArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     customerId?: boolean
     eventId?: boolean
+    voucherId?: boolean
     quantity?: boolean
     totalAmount?: boolean
+    totalPaid?: boolean
     status?: boolean
     paymentProof?: boolean
     paidAt?: boolean
@@ -10332,14 +10442,17 @@ export namespace Prisma {
     updatedAt?: boolean
     customer?: boolean | UserDefaultArgs<ExtArgs>
     event?: boolean | EventDefaultArgs<ExtArgs>
+    voucher?: boolean | Order$voucherArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     customerId?: boolean
     eventId?: boolean
+    voucherId?: boolean
     quantity?: boolean
     totalAmount?: boolean
+    totalPaid?: boolean
     status?: boolean
     paymentProof?: boolean
     paidAt?: boolean
@@ -10348,14 +10461,17 @@ export namespace Prisma {
     updatedAt?: boolean
     customer?: boolean | UserDefaultArgs<ExtArgs>
     event?: boolean | EventDefaultArgs<ExtArgs>
+    voucher?: boolean | Order$voucherArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectScalar = {
     id?: boolean
     customerId?: boolean
     eventId?: boolean
+    voucherId?: boolean
     quantity?: boolean
     totalAmount?: boolean
+    totalPaid?: boolean
     status?: boolean
     paymentProof?: boolean
     paidAt?: boolean
@@ -10364,18 +10480,21 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customerId" | "eventId" | "quantity" | "totalAmount" | "status" | "paymentProof" | "paidAt" | "verifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customerId" | "eventId" | "voucherId" | "quantity" | "totalAmount" | "totalPaid" | "status" | "paymentProof" | "paidAt" | "verifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | UserDefaultArgs<ExtArgs>
     event?: boolean | EventDefaultArgs<ExtArgs>
+    voucher?: boolean | Order$voucherArgs<ExtArgs>
   }
   export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | UserDefaultArgs<ExtArgs>
     event?: boolean | EventDefaultArgs<ExtArgs>
+    voucher?: boolean | Order$voucherArgs<ExtArgs>
   }
   export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | UserDefaultArgs<ExtArgs>
     event?: boolean | EventDefaultArgs<ExtArgs>
+    voucher?: boolean | Order$voucherArgs<ExtArgs>
   }
 
   export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10383,17 +10502,20 @@ export namespace Prisma {
     objects: {
       customer: Prisma.$UserPayload<ExtArgs>
       event: Prisma.$EventPayload<ExtArgs>
+      voucher: Prisma.$VoucherPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       customerId: string
       eventId: string
+      voucherId: string | null
       quantity: number
       totalAmount: number
+      totalPaid: number
       status: $Enums.StatusOrder
-      paymentProof: string
-      paidAt: Date
-      verifiedAt: Date
+      paymentProof: string | null
+      paidAt: Date | null
+      verifiedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["order"]>
@@ -10792,6 +10914,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     customer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     event<T extends EventDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EventDefaultArgs<ExtArgs>>): Prisma__EventClient<$Result.GetResult<Prisma.$EventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    voucher<T extends Order$voucherArgs<ExtArgs> = {}>(args?: Subset<T, Order$voucherArgs<ExtArgs>>): Prisma__VoucherClient<$Result.GetResult<Prisma.$VoucherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10824,8 +10947,10 @@ export namespace Prisma {
     readonly id: FieldRef<"Order", 'String'>
     readonly customerId: FieldRef<"Order", 'String'>
     readonly eventId: FieldRef<"Order", 'String'>
+    readonly voucherId: FieldRef<"Order", 'String'>
     readonly quantity: FieldRef<"Order", 'Int'>
     readonly totalAmount: FieldRef<"Order", 'Float'>
+    readonly totalPaid: FieldRef<"Order", 'Float'>
     readonly status: FieldRef<"Order", 'StatusOrder'>
     readonly paymentProof: FieldRef<"Order", 'String'>
     readonly paidAt: FieldRef<"Order", 'DateTime'>
@@ -11225,6 +11350,25 @@ export namespace Prisma {
      * Limit how many Orders to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Order.voucher
+   */
+  export type Order$voucherArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Voucher
+     */
+    select?: VoucherSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Voucher
+     */
+    omit?: VoucherOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VoucherInclude<ExtArgs> | null
+    where?: VoucherWhereInput
   }
 
   /**
@@ -13513,6 +13657,8 @@ export namespace Prisma {
     price: 'price',
     totalSeats: 'totalSeats',
     availableSeats: 'availableSeats',
+    startTime: 'startTime',
+    endTime: 'endTime',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     deletedAt: 'deletedAt'
@@ -13555,8 +13701,10 @@ export namespace Prisma {
     id: 'id',
     customerId: 'customerId',
     eventId: 'eventId',
+    voucherId: 'voucherId',
     quantity: 'quantity',
     totalAmount: 'totalAmount',
+    totalPaid: 'totalPaid',
     status: 'status',
     paymentProof: 'paymentProof',
     paidAt: 'paidAt',
@@ -14032,6 +14180,8 @@ export namespace Prisma {
     price?: FloatFilter<"Event"> | number
     totalSeats?: IntFilter<"Event"> | number
     availableSeats?: IntFilter<"Event"> | number
+    startTime?: DateTimeFilter<"Event"> | Date | string
+    endTime?: DateTimeFilter<"Event"> | Date | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     deletedAt?: DateTimeNullableFilter<"Event"> | Date | string | null
@@ -14051,6 +14201,8 @@ export namespace Prisma {
     price?: SortOrder
     totalSeats?: SortOrder
     availableSeats?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
@@ -14073,6 +14225,8 @@ export namespace Prisma {
     price?: FloatFilter<"Event"> | number
     totalSeats?: IntFilter<"Event"> | number
     availableSeats?: IntFilter<"Event"> | number
+    startTime?: DateTimeFilter<"Event"> | Date | string
+    endTime?: DateTimeFilter<"Event"> | Date | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     deletedAt?: DateTimeNullableFilter<"Event"> | Date | string | null
@@ -14092,6 +14246,8 @@ export namespace Prisma {
     price?: SortOrder
     totalSeats?: SortOrder
     availableSeats?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrderInput | SortOrder
@@ -14114,6 +14270,8 @@ export namespace Prisma {
     price?: FloatWithAggregatesFilter<"Event"> | number
     totalSeats?: IntWithAggregatesFilter<"Event"> | number
     availableSeats?: IntWithAggregatesFilter<"Event"> | number
+    startTime?: DateTimeWithAggregatesFilter<"Event"> | Date | string
+    endTime?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Event"> | Date | string
     deletedAt?: DateTimeNullableWithAggregatesFilter<"Event"> | Date | string | null
@@ -14194,6 +14352,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Voucher"> | Date | string | null
     event?: XOR<EventScalarRelationFilter, EventWhereInput>
     customer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    orders?: OrderListRelationFilter
   }
 
   export type VoucherOrderByWithRelationInput = {
@@ -14211,6 +14370,7 @@ export namespace Prisma {
     deletedAt?: SortOrderInput | SortOrder
     event?: EventOrderByWithRelationInput
     customer?: UserOrderByWithRelationInput
+    orders?: OrderOrderByRelationAggregateInput
   }
 
   export type VoucherWhereUniqueInput = Prisma.AtLeast<{
@@ -14231,6 +14391,7 @@ export namespace Prisma {
     deletedAt?: DateTimeNullableFilter<"Voucher"> | Date | string | null
     event?: XOR<EventScalarRelationFilter, EventWhereInput>
     customer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    orders?: OrderListRelationFilter
   }, "id">
 
   export type VoucherOrderByWithAggregationInput = {
@@ -14278,32 +14439,38 @@ export namespace Prisma {
     id?: StringFilter<"Order"> | string
     customerId?: StringFilter<"Order"> | string
     eventId?: StringFilter<"Order"> | string
+    voucherId?: StringNullableFilter<"Order"> | string | null
     quantity?: IntFilter<"Order"> | number
     totalAmount?: FloatFilter<"Order"> | number
+    totalPaid?: FloatFilter<"Order"> | number
     status?: EnumStatusOrderFilter<"Order"> | $Enums.StatusOrder
-    paymentProof?: StringFilter<"Order"> | string
-    paidAt?: DateTimeFilter<"Order"> | Date | string
-    verifiedAt?: DateTimeFilter<"Order"> | Date | string
+    paymentProof?: StringNullableFilter<"Order"> | string | null
+    paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    verifiedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     customer?: XOR<UserScalarRelationFilter, UserWhereInput>
     event?: XOR<EventScalarRelationFilter, EventWhereInput>
+    voucher?: XOR<VoucherNullableScalarRelationFilter, VoucherWhereInput> | null
   }
 
   export type OrderOrderByWithRelationInput = {
     id?: SortOrder
     customerId?: SortOrder
     eventId?: SortOrder
+    voucherId?: SortOrderInput | SortOrder
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
     status?: SortOrder
-    paymentProof?: SortOrder
-    paidAt?: SortOrder
-    verifiedAt?: SortOrder
+    paymentProof?: SortOrderInput | SortOrder
+    paidAt?: SortOrderInput | SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     customer?: UserOrderByWithRelationInput
     event?: EventOrderByWithRelationInput
+    voucher?: VoucherOrderByWithRelationInput
   }
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -14313,28 +14480,33 @@ export namespace Prisma {
     NOT?: OrderWhereInput | OrderWhereInput[]
     customerId?: StringFilter<"Order"> | string
     eventId?: StringFilter<"Order"> | string
+    voucherId?: StringNullableFilter<"Order"> | string | null
     quantity?: IntFilter<"Order"> | number
     totalAmount?: FloatFilter<"Order"> | number
+    totalPaid?: FloatFilter<"Order"> | number
     status?: EnumStatusOrderFilter<"Order"> | $Enums.StatusOrder
-    paymentProof?: StringFilter<"Order"> | string
-    paidAt?: DateTimeFilter<"Order"> | Date | string
-    verifiedAt?: DateTimeFilter<"Order"> | Date | string
+    paymentProof?: StringNullableFilter<"Order"> | string | null
+    paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    verifiedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     customer?: XOR<UserScalarRelationFilter, UserWhereInput>
     event?: XOR<EventScalarRelationFilter, EventWhereInput>
+    voucher?: XOR<VoucherNullableScalarRelationFilter, VoucherWhereInput> | null
   }, "id">
 
   export type OrderOrderByWithAggregationInput = {
     id?: SortOrder
     customerId?: SortOrder
     eventId?: SortOrder
+    voucherId?: SortOrderInput | SortOrder
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
     status?: SortOrder
-    paymentProof?: SortOrder
-    paidAt?: SortOrder
-    verifiedAt?: SortOrder
+    paymentProof?: SortOrderInput | SortOrder
+    paidAt?: SortOrderInput | SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: OrderCountOrderByAggregateInput
@@ -14351,12 +14523,14 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Order"> | string
     customerId?: StringWithAggregatesFilter<"Order"> | string
     eventId?: StringWithAggregatesFilter<"Order"> | string
+    voucherId?: StringNullableWithAggregatesFilter<"Order"> | string | null
     quantity?: IntWithAggregatesFilter<"Order"> | number
     totalAmount?: FloatWithAggregatesFilter<"Order"> | number
+    totalPaid?: FloatWithAggregatesFilter<"Order"> | number
     status?: EnumStatusOrderWithAggregatesFilter<"Order"> | $Enums.StatusOrder
-    paymentProof?: StringWithAggregatesFilter<"Order"> | string
-    paidAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
-    verifiedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
+    paymentProof?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    paidAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    verifiedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
   }
@@ -14795,6 +14969,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -14814,6 +14990,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -14827,6 +15005,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14846,6 +15026,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14862,6 +15044,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -14873,6 +15057,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14887,6 +15073,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14968,6 +15156,7 @@ export namespace Prisma {
     deletedAt?: Date | string | null
     event: EventCreateNestedOneWithoutVouchersInput
     customer?: UserCreateNestedOneWithoutVouchersInput
+    orders?: OrderCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUncheckedCreateInput = {
@@ -14983,6 +15172,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    orders?: OrderUncheckedCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUpdateInput = {
@@ -14998,6 +15188,7 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     event?: EventUpdateOneRequiredWithoutVouchersNestedInput
     customer?: UserUpdateOneWithoutVouchersNestedInput
+    orders?: OrderUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateInput = {
@@ -15013,6 +15204,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    orders?: OrderUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherCreateManyInput = {
@@ -15062,26 +15254,30 @@ export namespace Prisma {
     id?: string
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     customer: UserCreateNestedOneWithoutOrdersInput
     event: EventCreateNestedOneWithoutOrdersInput
+    voucher?: VoucherCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateInput = {
     id?: string
     customerId: string
     eventId: string
+    voucherId?: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -15090,26 +15286,30 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: UserUpdateOneRequiredWithoutOrdersNestedInput
     event?: EventUpdateOneRequiredWithoutOrdersNestedInput
+    voucher?: VoucherUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15118,12 +15318,14 @@ export namespace Prisma {
     id?: string
     customerId: string
     eventId: string
+    voucherId?: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -15132,10 +15334,11 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15144,12 +15347,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15711,6 +15916,8 @@ export namespace Prisma {
     price?: SortOrder
     totalSeats?: SortOrder
     availableSeats?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -15731,6 +15938,8 @@ export namespace Prisma {
     price?: SortOrder
     totalSeats?: SortOrder
     availableSeats?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -15745,6 +15954,8 @@ export namespace Prisma {
     price?: SortOrder
     totalSeats?: SortOrder
     availableSeats?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     deletedAt?: SortOrder
@@ -15877,12 +16088,19 @@ export namespace Prisma {
     not?: NestedEnumStatusOrderFilter<$PrismaModel> | $Enums.StatusOrder
   }
 
+  export type VoucherNullableScalarRelationFilter = {
+    is?: VoucherWhereInput | null
+    isNot?: VoucherWhereInput | null
+  }
+
   export type OrderCountOrderByAggregateInput = {
     id?: SortOrder
     customerId?: SortOrder
     eventId?: SortOrder
+    voucherId?: SortOrder
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
     status?: SortOrder
     paymentProof?: SortOrder
     paidAt?: SortOrder
@@ -15894,14 +16112,17 @@ export namespace Prisma {
   export type OrderAvgOrderByAggregateInput = {
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
   }
 
   export type OrderMaxOrderByAggregateInput = {
     id?: SortOrder
     customerId?: SortOrder
     eventId?: SortOrder
+    voucherId?: SortOrder
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
     status?: SortOrder
     paymentProof?: SortOrder
     paidAt?: SortOrder
@@ -15914,8 +16135,10 @@ export namespace Prisma {
     id?: SortOrder
     customerId?: SortOrder
     eventId?: SortOrder
+    voucherId?: SortOrder
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
     status?: SortOrder
     paymentProof?: SortOrder
     paidAt?: SortOrder
@@ -15927,6 +16150,7 @@ export namespace Prisma {
   export type OrderSumOrderByAggregateInput = {
     quantity?: SortOrder
     totalAmount?: SortOrder
+    totalPaid?: SortOrder
   }
 
   export type EnumStatusOrderWithAggregatesFilter<$PrismaModel = never> = {
@@ -16564,6 +16788,20 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type OrderCreateNestedManyWithoutVoucherInput = {
+    create?: XOR<OrderCreateWithoutVoucherInput, OrderUncheckedCreateWithoutVoucherInput> | OrderCreateWithoutVoucherInput[] | OrderUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutVoucherInput | OrderCreateOrConnectWithoutVoucherInput[]
+    createMany?: OrderCreateManyVoucherInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type OrderUncheckedCreateNestedManyWithoutVoucherInput = {
+    create?: XOR<OrderCreateWithoutVoucherInput, OrderUncheckedCreateWithoutVoucherInput> | OrderCreateWithoutVoucherInput[] | OrderUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutVoucherInput | OrderCreateOrConnectWithoutVoucherInput[]
+    createMany?: OrderCreateManyVoucherInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
   export type NullableBoolFieldUpdateOperationsInput = {
     set?: boolean | null
   }
@@ -16586,6 +16824,34 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVouchersInput, UserUpdateWithoutVouchersInput>, UserUncheckedUpdateWithoutVouchersInput>
   }
 
+  export type OrderUpdateManyWithoutVoucherNestedInput = {
+    create?: XOR<OrderCreateWithoutVoucherInput, OrderUncheckedCreateWithoutVoucherInput> | OrderCreateWithoutVoucherInput[] | OrderUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutVoucherInput | OrderCreateOrConnectWithoutVoucherInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutVoucherInput | OrderUpsertWithWhereUniqueWithoutVoucherInput[]
+    createMany?: OrderCreateManyVoucherInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutVoucherInput | OrderUpdateWithWhereUniqueWithoutVoucherInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutVoucherInput | OrderUpdateManyWithWhereWithoutVoucherInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
+  export type OrderUncheckedUpdateManyWithoutVoucherNestedInput = {
+    create?: XOR<OrderCreateWithoutVoucherInput, OrderUncheckedCreateWithoutVoucherInput> | OrderCreateWithoutVoucherInput[] | OrderUncheckedCreateWithoutVoucherInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutVoucherInput | OrderCreateOrConnectWithoutVoucherInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutVoucherInput | OrderUpsertWithWhereUniqueWithoutVoucherInput[]
+    createMany?: OrderCreateManyVoucherInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutVoucherInput | OrderUpdateWithWhereUniqueWithoutVoucherInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutVoucherInput | OrderUpdateManyWithWhereWithoutVoucherInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutOrdersInput = {
     create?: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: UserCreateOrConnectWithoutOrdersInput
@@ -16596,6 +16862,12 @@ export namespace Prisma {
     create?: XOR<EventCreateWithoutOrdersInput, EventUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: EventCreateOrConnectWithoutOrdersInput
     connect?: EventWhereUniqueInput
+  }
+
+  export type VoucherCreateNestedOneWithoutOrdersInput = {
+    create?: XOR<VoucherCreateWithoutOrdersInput, VoucherUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: VoucherCreateOrConnectWithoutOrdersInput
+    connect?: VoucherWhereUniqueInput
   }
 
   export type EnumStatusOrderFieldUpdateOperationsInput = {
@@ -16616,6 +16888,16 @@ export namespace Prisma {
     upsert?: EventUpsertWithoutOrdersInput
     connect?: EventWhereUniqueInput
     update?: XOR<XOR<EventUpdateToOneWithWhereWithoutOrdersInput, EventUpdateWithoutOrdersInput>, EventUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type VoucherUpdateOneWithoutOrdersNestedInput = {
+    create?: XOR<VoucherCreateWithoutOrdersInput, VoucherUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: VoucherCreateOrConnectWithoutOrdersInput
+    upsert?: VoucherUpsertWithoutOrdersInput
+    disconnect?: VoucherWhereInput | boolean
+    delete?: VoucherWhereInput | boolean
+    connect?: VoucherWhereUniqueInput
+    update?: XOR<XOR<VoucherUpdateToOneWithWhereWithoutOrdersInput, VoucherUpdateWithoutOrdersInput>, VoucherUncheckedUpdateWithoutOrdersInput>
   }
 
   export type EventCreateNestedManyWithoutCategoryInput = {
@@ -17117,24 +17399,28 @@ export namespace Prisma {
     id?: string
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     event: EventCreateNestedOneWithoutOrdersInput
+    voucher?: VoucherCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateWithoutCustomerInput = {
     id?: string
     eventId: string
+    voucherId?: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17155,6 +17441,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -17172,6 +17460,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -17201,6 +17491,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     event: EventCreateNestedOneWithoutVouchersInput
+    orders?: OrderCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUncheckedCreateWithoutCustomerInput = {
@@ -17215,6 +17506,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    orders?: OrderUncheckedCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherCreateOrConnectWithoutCustomerInput = {
@@ -17415,12 +17707,14 @@ export namespace Prisma {
     id?: StringFilter<"Order"> | string
     customerId?: StringFilter<"Order"> | string
     eventId?: StringFilter<"Order"> | string
+    voucherId?: StringNullableFilter<"Order"> | string | null
     quantity?: IntFilter<"Order"> | number
     totalAmount?: FloatFilter<"Order"> | number
+    totalPaid?: FloatFilter<"Order"> | number
     status?: EnumStatusOrderFilter<"Order"> | $Enums.StatusOrder
-    paymentProof?: StringFilter<"Order"> | string
-    paidAt?: DateTimeFilter<"Order"> | Date | string
-    verifiedAt?: DateTimeFilter<"Order"> | Date | string
+    paymentProof?: StringNullableFilter<"Order"> | string | null
+    paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    verifiedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
   }
@@ -17453,6 +17747,8 @@ export namespace Prisma {
     price?: FloatFilter<"Event"> | number
     totalSeats?: IntFilter<"Event"> | number
     availableSeats?: IntFilter<"Event"> | number
+    startTime?: DateTimeFilter<"Event"> | Date | string
+    endTime?: DateTimeFilter<"Event"> | Date | string
     createdAt?: DateTimeFilter<"Event"> | Date | string
     updatedAt?: DateTimeFilter<"Event"> | Date | string
     deletedAt?: DateTimeNullableFilter<"Event"> | Date | string | null
@@ -17958,24 +18254,28 @@ export namespace Prisma {
     id?: string
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     customer: UserCreateNestedOneWithoutOrdersInput
+    voucher?: VoucherCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateWithoutEventInput = {
     id?: string
     customerId: string
+    voucherId?: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18002,6 +18302,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     deletedAt?: Date | string | null
     customer?: UserCreateNestedOneWithoutVouchersInput
+    orders?: OrderCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherUncheckedCreateWithoutEventInput = {
@@ -18016,6 +18317,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
+    orders?: OrderUncheckedCreateNestedManyWithoutVoucherInput
   }
 
   export type VoucherCreateOrConnectWithoutEventInput = {
@@ -18177,6 +18479,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18195,6 +18499,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18255,6 +18561,46 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutVouchersInput, UserUncheckedCreateWithoutVouchersInput>
   }
 
+  export type OrderCreateWithoutVoucherInput = {
+    id?: string
+    quantity: number
+    totalAmount: number
+    totalPaid: number
+    status?: $Enums.StatusOrder
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    customer: UserCreateNestedOneWithoutOrdersInput
+    event: EventCreateNestedOneWithoutOrdersInput
+  }
+
+  export type OrderUncheckedCreateWithoutVoucherInput = {
+    id?: string
+    customerId: string
+    eventId: string
+    quantity: number
+    totalAmount: number
+    totalPaid: number
+    status?: $Enums.StatusOrder
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrderCreateOrConnectWithoutVoucherInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutVoucherInput, OrderUncheckedCreateWithoutVoucherInput>
+  }
+
+  export type OrderCreateManyVoucherInputEnvelope = {
+    data: OrderCreateManyVoucherInput | OrderCreateManyVoucherInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EventUpsertWithoutVouchersInput = {
     update: XOR<EventUpdateWithoutVouchersInput, EventUncheckedUpdateWithoutVouchersInput>
     create: XOR<EventCreateWithoutVouchersInput, EventUncheckedCreateWithoutVouchersInput>
@@ -18272,6 +18618,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18290,6 +18638,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18351,6 +18701,22 @@ export namespace Prisma {
     coupons?: CouponUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type OrderUpsertWithWhereUniqueWithoutVoucherInput = {
+    where: OrderWhereUniqueInput
+    update: XOR<OrderUpdateWithoutVoucherInput, OrderUncheckedUpdateWithoutVoucherInput>
+    create: XOR<OrderCreateWithoutVoucherInput, OrderUncheckedCreateWithoutVoucherInput>
+  }
+
+  export type OrderUpdateWithWhereUniqueWithoutVoucherInput = {
+    where: OrderWhereUniqueInput
+    data: XOR<OrderUpdateWithoutVoucherInput, OrderUncheckedUpdateWithoutVoucherInput>
+  }
+
+  export type OrderUpdateManyWithWhereWithoutVoucherInput = {
+    where: OrderScalarWhereInput
+    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutVoucherInput>
+  }
+
   export type UserCreateWithoutOrdersInput = {
     id?: string
     name: string
@@ -18406,6 +18772,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18424,6 +18792,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18433,6 +18803,41 @@ export namespace Prisma {
   export type EventCreateOrConnectWithoutOrdersInput = {
     where: EventWhereUniqueInput
     create: XOR<EventCreateWithoutOrdersInput, EventUncheckedCreateWithoutOrdersInput>
+  }
+
+  export type VoucherCreateWithoutOrdersInput = {
+    id?: string
+    code: string
+    value: number
+    validFrom?: Date | string
+    validUntil: Date | string
+    isUsed?: boolean | null
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+    event: EventCreateNestedOneWithoutVouchersInput
+    customer?: UserCreateNestedOneWithoutVouchersInput
+  }
+
+  export type VoucherUncheckedCreateWithoutOrdersInput = {
+    id?: string
+    eventId: string
+    customerId?: string | null
+    code: string
+    value: number
+    validFrom?: Date | string
+    validUntil: Date | string
+    isUsed?: boolean | null
+    usedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    deletedAt?: Date | string | null
+  }
+
+  export type VoucherCreateOrConnectWithoutOrdersInput = {
+    where: VoucherWhereUniqueInput
+    create: XOR<VoucherCreateWithoutOrdersInput, VoucherUncheckedCreateWithoutOrdersInput>
   }
 
   export type UserUpsertWithoutOrdersInput = {
@@ -18507,6 +18912,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18525,10 +18932,53 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     vouchers?: VoucherUncheckedUpdateManyWithoutEventNestedInput
+  }
+
+  export type VoucherUpsertWithoutOrdersInput = {
+    update: XOR<VoucherUpdateWithoutOrdersInput, VoucherUncheckedUpdateWithoutOrdersInput>
+    create: XOR<VoucherCreateWithoutOrdersInput, VoucherUncheckedCreateWithoutOrdersInput>
+    where?: VoucherWhereInput
+  }
+
+  export type VoucherUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: VoucherWhereInput
+    data: XOR<VoucherUpdateWithoutOrdersInput, VoucherUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type VoucherUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    value?: FloatFieldUpdateOperationsInput | number
+    validFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    isUsed?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    event?: EventUpdateOneRequiredWithoutVouchersNestedInput
+    customer?: UserUpdateOneWithoutVouchersNestedInput
+  }
+
+  export type VoucherUncheckedUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    customerId?: NullableStringFieldUpdateOperationsInput | string | null
+    code?: StringFieldUpdateOperationsInput | string
+    value?: FloatFieldUpdateOperationsInput | number
+    validFrom?: DateTimeFieldUpdateOperationsInput | Date | string
+    validUntil?: DateTimeFieldUpdateOperationsInput | Date | string
+    isUsed?: NullableBoolFieldUpdateOperationsInput | boolean | null
+    usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type EventCreateWithoutCategoryInput = {
@@ -18537,6 +18987,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18554,6 +19006,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18593,6 +19047,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18610,6 +19066,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18661,12 +19119,14 @@ export namespace Prisma {
   export type OrderCreateManyCustomerInput = {
     id?: string
     eventId: string
+    voucherId?: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18679,6 +19139,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -18778,24 +19240,28 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     event?: EventUpdateOneRequiredWithoutOrdersNestedInput
+    voucher?: VoucherUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutCustomerInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18803,12 +19269,14 @@ export namespace Prisma {
   export type OrderUncheckedUpdateManyWithoutCustomerInput = {
     id?: StringFieldUpdateOperationsInput | string
     eventId?: StringFieldUpdateOperationsInput | string
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18819,6 +19287,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18836,6 +19306,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18851,6 +19323,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -18868,6 +19342,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     event?: EventUpdateOneRequiredWithoutVouchersNestedInput
+    orders?: OrderUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateWithoutCustomerInput = {
@@ -18882,6 +19357,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    orders?: OrderUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateManyWithoutCustomerInput = {
@@ -18952,12 +19428,14 @@ export namespace Prisma {
   export type OrderCreateManyEventInput = {
     id?: string
     customerId: string
+    voucherId?: string | null
     quantity: number
     totalAmount: number
+    totalPaid: number
     status?: $Enums.StatusOrder
-    paymentProof: string
-    paidAt: Date | string
-    verifiedAt: Date | string
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18980,24 +19458,28 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: UserUpdateOneRequiredWithoutOrdersNestedInput
+    voucher?: VoucherUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19005,12 +19487,14 @@ export namespace Prisma {
   export type OrderUncheckedUpdateManyWithoutEventInput = {
     id?: StringFieldUpdateOperationsInput | string
     customerId?: StringFieldUpdateOperationsInput | string
+    voucherId?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
     status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
-    paymentProof?: StringFieldUpdateOperationsInput | string
-    paidAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifiedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19027,6 +19511,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     customer?: UserUpdateOneWithoutVouchersNestedInput
+    orders?: OrderUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateWithoutEventInput = {
@@ -19041,6 +19526,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    orders?: OrderUncheckedUpdateManyWithoutVoucherNestedInput
   }
 
   export type VoucherUncheckedUpdateManyWithoutEventInput = {
@@ -19057,6 +19543,66 @@ export namespace Prisma {
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type OrderCreateManyVoucherInput = {
+    id?: string
+    customerId: string
+    eventId: string
+    quantity: number
+    totalAmount: number
+    totalPaid: number
+    status?: $Enums.StatusOrder
+    paymentProof?: string | null
+    paidAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OrderUpdateWithoutVoucherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
+    status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: UserUpdateOneRequiredWithoutOrdersNestedInput
+    event?: EventUpdateOneRequiredWithoutOrdersNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutVoucherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
+    status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderUncheckedUpdateManyWithoutVoucherInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    customerId?: StringFieldUpdateOperationsInput | string
+    eventId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    totalAmount?: FloatFieldUpdateOperationsInput | number
+    totalPaid?: FloatFieldUpdateOperationsInput | number
+    status?: EnumStatusOrderFieldUpdateOperationsInput | $Enums.StatusOrder
+    paymentProof?: NullableStringFieldUpdateOperationsInput | string | null
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EventCreateManyCategoryInput = {
     id?: string
     eventOrganizerId: string
@@ -19065,6 +19611,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -19076,6 +19624,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19093,6 +19643,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19108,6 +19660,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19121,6 +19675,8 @@ export namespace Prisma {
     price: number
     totalSeats: number
     availableSeats: number
+    startTime: Date | string
+    endTime: Date | string
     createdAt?: Date | string
     updatedAt?: Date | string
     deletedAt?: Date | string | null
@@ -19132,6 +19688,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19149,6 +19707,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -19164,6 +19724,8 @@ export namespace Prisma {
     price?: FloatFieldUpdateOperationsInput | number
     totalSeats?: IntFieldUpdateOperationsInput | number
     availableSeats?: IntFieldUpdateOperationsInput | number
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     deletedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

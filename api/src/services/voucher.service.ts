@@ -1,5 +1,5 @@
 import { PrismaClient } from "../generated/index.js";
-import { type IVoucher } from "../types/voucher.js";
+import { type IVoucher } from "../types/voucher.d.js";
 
 const prisma = new PrismaClient();
 

@@ -6,12 +6,14 @@ import express, {
   type Response,
 } from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import authRoutes from "./routes/auth.route.js";
-import { ErrorMiddleware } from "./middlewares/error.middleware.js";
-
+import userRoutes from "./routes/user.route.js";
 import eventRoutes from "./routes/event.route.js";
 import voucherRoutes from "./routes/voucher.route.js";
+
+import { ErrorMiddleware } from "./middlewares/error.middleware.js";
 
 class App {
   public app: Application;
@@ -28,6 +30,15 @@ class App {
   }
 
   private initializeMiddleware(): void {
+    const corsOptions = {
+      // Replace 3000 with your actual frontend port if it's different
+      origin: "http://localhost:3000",
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      credentials: true, // Important if you use cookies/sessions
+      optionsSuccessStatus: 204, // Handle preflight (OPTIONS) requests gracefully
+    };
+
+    this.app.use(cors(corsOptions));
     this.app.use(express.json());
     this.app.use(cookieParser());
   }
@@ -42,6 +53,7 @@ class App {
 
   private initializeRoutes(): void {
     this.app.use("/api/auth", authRoutes);
+    this.app.use("/api/user", userRoutes);
     this.app.use("/api/events", eventRoutes);
     this.app.use("/api/vouchers", voucherRoutes);
   }

@@ -5,12 +5,17 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useThemeClass } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { loginSchemaFront } from "@/validation/login.validation";
+import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useAuth } from "@/context/auth-context";
 
 export default function LoginPage() {
   const { isDark } = useTheme();
   const themeClass = useThemeClass();
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   return (
     <main>
@@ -20,69 +25,95 @@ export default function LoginPage() {
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={toFormikValidationSchema(loginSchemaFront)}
-          onSubmit={async (values, { setErrors }) => {
-            const res = await fetch("/api/auth/login", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(values),
-            });
+          onSubmit={async (values, { setSubmitting, setErrors }) => {
+            try {
+              await axios.post(
+                `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/auth/login`,
+                values,
+                { withCredentials: true }
+              );
 
-            const data = await res.json();
-
-            // cek apakah username tidak ada / password salah
-            if (!res.ok && data.field) {
-              setErrors({ [data.field]: data.message });
+              alert("Login Success");
+              await refreshUser();
+              router.push("/");
               return;
-            }
+            } catch (err: unknown) {
+              if (axios.isAxiosError(err)) {
+                const msg = err.response?.data?.message;
 
-            // Kalau login sukses lempar user ke homepage
-            router.push("/");
+                if (msg === "Username or password is wrong") {
+                  setErrors({ username: msg, password: msg });
+                } else {
+                  console.error("Unexpected error:", err);
+                }
+              }
+
+              setSubmitting(false);
+            }
           }}
         >
-          <Form className="flex flex-col gap-4">
-            {/* USERNAME */}
-            <div className="flex flex-col gap-1">
-              <label className="font-medium">Username</label>
+          {({ isSubmitting }) => {
+            return (
+              <Form className="flex flex-col gap-4">
+                {/* USERNAME */}
+                <div className="flex flex-col gap-1">
+                  <label className="font-medium">Username</label>
 
-              <Field
-                name="username"
-                placeholder="Email or Username"
-                className={`border p-2 rounded ${themeClass}`}
-              />
+                  <Field
+                    name="username"
+                    placeholder="Email or Username"
+                    className={`border p-2 rounded ${themeClass}`}
+                  />
 
-              <ErrorMessage
-                name="username"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+                  <ErrorMessage
+                    name="username"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
 
-            {/* PASSWORD */}
-            <div className="flex flex-col gap-1">
-              <label className="font-medium">Password</label>
+                {/* PASSWORD */}
+                <div className="flex flex-col gap-1">
+                  <label className="font-medium">Password</label>
 
-              <Field
-                name="password"
-                type="password"
-                placeholder="Password"
-                className={`border p-2 rounded ${themeClass}`}
-              />
+                  <div className="relative">
+                    <Field
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      className={`border p-2 rounded w-full ${themeClass}`}
+                    />
 
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-sm cursor-pointer"
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button>
+                  </div>
 
-            <button
-              className={`p-2 rounded hover:scale-110 duration-500 transition cursor-pointer ${
-                isDark ? "bg-white text-black" : "bg-black text-white"
-              }`}
-            >
-              Login
-            </button>
-          </Form>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`p-2 rounded transition duration-300 cursor-pointer ${
+                    isSubmitting
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:scale-110"
+                  } ${isDark ? "bg-white text-black" : "bg-black text-white"}`}
+                >
+                  {isSubmitting ? "Processing..." : "Login"}
+                </button>
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </main>

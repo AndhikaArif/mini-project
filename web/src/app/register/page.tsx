@@ -1,14 +1,53 @@
 "use client";
 
 import { useTheme } from "@/context/theme-context";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import { useThemeClass } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerSchemaFront } from "@/validation/register.validation";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+function Autosave() {
+  const { values } = useFormikContext();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      sessionStorage.setItem("registerForm", JSON.stringify(values));
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, [values]);
+
+  return null;
+}
 
 export default function RegisterPage() {
   const { isDark } = useTheme();
   const themeClass = useThemeClass();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const router = useRouter();
+
+  // Ambil sessionStorage sekali saat mount
+  const [savedValues, setSavedValues] = useState({
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    referralCode: "",
+  });
+
+  useEffect(() => {
+    async function getSessionData() {
+      const stored = sessionStorage.getItem("registerForm");
+      if (stored) {
+        setSavedValues(JSON.parse(stored));
+      }
+    }
+
+    getSessionData();
+  }, []);
 
   return (
     <main>
@@ -16,104 +55,159 @@ export default function RegisterPage() {
         <h2 className="text-xl font-semibold mb-4">Register</h2>
 
         <Formik
-          initialValues={{ name: "", username: "", email: "", password: "" }}
+          initialValues={savedValues}
+          enableReinitialize
           validationSchema={toFormikValidationSchema(registerSchemaFront)}
-          onSubmit={async (values, { setErrors }) => {
-            const res = await fetch("/api/auth/register", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(values),
-            });
+          onSubmit={async (values, { setSubmitting, setErrors }) => {
+            try {
+              await axios.post(
+                `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/auth/register`,
+                values,
+                {
+                  withCredentials: true,
+                }
+              );
 
-            const data = await res.json();
+              sessionStorage.removeItem("registerForm");
+              alert("Register success");
 
-            // cek database apakah username/email sudah digunakan
-            if (!res.ok && data.field) {
-              setErrors({ [data.field]: data.message });
+              router.push(`/login`);
               return;
-            }
+            } catch (err: unknown) {
+              if (axios.isAxiosError(err)) {
+                const msg = err.response?.data?.message;
 
-            alert("Register Success!");
+                if (msg === "User already exist") {
+                  setErrors({ email: msg, username: msg });
+                }
+
+                if (msg === "Invalid referral code") {
+                  setErrors({ referralCode: msg });
+                }
+              } else {
+                console.error("Unexpected error:", err);
+              }
+
+              setSubmitting(false);
+            }
           }}
         >
-          <Form className="flex flex-col gap-4">
-            {/* NAME */}
-            <div className="flex flex-col gap-1">
-              <label className="font-medium">Name</label>
+          {({ isSubmitting }) => {
+            return (
+              <>
+                <Autosave />
+                <Form className="flex flex-col gap-4">
+                  {/* NAME */}
+                  <div className="flex flex-col gap-1">
+                    <label className="font-medium">Name</label>
+                    <Field
+                      name="name"
+                      placeholder="Name"
+                      className={`border p-2 rounded ${themeClass}`}
+                    />
+                    <ErrorMessage
+                      name="name"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
 
-              <Field
-                name="name"
-                placeholder="Name"
-                className={`border p-2 rounded ${themeClass}`}
-              />
+                  {/* USERNAME */}
+                  <div className="flex flex-col gap-1">
+                    <label className="font-medium">Username</label>
+                    <Field
+                      name="username"
+                      placeholder="Username"
+                      className={`border p-2 rounded ${themeClass}`}
+                    />
+                    <ErrorMessage
+                      name="username"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
 
-              <ErrorMessage
-                name="name"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+                  {/* EMAIL */}
+                  <div className="flex flex-col gap-1">
+                    <label className="font-medium">Email</label>
+                    <Field
+                      name="email"
+                      placeholder="Email"
+                      className={`border p-2 rounded ${themeClass}`}
+                    />
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
 
-            {/* USERNAME */}
-            <div className="flex flex-col gap-1">
-              <label className="font-medium">Username</label>
+                  {/* PASSWORD */}
+                  <div className="flex flex-col gap-1">
+                    <label className="font-medium">Password</label>
 
-              <Field
-                name="username"
-                placeholder="Username"
-                className={`border p-2 rounded ${themeClass}`}
-              />
+                    <div className="relative">
+                      <Field
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        className={`border p-2 rounded w-full ${themeClass}`}
+                      />
 
-              <ErrorMessage
-                name="username"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+                      {/* Eye Icon */}
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm cursor-pointer"
+                      >
+                        {showPassword ? "🙈" : "👁️"}
+                      </button>
+                    </div>
 
-            {/* EMAIL */}
-            <div className="flex flex-col gap-1">
-              <label className="font-medium">Email</label>
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
 
-              <Field
-                name="email"
-                placeholder="Email"
-                className={`border p-2 rounded ${themeClass}`}
-              />
+                  {/* REFERRAL */}
+                  <div className="flex flex-col gap-1">
+                    <label className="font-medium">
+                      Referral Code (optional)
+                    </label>
 
-              <ErrorMessage
-                name="email"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+                    {/* Bisa pakai Field atau input bebas */}
+                    <Field
+                      name="referralCode"
+                      placeholder="Referral Code"
+                      className={`border p-2 rounded ${themeClass}`}
+                    />
 
-            {/* PASSWORD */}
-            <div className="flex flex-col gap-1">
-              <label className="font-medium">Password</label>
+                    <ErrorMessage
+                      name="referralCode"
+                      component="div"
+                      className="text-red-500 text-sm"
+                    />
+                  </div>
 
-              <Field
-                name="password"
-                type="password"
-                placeholder="Password"
-                className={`border p-2 rounded ${themeClass}`}
-              />
-
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <button
-              className={`p-2 rounded hover:scale-110 duration-500 transition cursor-pointer ${
-                isDark ? "bg-white text-black" : "bg-black text-white"
-              }`}
-            >
-              Register
-            </button>
-          </Form>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`p-2 rounded transition duration-300 cursor-pointer ${
+                      isSubmitting
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:scale-110"
+                    } ${
+                      isDark ? "bg-white text-black" : "bg-black text-white"
+                    }`}
+                  >
+                    {isSubmitting ? "Processing..." : "Register"}
+                  </button>
+                </Form>
+              </>
+            );
+          }}
         </Formik>
       </div>
     </main>

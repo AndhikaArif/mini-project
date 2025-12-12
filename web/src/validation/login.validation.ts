@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const loginSchemaFront = z.object({
-  username: z.string().min(1, "Username is required").default(""),
-  password: z.string().min(1, "Password is required").default(""),
+  username: z.string({ error: "Username is required" }),
+  password: z.string({ error: "Password is required" }),
 });
 
 export type LoginFormType = z.infer<typeof loginSchemaFront>;

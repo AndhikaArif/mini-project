@@ -59,6 +59,8 @@ export class AuthService {
         password: hashedPassword,
         referralCode: finalReferralCode,
         ...(referredById && { referredById }),
+        profilePicture:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsaRe2zqH_BBicvUorUseeTaE4kxPL2FmOQ&s",
       },
       omit: { password: true },
     });

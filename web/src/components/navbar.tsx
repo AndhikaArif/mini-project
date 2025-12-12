@@ -3,10 +3,13 @@
 import { useTheme } from "@/context/theme-context";
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/context/auth-context";
+import Image from "next/image";
 
 export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const { user, loading, logout, userImage } = useAuth();
 
   return (
     <nav
@@ -58,15 +61,34 @@ export default function Navbar() {
         </button>
 
         {/* Login/Register */}
-        <div className="flex gap-4">
-          <Link href="/login" className="text-blue-600 hover:underline">
-            Login
-          </Link>
-          <Link href="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-        </div>
+        <div className="flex gap-4 items-center">
+          {loading ? (
+            <div className="opacity-50 text-sm">...</div>
+          ) : user ? (
+            <div className="flex items-center gap-3">
+              <div className="relative h-9 w-9">
+                <Image
+                  src={userImage}
+                  className="rounded-full border object-cover"
+                  fill
+                  alt="Photo Profile"
+                />
+              </div>
 
+              <button
+                onClick={logout}
+                className="text-red-400 hover:underline cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link href="/login">Login</Link>
+              <Link href="/register">Register</Link>
+            </>
+          )}
+        </div>
         {/* Hamburger (mobile only) */}
         <button
           className="text-3xl sm:hidden"
