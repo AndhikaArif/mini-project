@@ -1,13 +1,13 @@
 import { PrismaClient } from "../generated/client.js";
-import { type ICreateOrder, type IUpdateOrder } from "../types/order.d.js";
+import { type ICreateOrder } from "../types/order.d.js";
 
 const prisma = new PrismaClient();
 
 export class OrderService {
   async createOrder(data: ICreateOrder) {
     // customerId
-    const user = await prisma.user.findUnique({
-      where: { id: data.customerId },
+    const user = await prisma.user.findFirst({
+      where: { AND: { id: data.customerId, role: "CUSTOMER" } },
     });
 
     if (!user) throw new Error("User not found");
@@ -21,26 +21,10 @@ export class OrderService {
 
     if (!event) throw new Error("Event not found");
 
-    // voucherId
-    const voucher = await prisma.voucher.findUnique({
-      where: { id: data.voucherId },
-    });
-
-    if (!voucher) throw new Error("Voucher not found");
-
-    // couponId
-    const coupon = await prisma.coupon.findUnique({
-      where: { id: data.couponId },
-    });
-
-    if (!coupon) throw new Error("Coupon not found");
-
     const totalAmount = data.quantity * event!.price;
-    const totalPaid =
-      totalAmount - (voucher.value + data.pointUsed + coupon.discount);
 
     const order = await prisma.order.create({
-      data: { ...data, totalAmount, totalPaid },
+      data: { ...data, totalAmount },
     });
 
     return order;
@@ -61,8 +45,8 @@ export class OrderService {
   }
 
   async getAllEventOrders(userId: string, eventId: string) {
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: userId, role: "EVENT_ORGANIZER" } },
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
     });
 
     if (!user) throw new Error("User not found");
