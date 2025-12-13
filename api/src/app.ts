@@ -5,11 +5,17 @@ import express, {
   type Request,
   type Response,
 } from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
+import authRoutes from "./routes/auth.route.js";
+import userRoutes from "./routes/user.route.js";
 import eventRoutes from "./routes/event.route.js";
 import voucherRoutes from "./routes/voucher.route.js";
 import orderRoutes from "./routes/order.route.js";
 import paymentRoutes from "./routes/payment.route.js";
+
+import { ErrorMiddleware } from "./middlewares/error.middleware.js";
 
 class App {
   public app: Application;
@@ -22,10 +28,21 @@ class App {
     this.initializeMiddleware();
     this.initializeStatus();
     this.initializeRoutes();
+    this.initializeErrorHandle();
   }
 
   private initializeMiddleware(): void {
+    const corsOptions = {
+      // Replace 3000 with your actual frontend port if it's different
+      origin: "http://localhost:3000",
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      credentials: true, // Important if you use cookies/sessions
+      optionsSuccessStatus: 204, // Handle preflight (OPTIONS) requests gracefully
+    };
+
+    this.app.use(cors(corsOptions));
     this.app.use(express.json());
+    this.app.use(cookieParser());
   }
 
   private initializeStatus(): void {
@@ -38,9 +55,16 @@ class App {
 
   private initializeRoutes(): void {
     this.app.use("/api/events", eventRoutes, orderRoutes);
+    this.app.use("/api/auth", authRoutes);
+    this.app.use("/api/user", userRoutes);
     this.app.use("/api/vouchers", voucherRoutes);
     this.app.use("/api/orders", orderRoutes);
     this.app.use("/api/payment", paymentRoutes);
+  }
+
+  private initializeErrorHandle(): void {
+    this.app.use(ErrorMiddleware.notFound);
+    this.app.use(ErrorMiddleware.global);
   }
 
   public listen(): void {
