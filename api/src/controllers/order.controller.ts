@@ -6,14 +6,11 @@ const orderService = new OrderService();
 export class OrderController {
   async createOrder(req: Request, res: Response) {
     try {
-      const { eventId, voucherId, pointUsed, couponId, quantity } = req.body;
+      const { eventId, quantity } = req.body;
       const customerId = req.currentUser.id;
 
       const order = await orderService.createOrder({
         eventId,
-        voucherId,
-        pointUsed,
-        couponId,
         quantity,
         customerId,
       });
@@ -40,11 +37,11 @@ export class OrderController {
     try {
       const eventOrganizerId = req.currentUser.id;
 
-      const event = req.body;
+      const eventId = String(req.params.id);
 
       const orders = await orderService.getAllEventOrders(
         eventOrganizerId,
-        event
+        eventId
       );
 
       res.status(200).json(orders);
