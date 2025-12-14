@@ -1,27 +1,14 @@
 "use client";
 
 import { useTheme } from "@/context/theme-context";
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useThemeClass } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerSchemaFront } from "@/validation/register.validation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-
-function Autosave() {
-  const { values } = useFormikContext();
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      sessionStorage.setItem("registerForm", JSON.stringify(values));
-    }, 2000);
-
-    return () => clearTimeout(timeout);
-  }, [values]);
-
-  return null;
-}
+import AutoSave from "@/components/auto-save";
 
 export default function RegisterPage() {
   const { isDark } = useTheme();
@@ -95,7 +82,7 @@ export default function RegisterPage() {
           {({ isSubmitting }) => {
             return (
               <>
-                <Autosave />
+                <AutoSave />
                 <Form className="flex flex-col gap-4">
                   {/* NAME */}
                   <div className="flex flex-col gap-1">
@@ -132,6 +119,7 @@ export default function RegisterPage() {
                     <label className="font-medium">Email</label>
                     <Field
                       name="email"
+                      type="email"
                       placeholder="Email"
                       className={`border p-2 rounded ${themeClass}`}
                     />
