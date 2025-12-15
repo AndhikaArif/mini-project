@@ -29,43 +29,95 @@ export class AuthService {
       referredById = referrer.id;
     }
 
-    // Generate referral code untuk user baru
-    const generateNewReferral = () => {
-      const joinUsername = username.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
-      const random = Math.random().toString(36).substring(2, 10).toUpperCase();
-      return `${joinUsername}-${random}`;
-    };
+    const result = await prisma.$transaction(async (tx) => {
+      // Generate referral code untuk user baru
+      const generateNewReferral = () => {
+        const joinUsername = username
+          .replace(/[^a-zA-Z0-9]/g, "")
+          .toUpperCase();
+        const random = Math.random()
+          .toString(36)
+          .substring(2, 10)
+          .toUpperCase();
+        return `${joinUsername}-${random}`;
+      };
 
-    // Cek apakah referral code yang baru dibuat untuk user baru ada yang sama dengan referral code user lama
-    let finalReferralCode = "";
+      // Cek apakah referral code yang baru dibuat untuk user baru ada yang sama dengan referral code user lama
+      let finalReferralCode = "";
 
-    while (true) {
-      const code = generateNewReferral();
-      const exists = await prisma.user.findUnique({
-        where: { referralCode: code },
+      while (true) {
+        const code = generateNewReferral();
+        const exists = await tx.user.findUnique({
+          where: { referralCode: code },
+        });
+
+        if (!exists) {
+          finalReferralCode = code;
+          break;
+        }
+      }
+
+      // buat user baru
+      const user = await tx.user.create({
+        data: {
+          name: name.trim(),
+          username,
+          email,
+          password: hashedPassword,
+          referralCode: finalReferralCode,
+          ...(referredById && { referredById }),
+          profilePicture:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsaRe2zqH_BBicvUorUseeTaE4kxPL2FmOQ&s",
+        },
+        omit: { password: true },
       });
 
-      if (!exists) {
-        finalReferralCode = code;
-        break;
-      }
-    }
+      // generate coupon code untuk user baru
+      const generateNewCoupon = `WELCOME-${Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase()}`;
 
-    const user = await prisma.user.create({
-      data: {
-        name: name.trim(),
-        username,
-        email,
-        password: hashedPassword,
-        referralCode: finalReferralCode,
-        ...(referredById && { referredById }),
-        profilePicture:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsaRe2zqH_BBicvUorUseeTaE4kxPL2FmOQ&s",
-      },
-      omit: { password: true },
+      // Cek apakah coupon code yang baru dibuat untuk user baru ada yang sama dengan coupon code user lama
+      let couponCode = "";
+
+      while (true) {
+        const code = generateNewCoupon;
+        const exist = await tx.coupon.findUnique({
+          where: { code },
+        });
+
+        if (!exist) {
+          couponCode = code;
+          break;
+        }
+      }
+
+      // kasih coupon ke user baru
+      if (referredById) {
+        await tx.coupon.create({
+          data: {
+            userId: user.id,
+            code: couponCode,
+            discount: 10000,
+            expiredAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 hari
+          },
+        });
+
+        // kasih point ke user yang referral nya digunakan
+        await tx.point.create({
+          data: {
+            userId: referredById,
+            amount: 10000,
+            expiredAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 hari
+          },
+        });
+      }
+
+      return user;
     });
 
-    return user;
+    return result;
   }
 
   async validateUser(username: string, password: string) {
@@ -96,7 +148,7 @@ export class AuthService {
     };
 
     const authToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     return authToken;

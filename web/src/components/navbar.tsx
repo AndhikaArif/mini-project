@@ -66,14 +66,16 @@ export default function Navbar() {
             <div className="opacity-50 text-sm">...</div>
           ) : user ? (
             <div className="flex items-center gap-3">
-              <div className="relative h-9 w-9">
-                <Image
-                  src={userImage}
-                  className="rounded-full border object-cover"
-                  fill
-                  alt="Photo Profile"
-                />
-              </div>
+              <Link href="/profile" className="cursor-pointer">
+                <div className="relative h-9 w-9">
+                  <Image
+                    src={userImage}
+                    className="rounded-full border object-cover"
+                    fill
+                    alt="Photo Profile"
+                  />
+                </div>
+              </Link>
 
               <button
                 onClick={logout}
