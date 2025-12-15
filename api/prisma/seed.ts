@@ -341,12 +341,11 @@ async function seed() {
     const allEventNames = Object.values(eventNamesByCategory).flat();
     const categories = Object.values(CategoryOption);
     const locations = Object.values(LocationOption);
-    const durationInHours = faker.number.int({ min: 1, max: 5 });
 
     const eventsToCreate = allEventNames.slice(0, 30).map((name, idx) => {
       const organizer =
         createdEventOrganizers[idx % createdEventOrganizers.length];
-      const category = categories[idx / 6] as CategoryOption;
+      const category = categories[Math.floor(idx / 6)] as CategoryOption;
       const location = locations[idx % locations.length] as LocationOption;
       const price = 50_000 + (idx % 10) * 25_000;
       const totalSeats = 100 + (idx % 6) * 10;

@@ -126,7 +126,7 @@ model Event {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  eventOrganizer User @relation(fields: [eventOrganizerId], references: [id])
+  eventOrganizer User @relation(fields: [eventOrganizerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   orders   Order[]
   vouchers Voucher[]

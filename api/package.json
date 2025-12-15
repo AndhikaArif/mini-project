@@ -17,6 +17,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
+    "seed": "tsx prisma/seed.ts",
     "build": "tsc",
     "dev": "tsx --watch src/server.ts",
     "start": "npm run build && node dist/app.js"
