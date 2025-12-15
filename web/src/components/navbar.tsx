@@ -5,6 +5,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import Image from "next/image";
+import { IoMenu } from "react-icons/io5";
+import { IoClose } from "react-icons/io5";
+import { IoSunny } from "react-icons/io5";
+import { IoMoon } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
+import { GoHome } from "react-icons/go";
+import { IoCreateOutline } from "react-icons/io5";
+import { BsCalendar4Event } from "react-icons/bs";
 
 export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
@@ -12,129 +20,213 @@ export default function Navbar() {
   const { user, loading, logout, userImage } = useAuth();
 
   return (
-    <nav
-      className={`flex justify-between p-4 w-full shadow-md transition-colors duration-300 ${
-        isDark ? "bg-black text-white" : "bg-white text-black"
-      }`}
-    >
-      {/* Logo */}
-      <Link href="/" className="text-lg font-semibold">
-        Event Manager
-      </Link>
-
-      {/* Dekstop Navigation */}
-      <div className="hidden sm:flex gap-12 mr-12">
-        <Link
-          href="/"
-          className="transition-colors duration-300 hover:text-blue-400"
-        >
-          Home
+    <>
+      {/* Top Navbar */}
+      <nav
+        className={`flex justify-between items-center py-4 px-4 md:px-8 w-full border-b border-gray-300 transition-colors duration-300 ${
+          isDark ? "bg-black text-white" : "bg-white text-black"
+        }`}
+      >
+        {/* Logo */}
+        <Link href="/" className="text-2xl font-semibold tracking-wide">
+          Festivo
         </Link>
-        <Link
-          href="./about"
-          className="transition-colors duration-300 hover:text-blue-400"
-        >
-          About
-        </Link>
-        <Link
-          href="./events"
-          className="transition-colors duration-300 hover:text-blue-400"
-        >
-          Events
-        </Link>
-        <Link
-          href="./contact"
-          className="transition-colors duration-300 hover:text-blue-400"
-        >
-          Contact Me
-        </Link>
-      </div>
 
-      {/* Right side icons */}
-      <div className="flex items-center gap-4">
-        {/* Toggle Theme */}
-        <button
-          onClick={toggleTheme}
-          className="text-2xl hover:scale-125 transition-transform duration-150 cursor-pointer"
+        {/* Search bar */}
+        <div
+          className={`flex justify-between items-center w-[250px] md:w-[500px]  border  rounded-2xl pl-4 pr-2 py-1.5 transition-colors duration-300 ${
+            isDark
+              ? "bg-gray-700 border-gray-500 text-white"
+              : "bg-gray-100 border-gray-300 text-gray-500"
+          }`}
         >
-          {isDark ? "🌞" : "🌙"}
-        </button>
-
-        {/* Login/Register */}
-        <div className="flex gap-4 items-center">
-          {loading ? (
-            <div className="opacity-50 text-sm">...</div>
-          ) : user ? (
-            <div className="flex items-center gap-3">
-              <div className="relative h-9 w-9">
-                <Image
-                  src={userImage}
-                  className="rounded-full border object-cover"
-                  fill
-                  alt="Photo Profile"
-                />
-              </div>
-
-              <button
-                onClick={logout}
-                className="text-red-400 hover:underline cursor-pointer"
-              >
-                Logout
-              </button>
-            </div>
-          ) : (
-            <>
-              <Link href="/login">Login</Link>
-              <Link href="/register">Register</Link>
-            </>
-          )}
+          <h2 className="text-sm">Search Event</h2>
+          <IoSearch
+            className={`text-xl transition-colors duration-300 ${
+              isDark ? "text-white" : "text-black"
+            }`}
+          />
         </div>
+
         {/* Hamburger (mobile only) */}
         <button
-          className="text-3xl sm:hidden"
+          className="text-3xl cursor-pointer hover:opacity-50 sm:hidden"
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          {isOpen ? "✖" : "☰"}
+          {isOpen ? (
+            <IoClose className="text-3xl" />
+          ) : (
+            <IoMenu className="text-3xl" />
+          )}
         </button>
 
         {/* Mobile dropdown menu */}
         {isOpen && (
           <div
-            className={`absolute top-16 left-0 pl-4 pt-3 w-full sm:hidden flex flex-col gap-4 shadow-lg transition duration-300 ${
+            className={`absolute top-16 right-4 px-4 py-4 w-[200px] sm:hidden flex flex-col gap-4 shadow-xl transition duration-300 ${
               isDark ? "bg-gray-800 text-white" : "bg-gray-100 text-black"
             }`}
           >
-            <Link
-              href={`/`}
-              className="duration-300 hover:text-blue-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href={`/about`}
-              className="duration-300 hover:text-blue-400"
-              onClick={() => setIsOpen(false)}
-            >
-              About
-            </Link>
-            <Link
-              href={`/events`}
-              className="duration-300 hover:text-blue-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Events
-            </Link>
-            <Link
-              href={`/contact`}
-              className="duration-300 hover:text-blue-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Contact
-            </Link>
+            <div className="flex flex-col gap-4 ">
+              {loading ? (
+                <div className="opacity-50 text-sm">...</div>
+              ) : user ? (
+                <div className="flex items-center gap-3">
+                  <div className="relative h-9 w-9">
+                    <Image
+                      src={userImage}
+                      className="rounded-full border object-cover"
+                      fill
+                      alt="Photo Profile"
+                    />
+                  </div>
+
+                  <button
+                    onClick={logout}
+                    className="text-red-400 hover:underline cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href="/register"
+                    className="transition-colors duration-300 hover:text-blue-400"
+                  >
+                    Register
+                  </Link>
+
+                  <Link
+                    href="/login"
+                    className="transition-colors duration-300 hover:text-blue-400"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div className="border border-gray-200 w-[165px]"></div>
+              <div className="flex justify-between">
+                <button
+                  onClick={toggleTheme}
+                  className="text-md hover:text-blue-400 transition-transform duration-150 cursor-pointer"
+                >
+                  {isDark ? "Light Mode" : "Dark Mode"}
+                </button>
+
+                <button
+                  onClick={toggleTheme}
+                  className="text-xl hover:scale-120 transition-transform duration-150 cursor-pointer"
+                >
+                  {isDark ? (
+                    <IoSunny className="text-yellow-400" />
+                  ) : (
+                    <IoMoon className="text-gray-600" />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         )}
-      </div>
-    </nav>
+
+        {/* Dekstop Navigation */}
+        <div className="hidden sm:flex gap-12">
+          <Link
+            href="/create"
+            className="transition-colors duration-300 hover:text-blue-400"
+          >
+            Create
+          </Link>
+
+          <Link
+            href="./events"
+            className="transition-colors duration-300 hover:text-blue-400"
+          >
+            Events
+          </Link>
+
+          <div className="hidden sm:flex gap-12 items-center">
+            {loading ? (
+              <div className="opacity-50 text-sm">...</div>
+            ) : user ? (
+              <div className="flex items-center gap-3">
+                <div className="relative h-9 w-9">
+                  <Image
+                    src={userImage}
+                    className="rounded-full border object-cover"
+                    fill
+                    alt="Photo Profile"
+                  />
+                </div>
+
+                <button
+                  onClick={logout}
+                  className="text-red-400 hover:underline cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="transition-colors duration-300 hover:text-blue-400"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="transition-colors duration-300 hover:text-blue-400"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+
+          <button
+            onClick={toggleTheme}
+            className="hidden sm:flex text-xl hover:scale-120 transition-transform duration-150 cursor-pointer"
+          >
+            {isDark ? (
+              <IoSunny className="text-yellow-400" />
+            ) : (
+              <IoMoon className="text-gray-600" />
+            )}
+          </button>
+        </div>
+      </nav>
+
+      {/* Bottom Navbar */}
+      <nav
+        className={`fixed bottom-0 h-20 flex justify-between items-center px-15 w-full border-t border-gray-300 transition-colors duration-300 sm:hidden ${
+          isDark ? "bg-black text-white" : "bg-white text-black"
+        }`}
+      >
+        <Link href="/" className="hover:scale-110 duration-300">
+          <div className="flex flex-col items-center gap-1">
+            <GoHome className="text-2xl" />
+            <h3 className="text-sm">Home</h3>
+          </div>
+        </Link>
+
+        <Link href="/create" className="hover:scale-110 duration-300">
+          <div className="flex flex-col items-center gap-1">
+            <IoCreateOutline className="text-2xl" />
+            <h3 className="text-sm">Create</h3>
+          </div>
+        </Link>
+
+        <Link href="/Events" className="hover:scale-110 duration-300">
+          <div className="flex flex-col items-center gap-1">
+            <BsCalendar4Event className="text-lg" />
+            <h3 className="text-sm">Events</h3>
+          </div>
+        </Link>
+      </nav>
+    </>
   );
 }
