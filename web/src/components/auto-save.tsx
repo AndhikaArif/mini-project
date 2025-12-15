@@ -6,7 +6,7 @@ export default function Autosave() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      sessionStorage.setItem("registerForm", JSON.stringify(values));
+      sessionStorage.setItem("form", JSON.stringify(values));
     }, 2000);
 
     return () => clearTimeout(timeout);

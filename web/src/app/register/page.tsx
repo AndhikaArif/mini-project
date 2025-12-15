@@ -27,7 +27,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     async function getSessionData() {
-      const stored = sessionStorage.getItem("registerForm");
+      const stored = sessionStorage.getItem("form");
       if (stored) {
         setSavedValues(JSON.parse(stored));
       }
@@ -55,7 +55,7 @@ export default function RegisterPage() {
                 }
               );
 
-              sessionStorage.removeItem("registerForm");
+              sessionStorage.removeItem("form");
               alert("Register success");
 
               router.push(`/login`);

@@ -44,4 +44,14 @@ export class UserService {
         : null,
     };
   }
+
+  async updateUser(id: string, data: { name: string; bio: string | null }) {
+    const updateUser = await prisma.user.update({
+      where: { id },
+      data,
+      omit: { password: true },
+    });
+
+    return updateUser;
+  }
 }
