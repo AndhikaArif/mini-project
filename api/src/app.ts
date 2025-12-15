@@ -54,9 +54,9 @@ class App {
   }
 
   private initializeRoutes(): void {
+    this.app.use("/api/events", eventRoutes, orderRoutes);
     this.app.use("/api/auth", authRoutes);
     this.app.use("/api/user", userRoutes);
-    this.app.use("/api/events", eventRoutes);
     this.app.use("/api/vouchers", voucherRoutes);
     this.app.use("/api/orders", orderRoutes);
     this.app.use("/api/payment", paymentRoutes);
