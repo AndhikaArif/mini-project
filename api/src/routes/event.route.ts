@@ -6,6 +6,8 @@ const eventController = new EventController();
 const router = express.Router();
 
 router.route("/").get(eventController.getAllEvents);
+router.route("/top-3").get(eventController.getTopThreeEvents);
+router.route("/category").get(eventController.getEventsByCategory);
 router
   .route("/:id")
   .get(eventController.getEventById)
