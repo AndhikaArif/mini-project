@@ -32,6 +32,7 @@ export default function ProfilePage() {
           <div>
             <p className="font-medium">{user.name}</p>
             <p className="text-sm text-gray-500">@{user.username}</p>
+            <p className="text-sm text-gray-500"></p>
           </div>
         </div>
 

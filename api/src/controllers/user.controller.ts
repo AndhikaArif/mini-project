@@ -26,4 +26,25 @@ export class UserController {
       next(error);
     }
   }
+
+  async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.currentUser!.id;
+      const { oldPassword, newPassword } = req.body;
+
+      await userService.changePassword(userId, oldPassword, newPassword);
+
+      res.clearCookie("authenticationToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      res
+        .status(200)
+        .json({ message: "Password changed successfully. Please login again" });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
