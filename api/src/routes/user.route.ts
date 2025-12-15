@@ -13,4 +13,8 @@ router
   .route("/profile")
   .put(AuthMiddleWare.verifyToken, userController.updateProfile);
 
+router
+  .route("/change-password")
+  .put(AuthMiddleWare.verifyToken, userController.changePassword);
+
 export default router;
