@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 import "dotenv/config";
 import {
   PrismaClient,
@@ -18,7 +20,6 @@ async function seed() {
     console.info("🚮 Deleting previous data...");
     await prisma.user.deleteMany();
     await prisma.event.deleteMany();
-    await prisma.order.deleteMany();
     console.info("👌 All previous data deleted");
 
     /* -------------------------------------------------------------------------- */
@@ -340,16 +341,24 @@ async function seed() {
     const allEventNames = Object.values(eventNamesByCategory).flat();
     const categories = Object.values(CategoryOption);
     const locations = Object.values(LocationOption);
+    const durationInHours = faker.number.int({ min: 1, max: 5 });
 
     const eventsToCreate = allEventNames.slice(0, 30).map((name, idx) => {
       const organizer =
         createdEventOrganizers[idx % createdEventOrganizers.length];
-      const category = categories[idx / 6];
-      const location = locations[idx % locations.length];
+      const category = categories[idx / 6] as CategoryOption;
+      const location = locations[idx % locations.length] as LocationOption;
       const price = 50_000 + (idx % 10) * 25_000;
       const totalSeats = 100 + (idx % 6) * 10;
-      //   const startTime =
-      //   const endTime =
+      const startTime = faker.date.soon({ days: 30 });
+      startTime.setHours(
+        faker.number.int({ min: 9, max: 20 }),
+        faker.number.int({ min: 0, max: 59 })
+      );
+      const endTime = new Date(startTime);
+      endTime.setHours(
+        startTime.getHours() + faker.number.int({ min: 1, max: 4 })
+      );
       return {
         eventOrganizerId: organizer!.id,
         name,
@@ -358,8 +367,8 @@ async function seed() {
         price,
         totalSeats,
         availableSeats: totalSeats,
-        // startTime
-        // endTime
+        startTime,
+        endTime,
       };
     });
 
@@ -368,5 +377,13 @@ async function seed() {
     );
 
     console.info(`✅ Created ${createdEvents.length} events`);
-  } catch (error) {}
+    console.info(`🏁 Seeding finished successfully`);
+  } catch (error) {
+    console.error(`👎 Seeding failed:`, error);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
+
+seed();
