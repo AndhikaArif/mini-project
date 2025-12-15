@@ -1,7 +1,6 @@
 import { type Request, type Response } from "express";
 import { PaymentService } from "../services/payment.service.js";
-import { OrderController } from "./order.controller.js";
-import type { IUpdatePayment } from "../types/payment.js";
+import type { IUpdatePayment } from "../types/payment.d.js";
 
 const paymentService = new PaymentService();
 
@@ -20,9 +19,10 @@ export class PaymentController {
 
   async getAllPayment(req: Request, res: Response) {
     try {
-      const userId = req.currentUser.id;
+      const eoId = req.currentUser.id;
+      const eventId = String(req.params.id);
 
-      const payments = await paymentService.getAllPayment(userId);
+      const payments = await paymentService.getAllPayment(eoId, eventId);
 
       res.status(200).json(payments);
     } catch (error) {
@@ -55,6 +55,12 @@ export class PaymentController {
         id,
         userId
       );
-    } catch (error) {}
+
+      res
+        .status(200)
+        .json({ message: "Success update payment", updatedPayment });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update payment" });
+    }
   }
 }
