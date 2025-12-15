@@ -8,7 +8,7 @@ import { FaRegChartBar } from "react-icons/fa";
 
 export default function CategorySection() {
   return (
-    <section className="flex justify-evenly items-center pt-5 md:pt-10 w-[450px] mx-auto md:w-[1125px]">
+    <section className="flex justify-evenly items-center pt-10 w-[450px] mx-auto md:w-[1125px]">
       <Link
         href="/events"
         className="flex flex-col items-center gap-2 md:gap-3 hover:scale-105 duration-300"
