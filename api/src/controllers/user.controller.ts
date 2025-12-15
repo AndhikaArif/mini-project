@@ -13,4 +13,17 @@ export class UserController {
       next(error);
     }
   }
+
+  async updateProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.currentUser!.id;
+      const { name, bio } = req.body;
+
+      const user = await userService.updateUser(userId, { name, bio });
+
+      res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

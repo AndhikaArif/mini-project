@@ -83,6 +83,35 @@ export class EventService {
     return event;
   }
 
+  async getTopThreeEvents() {
+    const events = await prisma.event.findMany({
+      where: { availableSeats: { gt: 0 } },
+      orderBy: { availableSeats: "asc" },
+      take: 3,
+    });
+
+    return events;
+  }
+
+  async getEventsByCategory(page: number) {
+    const limit: number = 8;
+
+    const skip = (page - 1) * limit;
+
+    const totalData = await prisma.event.count();
+
+    const totalPages = Math.ceil(totalData / limit);
+
+    const events = await prisma.event.groupBy({
+      by: ["category", "startTime"],
+      orderBy: { startTime: "asc" },
+      skip,
+      take: limit,
+    });
+
+    return { events, totalData, totalPages };
+  }
+
   async updateEvent(data: Partial<IEvent>, id: string) {
     const event = await prisma.event.findUnique({ where: { id } });
 

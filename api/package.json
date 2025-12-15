@@ -2,6 +2,7 @@
   "dependencies": {
     "@prisma/client": "^6.17.1",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.8.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.2.1",
@@ -25,6 +26,7 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
+    "seed": "tsx prisma/seed.ts",
     "build": "tsc",
     "dev": "tsx --watch src/server.ts",
     "start": "npm run build && node dist/server.js"

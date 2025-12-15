@@ -6,8 +6,19 @@ import axios from "axios";
 interface IUser {
   id: number;
   name: string;
+  username: string;
+  bio: string | null;
   role: string;
+  referralCode: string;
   profilePicture: string | null;
+  createdAt: string;
+
+  pointBalance: number;
+  coupon: {
+    code: string;
+    discount: number;
+    expiredAt: string;
+  } | null;
 }
 
 interface IAuthContext {

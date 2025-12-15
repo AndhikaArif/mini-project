@@ -39,7 +39,6 @@ model User {
   deletedAt DateTime?
 
   referrals User[]    @relation("Referrals")
-  wallets   Wallet?
   orders    Order[]
   events    Event[]
   vouchers  Voucher[]
@@ -52,7 +51,7 @@ model User {
 model Point {
   id        String   @id @default(uuid())
   userId    String
-  amount    Float
+  amount    Int
   createdAt DateTime @default(now())
   expiredAt DateTime
 
@@ -67,7 +66,7 @@ model Coupon {
   id       String  @id @default(uuid())
   userId   String
   code     String  @unique
-  discount Float
+  discount Int
   used     Boolean @default(false)
 
   createdAt DateTime  @default(now())
@@ -79,16 +78,6 @@ model Coupon {
   payments Payment[]
 
   @@map("coupons")
-}
-
-model Wallet {
-  id      String @id @default(uuid())
-  userId  String @unique
-  balance Float
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("wallets")
 }
 
 enum CategoryOption {
@@ -128,7 +117,7 @@ model Event {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  eventOrganizer User @relation(fields: [eventOrganizerId], references: [id])
+  eventOrganizer User @relation(fields: [eventOrganizerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   orders   Order[]
   vouchers Voucher[]
