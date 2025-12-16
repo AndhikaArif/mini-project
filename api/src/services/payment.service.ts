@@ -17,7 +17,7 @@ export class PaymentService {
 
     // voucherId
     const voucher = await prisma.voucher.findFirst({
-      where: { AND: { eventId: order.eventId, customerId: order.customerId } },
+      where: { AND: { eventId: order.eventId } },
     });
 
     if (!voucher) throw new Error("Voucher not found");
