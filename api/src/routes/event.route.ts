@@ -18,8 +18,12 @@ router.route("/category").get(eventController.getEventsByCategory);
 router
   .route("/:id")
   .get(eventController.getEventById)
-  .put(eventController.updateEvent)
-  .put(eventController.softDeleteEvent);
+  .put(
+    AuthMiddleWare.verifyToken,
+    AuthMiddleWare.roleGuard(RoleType.EVENT_ORGANIZER),
+    eventController.updateEvent
+  );
+router.route("/:id/delete").put(eventController.softDeleteEvent);
 router
   .route("/create")
   .post(

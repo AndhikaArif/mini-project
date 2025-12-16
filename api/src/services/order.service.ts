@@ -1,8 +1,6 @@
-import { AppError } from "../errors/app.error.js";
-import { PrismaClient } from "../generated/client.js";
 import { type ICreateOrder } from "../types/order.d.js";
-
-const prisma = new PrismaClient();
+import { prisma } from "../configs/prisma.config.js";
+import { AppError } from "../errors/app.error.js";
 
 export class OrderService {
   async createOrder(data: ICreateOrder) {
@@ -52,7 +50,10 @@ export class OrderService {
     });
 
     if (!user || user.role !== "EVENT_ORGANIZER")
-      throw new AppError(403, "Only Event Organizer can view order history");
+      throw new AppError(
+        403,
+        "Only Event Organizer can view all order history from this event"
+      );
 
     const event = await prisma.event.findUnique({
       where: { id: eventId, eventOrganizerId: eoId },
@@ -70,7 +71,7 @@ export class OrderService {
       where: { id: userId },
     });
 
-    if (!user) throw new AppError(404, "User not found");
+    if (!user) throw new AppError(403, "Missing userId");
 
     const order = await prisma.order.findFirst({
       where: {

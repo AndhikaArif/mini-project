@@ -7,6 +7,7 @@ interface IUser {
   id: number;
   name: string;
   username: string;
+  email: string;
   bio: string | null;
   role: string;
   referralCode: string;

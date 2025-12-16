@@ -1,19 +1,17 @@
 "use client";
 
-import { useTheme } from "@/context/theme-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useThemeClass } from "@/components/theme";
+import { useThemeClass, useThemeButton } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { loginSchemaFront } from "@/validation/login.validation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
+import PasswordField from "@/components/form/passwordField";
 
 export default function LoginPage() {
-  const { isDark } = useTheme();
+  const themeButton = useThemeButton();
   const themeClass = useThemeClass();
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { refreshUser } = useAuth();
 
@@ -73,32 +71,11 @@ export default function LoginPage() {
                 </div>
 
                 {/* PASSWORD */}
-                <div className="flex flex-col gap-1">
-                  <label className="font-medium">Password</label>
-
-                  <div className="relative">
-                    <Field
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      className={`border p-2 rounded w-full ${themeClass}`}
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-sm cursor-pointer"
-                    >
-                      {showPassword ? "🙈" : "👁️"}
-                    </button>
-                  </div>
-
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
+                <PasswordField
+                  name="password"
+                  label="Password"
+                  className={themeClass}
+                />
 
                 <button
                   type="submit"
@@ -107,10 +84,20 @@ export default function LoginPage() {
                     isSubmitting
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:scale-110"
-                  } ${isDark ? "bg-white text-black" : "bg-black text-white"}`}
+                  } ${themeButton}`}
                 >
                   {isSubmitting ? "Processing..." : "Login"}
                 </button>
+
+                <div className="text-sm text-right mt-2">
+                  <button
+                    type="button"
+                    onClick={() => router.push("/forgot-password")}
+                    className="text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
               </Form>
             );
           }}

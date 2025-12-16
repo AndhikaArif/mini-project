@@ -4,6 +4,10 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../configs/prisma.config.js";
 import { type IRegister, type IExistingUser } from "../types/auth.type.d.js";
 import { AppError } from "../errors/app.error.js";
+import crypto from "crypto";
+import { EmailUtil } from "../utils/email.util.js";
+
+const emailUtil = new EmailUtil();
 
 export class AuthService {
   async register({ name, username, email, password, referralCode }: IRegister) {
@@ -152,5 +156,76 @@ export class AuthService {
     });
 
     return authToken;
+  }
+
+  async requestResetPasswordByEmail(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    // bukan throw error karena nanti ANTI ENUMERATION
+    if (!user) return;
+
+    // invalidate token lama
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken: null,
+        resetTokenExp: null,
+      },
+    });
+
+    // generate token
+    const rawToken = crypto.randomBytes(32).toString("hex");
+
+    // hash token
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
+
+    // simpan token + expire 15 menit
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken: hashedToken,
+        resetTokenExp: new Date(Date.now() + 15 * 60 * 1000),
+      },
+    });
+
+    // kirim email (pakai RAW token)
+    await emailUtil.sendResetPasswordEmail(user.email, rawToken);
+  }
+
+  async confirmResetPassword(token: string, newPassword: string) {
+    // hash token dari user
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // cari user + cek expiry
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: hashedToken,
+        resetTokenExp: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      throw new AppError(400, "Invalid or expired reset token");
+    }
+
+    // hash password baru
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // update password + hapus token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExp: null,
+      },
+    });
   }
 }
