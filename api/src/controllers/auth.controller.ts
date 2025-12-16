@@ -1,7 +1,12 @@
 import { type Request, type Response, type NextFunction } from "express";
 
 import { AuthService } from "../services/auth.service.js";
-import { registerSchema, loginSchema } from "../validations/auth.validation.js";
+import {
+  registerSchema,
+  loginSchema,
+  resetPasswordRequestSchema,
+  resetPasswordConfirmSchema,
+} from "../validations/auth.validation.js";
 
 const authService = new AuthService();
 
@@ -57,5 +62,35 @@ export class AuthController {
       .status(200)
       .clearCookie("authenticationToken")
       .json({ message: "Logout success" });
+  }
+
+  async requestResetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email } = resetPasswordRequestSchema.parse(req.body);
+
+      await authService.requestResetPasswordByEmail(email);
+
+      // response selalu sama (ANTI ENUMERATION)
+      res.json({
+        message: "If the email exists, a reset password link has been sent",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async confirmResetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token, newPassword } = resetPasswordConfirmSchema.parse(req.body);
+
+      await authService.confirmResetPassword(token, newPassword);
+
+      // logout otomatis (invalidate cookie)
+      res.clearCookie("authenticationToken").json({
+        message: "Password reset successful. Please login again.",
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { useTheme } from "@/context/theme-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useThemeClass } from "@/components/theme";
+import { useThemeClass, useThemeButton } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerSchemaFront } from "@/validation/register.validation";
 import { useState, useEffect } from "react";
@@ -11,7 +10,7 @@ import { useRouter } from "next/navigation";
 import AutoSave from "@/components/auto-save";
 
 export default function RegisterPage() {
-  const { isDark } = useTheme();
+  const themeButton = useThemeButton();
   const themeClass = useThemeClass();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
@@ -58,7 +57,7 @@ export default function RegisterPage() {
               sessionStorage.removeItem("form");
               alert("Register success");
 
-              router.push(`/login`);
+              router.replace(`/login`);
               return;
             } catch (err: unknown) {
               if (axios.isAxiosError(err)) {
@@ -186,9 +185,7 @@ export default function RegisterPage() {
                       isSubmitting
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:scale-110"
-                    } ${
-                      isDark ? "bg-white text-black" : "bg-black text-white"
-                    }`}
+                    } ${themeButton}`}
                   >
                     {isSubmitting ? "Processing..." : "Register"}
                   </button>

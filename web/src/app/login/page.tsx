@@ -1,8 +1,7 @@
 "use client";
 
-import { useTheme } from "@/context/theme-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useThemeClass } from "@/components/theme";
+import { useThemeClass, useThemeButton } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { loginSchemaFront } from "@/validation/login.validation";
 import axios from "axios";
@@ -11,7 +10,7 @@ import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 
 export default function LoginPage() {
-  const { isDark } = useTheme();
+  const themeButton = useThemeButton();
   const themeClass = useThemeClass();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
@@ -107,10 +106,20 @@ export default function LoginPage() {
                     isSubmitting
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:scale-110"
-                  } ${isDark ? "bg-white text-black" : "bg-black text-white"}`}
+                  } ${themeButton}`}
                 >
                   {isSubmitting ? "Processing..." : "Login"}
                 </button>
+
+                <div className="text-sm text-right mt-2">
+                  <button
+                    type="button"
+                    onClick={() => router.push("/forgot-password")}
+                    className="text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
               </Form>
             );
           }}
