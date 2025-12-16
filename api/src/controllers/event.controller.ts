@@ -98,10 +98,11 @@ export class EventController {
     try {
       const id = String(req.params.id);
       const eoId = req.currentUser!.id;
+      const data = req.body;
 
       if (!id) return res.status(400).json({ message: "Id is missing" });
 
-      const updatedEvent = await eventService.updateEvent(req.body, id, eoId);
+      const updatedEvent = await eventService.updateEvent(data, id, eoId);
 
       res.status(201).json({ message: "Event has been updated", updatedEvent });
     } catch (error) {

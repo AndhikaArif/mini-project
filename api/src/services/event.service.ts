@@ -1,8 +1,10 @@
 import { Prisma } from "../generated/client.js";
 import { type IEvent, type IEventSearch } from "../types/event.d.js";
-import { uploadArray } from "../utils/file-upload.util.js";
+import { FileUpload } from "../utils/file-upload.util.js";
 import { AppError } from "../errors/app.error.js";
 import { prisma } from "../configs/prisma.config.js";
+
+const fileUpload = new FileUpload();
 
 export class EventService {
   async createEvent({
@@ -25,7 +27,7 @@ export class EventService {
     if (user.role !== "EVENT_ORGANIZER")
       throw new AppError(400, "Only Event Organizer can create event");
 
-    const imageUrls = await uploadArray(eventImage);
+    const imageUrls = await fileUpload.uploadArray(eventImage);
 
     const event = await prisma.event.create({
       data: {
