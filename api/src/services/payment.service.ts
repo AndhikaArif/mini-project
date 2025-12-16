@@ -1,19 +1,14 @@
 import { AppError } from "../errors/app.error.js";
-import {
-  PrismaClient,
-  StatusPayment,
-  StatusOrder,
-} from "../generated/index.js";
+import { StatusPayment, StatusOrder } from "../generated/index.js";
 import {
   type ICreatePayment,
   type IUpdatePaymentProof,
   type IUpdatePaymentStatus,
 } from "../types/payment.d.js";
 import { FileUpload } from "../utils/file-upload.util.js";
+import { prisma } from "../configs/prisma.config.js";
 
 const fileUpload = new FileUpload();
-
-const prisma = new PrismaClient();
 
 export class PaymentService {
   async createPayment(data: ICreatePayment) {
@@ -68,6 +63,16 @@ export class PaymentService {
   }
 
   async getPaymentById(id: string, userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user)
+      throw new AppError(
+        403,
+        "Only the Customer and the Event Organizer can access this page"
+      );
+
     const payment = await prisma.payment.findFirst({
       where: {
         AND: {
@@ -180,70 +185,4 @@ export class PaymentService {
       order: updatedOrder,
     };
   }
-
-  // async updatePayment(data: IUpdatePaymentStatus) {
-  //   const payment = await prisma.payment.findFirst({
-  //     where: {
-  //       AND: {
-  //         id: data.paymentId,
-  //         OR: [
-  //           {
-  //             order: { customerId: data.userId },
-  //           },
-  //           { order: { event: { eventOrganizerId: data.userId } } },
-  //         ],
-  //       },
-  //     },
-  //   });
-
-  //   if (!payment) {
-  //     throw new AppError(404, "Payment not found or forbidden");
-  //   }
-
-  //   const imageUrls = await fileUpload.uploadSingle(data.paymentProof.path);
-
-  //   const order = await prisma.order.findUnique({
-  //     where: { id: payment!.orderId },
-  //   });
-
-  //   let statusOrder = order?.status;
-  //   if (data.status == "EXPIRED") {
-  //     statusOrder = "EXPIRED";
-  //   }
-  //   if (data.status == "REJECTED") {
-  //     statusOrder = "REJECTED";
-  //   }
-  //   if (data.status == "DONE") {
-  //     statusOrder = "PAID";
-  //   }
-
-  //   let verifiedAt = order?.verifiedAt;
-  //   if (payment?.status == "DONE") {
-  //     verifiedAt = new Date();
-  //   } else {
-  //     verifiedAt = null;
-  //   }
-
-  //   let paidAt = payment?.paidAt;
-  //   if (payment?.status == "DONE") {
-  //     paidAt = new Date();
-  //   } else {
-  //     paidAt = null;
-  //   }
-
-  //   const updatedPayment = await prisma.payment.update({
-  //     where: { id: data.paymentId },
-  //     data: { ...data, paidAt, paymentProof: imageUrls },
-  //   });
-
-  //   await prisma.order.update({
-  //     where: { id: payment.orderId },
-  //     data: {
-  //       status: statusOrder!,
-  //       verifiedAt,
-  //     },
-  //   });
-
-  //   return updatedPayment;
-  // }
 }

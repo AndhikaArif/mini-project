@@ -47,7 +47,7 @@ export class PaymentController {
   async updatePaymentProof(req: Request, res: Response, next: NextFunction) {
     try {
       const id = String(req.params.id);
-      const customerId = "29c2c9b2-eeb1-4ef4-acff-0b0349eb54eb";
+      const customerId = req.currentUser!.id;
 
       const paymentProof = req.file as Express.Multer.File;
 
@@ -70,7 +70,7 @@ export class PaymentController {
   async updatePaymentStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const id = String(req.params.id);
-      const eoId = "3fa2d2cd-9817-45af-8dda-5aeff18cf75c";
+      const eoId = req.currentUser!.id;
 
       const { status } = req.body;
 
@@ -99,34 +99,4 @@ export class PaymentController {
       next(error);
     }
   }
-
-  // async updatePayment(req: Request, res: Response, next: NextFunction) {
-  //   try {
-  //     const id = String(req.params.id);
-  //     const userId = req.currentUser!.id;
-
-  //     const { status } = req.body;
-
-  //     if (!status) {
-  //       return res.status(400).json({ message: "Status is required" });
-  //     }
-
-  //     const paymentProof = req.file as Express.Multer.File;
-
-  //     if (!paymentProof) throw new AppError(400, "File missing");
-
-  //     const updatedPayment = await paymentService.updatePayment({
-  //       status,
-  //       paymentProof,
-  //       paymentId: id,
-  //       userId,
-  //     });
-
-  //     res
-  //       .status(200)
-  //       .json({ message: "Success update payment", updatedPayment });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
 }
