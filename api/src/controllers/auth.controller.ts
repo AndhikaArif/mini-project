@@ -72,7 +72,7 @@ export class AuthController {
 
       // response selalu sama (ANTI ENUMERATION)
       res.json({
-        message: "If the email exists, a reset password link has been sent",
+        message: "Reset password link has been sent",
       });
     } catch (error) {
       next(error);

@@ -8,11 +8,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import AutoSave from "@/components/auto-save";
+import PasswordField from "@/components/form/passwordField";
 
 export default function RegisterPage() {
   const themeButton = useThemeButton();
   const themeClass = useThemeClass();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
 
   // Ambil sessionStorage sekali saat mount
@@ -130,33 +130,11 @@ export default function RegisterPage() {
                   </div>
 
                   {/* PASSWORD */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-medium">Password</label>
-
-                    <div className="relative">
-                      <Field
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        className={`border p-2 rounded w-full ${themeClass}`}
-                      />
-
-                      {/* Eye Icon */}
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((prev) => !prev)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm cursor-pointer"
-                      >
-                        {showPassword ? "🙈" : "👁️"}
-                      </button>
-                    </div>
-
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
+                  <PasswordField
+                    name="password"
+                    label="Password"
+                    className={themeClass}
+                  />
 
                   {/* REFERRAL */}
                   <div className="flex flex-col gap-1">

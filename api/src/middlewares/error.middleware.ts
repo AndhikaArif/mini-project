@@ -12,6 +12,8 @@ export class ErrorMiddleware {
     res: Response,
     next: NextFunction
   ) {
+    console.error(error);
+
     if (error instanceof AppError) {
       return res.status(error.statusCode).json({ message: error.message });
     }

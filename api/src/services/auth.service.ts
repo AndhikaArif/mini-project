@@ -5,7 +5,9 @@ import { prisma } from "../configs/prisma.config.js";
 import { type IRegister, type IExistingUser } from "../types/auth.type.d.js";
 import { AppError } from "../errors/app.error.js";
 import crypto from "crypto";
-import { sendResetPasswordEmail } from "../utils/email.util.js";
+import { EmailUtil } from "../utils/email.util.js";
+
+const emailUtil = new EmailUtil();
 
 export class AuthService {
   async register({ name, username, email, password, referralCode }: IRegister) {
@@ -161,10 +163,10 @@ export class AuthService {
       where: { email },
     });
 
-    // ⛔ jangan throw error (ANTI ENUMERATION)
+    // bukan throw error karena nanti ANTI ENUMERATION
     if (!user) return;
 
-    // 1️⃣ invalidate token lama (pilihan A)
+    // invalidate token lama
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -173,16 +175,16 @@ export class AuthService {
       },
     });
 
-    // 2️⃣ generate token
+    // generate token
     const rawToken = crypto.randomBytes(32).toString("hex");
 
-    // 3️⃣ hash token
+    // hash token
     const hashedToken = crypto
       .createHash("sha256")
       .update(rawToken)
       .digest("hex");
 
-    // 4️⃣ simpan token + expire 15 menit
+    // simpan token + expire 15 menit
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -191,15 +193,15 @@ export class AuthService {
       },
     });
 
-    // 5️⃣ kirim email (pakai RAW token)
-    await sendResetPasswordEmail(user.email, rawToken);
+    // kirim email (pakai RAW token)
+    await emailUtil.sendResetPasswordEmail(user.email, rawToken);
   }
 
   async confirmResetPassword(token: string, newPassword: string) {
-    // 1️⃣ hash token dari user
+    // hash token dari user
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    // 2️⃣ cari user + cek expiry
+    // cari user + cek expiry
     const user = await prisma.user.findFirst({
       where: {
         resetToken: hashedToken,
@@ -213,10 +215,10 @@ export class AuthService {
       throw new AppError(400, "Invalid or expired reset token");
     }
 
-    // 3️⃣ hash password baru
+    // hash password baru
     const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-    // 4️⃣ update password + hapus token
+    // update password + hapus token
     await prisma.user.update({
       where: { id: user.id },
       data: {

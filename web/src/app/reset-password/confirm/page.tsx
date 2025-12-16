@@ -2,11 +2,15 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { resetPasswordConfirmSchema } from "@/validation/reset-password.validation";
+import { useThemeButton, useThemeClass } from "@/components/theme";
+import PasswordField from "@/components/form/passwordField";
 
 export default function ResetPasswordConfirmPage() {
+  const themeButton = useThemeButton();
+  const themeClass = useThemeClass();
   const params = useSearchParams();
   const router = useRouter();
   const token = params.get("token");
@@ -51,38 +55,23 @@ export default function ResetPasswordConfirmPage() {
       >
         {({ isSubmitting }) => (
           <Form className="space-y-4">
-            <div>
-              <label>New Password</label>
-              <Field
-                type="password"
-                name="newPassword"
-                className="w-full border p-2 rounded"
-              />
-              <ErrorMessage
-                name="newPassword"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+            <PasswordField
+              name="password"
+              label="Password"
+              className={themeClass}
+            />
 
-            <div>
-              <label>Confirm Password</label>
-              <Field
-                type="password"
-                name="confirmPassword"
-                className="w-full border p-2 rounded"
-              />
-              <ErrorMessage
-                name="confirmPassword"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
+            <PasswordField
+              name="password"
+              label="Confurm Password"
+              placeholder="Confirm Password"
+              className={themeClass}
+            />
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-black text-white p-2 rounded hover:scale-105"
+              className={`w-full p-2 rounded hover:scale-110 duration-300 cursor-pointer ${themeButton}`}
             >
               {isSubmitting ? "Processing..." : "Reset Password"}
             </button>

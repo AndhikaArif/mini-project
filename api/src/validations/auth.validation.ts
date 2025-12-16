@@ -26,8 +26,8 @@ export const resetPasswordRequestSchema = z.object({
 export const resetPasswordConfirmSchema = z
   .object({
     token: z.string().min(1, "Token is required"),
-    newPassword: z.string().min(8, "Password minimal 8 karakter"),
-    confirmPassword: z.string().min(8),
+    newPassword: z.string().min(5, "Password must be at least 5 characters"),
+    confirmPassword: z.string().min(5),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Password confirmation does not match",

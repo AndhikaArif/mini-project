@@ -6,13 +6,12 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { loginSchemaFront } from "@/validation/login.validation";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
+import PasswordField from "@/components/form/passwordField";
 
 export default function LoginPage() {
   const themeButton = useThemeButton();
   const themeClass = useThemeClass();
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { refreshUser } = useAuth();
 
@@ -72,32 +71,11 @@ export default function LoginPage() {
                 </div>
 
                 {/* PASSWORD */}
-                <div className="flex flex-col gap-1">
-                  <label className="font-medium">Password</label>
-
-                  <div className="relative">
-                    <Field
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      className={`border p-2 rounded w-full ${themeClass}`}
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-sm cursor-pointer"
-                    >
-                      {showPassword ? "🙈" : "👁️"}
-                    </button>
-                  </div>
-
-                  <ErrorMessage
-                    name="password"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
+                <PasswordField
+                  name="password"
+                  label="Password"
+                  className={themeClass}
+                />
 
                 <button
                   type="submit"

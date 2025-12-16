@@ -4,10 +4,13 @@ import axios, { AxiosError } from "axios";
 import { Formik, Form, Field } from "formik";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import PasswordField from "@/components/form/passwordField";
+import { useThemeClass } from "@/components/theme";
 
 export default function ChangePasswordPage() {
   const router = useRouter();
   const { logout } = useAuth();
+  const themeClass = useThemeClass();
 
   return (
     <main className="max-w-md mx-auto p-6">
@@ -51,32 +54,26 @@ export default function ChangePasswordPage() {
       >
         {({ isSubmitting }) => (
           <Form className="space-y-4">
-            <div>
-              <label className="blcok mb-1">Old Password</label>
-              <Field
-                type="password"
-                name="oldPassword"
-                className="w-full border p-2 rounded"
-              />
-            </div>
+            <PasswordField
+              name="oldPassword"
+              label="Old Password"
+              placeholder="Old Password"
+              className={themeClass}
+            />
 
-            <div>
-              <label className="blcok mb-1">New Password</label>
-              <Field
-                type="password"
-                name="newPassword"
-                className="w-full border p-2 rounded"
-              />
-            </div>
+            <PasswordField
+              name="newPassword"
+              label="New Password"
+              placeholder="New Password"
+              className={themeClass}
+            />
 
-            <div>
-              <label className="blcok mb-1">Confirm New Password</label>
-              <Field
-                type="password"
-                name="confirmPassword"
-                className="w-full border p-2 rounded"
-              />
-            </div>
+            <PasswordField
+              name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Confirm Password"
+              className={themeClass}
+            />
 
             <button
               type="submit"
