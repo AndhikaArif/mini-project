@@ -21,6 +21,7 @@ async function seed() {
     await prisma.user.deleteMany();
     await prisma.event.deleteMany();
     await prisma.voucher.deleteMany();
+    await prisma.eventImage.deleteMany();
     console.info("👌 All previous data deleted");
 
     /* -------------------------------------------------------------------------- */
@@ -443,6 +444,37 @@ async function seed() {
     );
 
     console.info(`✅ Created ${createdVouchers.length} vouchers`);
+
+    /* -------------------------------------------------------------------------- */
+    /*                             Create Event Images                            */
+    /* -------------------------------------------------------------------------- */
+    console.info("🖼️ Creating 30 event images");
+
+    const imageUrl: string[] = [];
+
+    for (let i = 0; i < 30; i++) {
+      imageUrl.push(
+        faker.image.url({
+          width: 450,
+          height: 100,
+        })
+      );
+    }
+
+    const eventImagesToCreate = imageUrl.slice(0, 30).map((url, idx) => {
+      const event = createdEvents[idx % createdEvents.length];
+
+      return {
+        eventId: event!.id,
+        url,
+      };
+    });
+
+    const createdEventImages = await Promise.all(
+      eventImagesToCreate.map((i) => prisma.eventImage.create({ data: i }))
+    );
+
+    console.info(`✅ Created ${createdEventImages.length} vouchers`);
     console.info(`🏁 Seeding finished successfully`);
   } catch (error) {
     console.error(`👎 Seeding failed:`, error);

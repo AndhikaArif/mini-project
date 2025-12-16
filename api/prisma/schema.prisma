@@ -38,10 +38,9 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  referrals User[]    @relation("Referrals")
+  referrals User[]   @relation("Referrals")
   orders    Order[]
   events    Event[]
-  vouchers  Voucher[]
   points    Point[]
   coupons   Coupon[]
 
@@ -155,7 +154,6 @@ model Ticket {
 model Voucher {
   id         String    @id @default(uuid())
   eventId    String
-  customerId String?
   code       String // namaEvent-(random number), generate otomatis
   value      Float
   validFrom  DateTime  @default(now())
@@ -167,8 +165,7 @@ model Voucher {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  event    Event @relation(fields: [eventId], references: [id])
-  customer User? @relation(fields: [customerId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
 
   payments Payment[]
 
