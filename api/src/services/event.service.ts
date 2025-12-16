@@ -6,23 +6,20 @@ import { AppError } from "../errors/app.error.js";
 const prisma = new PrismaClient();
 
 export class EventService {
-  async createEvent(
-    {
-      eventOrganizerId,
-      name,
-      category,
-      location,
-      price,
-      totalSeats,
-      availableSeats,
-      startTime,
-      endTime,
-      eventImage,
-    }: IEvent,
-    eoId: string
-  ) {
+  async createEvent({
+    eventOrganizerId,
+    name,
+    category,
+    location,
+    price,
+    totalSeats,
+    availableSeats,
+    startTime,
+    endTime,
+    eventImage,
+  }: IEvent) {
     const user = await prisma.user.findFirst({
-      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+      where: { AND: { id: eventOrganizerId, role: "EVENT_ORGANIZER" } },
     });
 
     if (!user) throw new AppError(400, "Event organizer not found");
