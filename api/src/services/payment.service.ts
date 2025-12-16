@@ -1,10 +1,14 @@
-import { PrismaClient } from "../generated/index.js";
+import { AppError } from "../errors/app.error.js";
+import { StatusPayment, StatusOrder } from "../generated/index.js";
 import {
   type ICreatePayment,
-  type IUpdatePayment,
+  type IUpdatePaymentProof,
+  type IUpdatePaymentStatus,
 } from "../types/payment.d.js";
+import { FileUpload } from "../utils/file-upload.util.js";
+import { prisma } from "../configs/prisma.config.js";
 
-const prisma = new PrismaClient();
+const fileUpload = new FileUpload();
 
 export class PaymentService {
   async createPayment(data: ICreatePayment) {
@@ -13,35 +17,41 @@ export class PaymentService {
       where: { id: data.orderId },
     });
 
-    if (!order) throw new Error("Order not found");
+    if (!order) throw new AppError(404, "Order not found");
 
     // voucherId
-    const voucher = await prisma.voucher.findFirst({
-      where: { AND: { eventId: order.eventId } },
-    });
-
-    if (!voucher) throw new Error("Voucher not found");
+    let voucher;
+    if (data.voucherId) {
+      voucher = await prisma.voucher.findUnique({
+        where: { id: data.voucherId },
+      });
+    }
 
     // couponId
-    const coupon = await prisma.coupon.findFirst({
-      where: { userId: order.customerId },
-    });
+    let coupon;
+    if (data.couponId) {
+      coupon = await prisma.coupon.findUnique({
+        where: { id: data.couponId, userId: order.customerId },
+      });
+    }
 
-    if (!coupon) throw new Error("You dont have any coupon");
+    const voucherValue = voucher?.value ?? 0;
+    const couponDiscount = coupon?.discount ?? 0;
 
-    data.totalPaid = order.totalAmount - (voucher.value + coupon.discount);
+    data.totalPaid = order.totalAmount - voucherValue - couponDiscount;
 
     const payment = await prisma.payment.create({ data });
+
+    return payment;
   }
 
   async getAllPayment(eoId: string, eventId: string) {
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+    const user = await prisma.user.findUnique({
+      where: { id: eoId, role: "EVENT_ORGANIZER" },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "EVENT_ORGANIZER")
-      throw new Error("Only EO can access this page");
+    if (!user || user.role !== "EVENT_ORGANIZER")
+      throw new AppError(403, "Only Event Organizer can access this page");
 
     const payments = await prisma.payment.findMany({
       where: {
@@ -53,6 +63,16 @@ export class PaymentService {
   }
 
   async getPaymentById(id: string, userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user)
+      throw new AppError(
+        403,
+        "Only the Customer and the Event Organizer can access this page"
+      );
+
     const payment = await prisma.payment.findFirst({
       where: {
         AND: {
@@ -70,55 +90,99 @@ export class PaymentService {
     return payment;
   }
 
-  async updatePayment(data: IUpdatePayment, id: string, userId: string) {
+  async updatePaymentProof(data: IUpdatePaymentProof) {
     const payment = await prisma.payment.findFirst({
-      where: {
-        AND: {
-          id,
-          OR: [
-            {
-              order: { customerId: userId },
-            },
-            { order: { event: { eventOrganizerId: userId } } },
-          ],
-        },
+      where: { AND: { id: data.id, order: { customerId: data.customerId } } },
+    });
+
+    if (!payment) {
+      throw new AppError(404, "Payment not found or forbidden");
+    }
+
+    if (payment.status !== "PENDING") {
+      throw new AppError(
+        400,
+        "Payment proof can only be uploaded for pending payments"
+      );
+    }
+
+    const imageUrl = await fileUpload.uploadSingle(data.paymentProof.path);
+
+    const updatedPayment = await prisma.payment.update({
+      where: { id: data.id },
+      data: {
+        paymentProof: imageUrl,
+        status: "WAITING_CONFIRMATION",
       },
     });
 
-    const order = await prisma.order.findUnique({
-      where: { id: payment!.orderId },
-    });
-
-    let statusOrder = order?.status;
-    if (payment?.status == "EXPIRED") {
-      statusOrder = "EXPIRED";
-    }
-    if (payment?.status == "REJECTED") {
-      statusOrder = "REJECTED";
-    }
-    if (payment?.status == "DONE") {
-      statusOrder = "PAID";
-    }
-
-    let verifiedAt = order?.verifiedAt;
-    if (payment?.status == "DONE") {
-      verifiedAt = new Date();
-    } else {
-      verifiedAt = null;
-    }
-
-    let paidAt = payment?.paidAt;
-    if (payment?.status == "DONE") {
-      paidAt = new Date();
-    } else {
-      paidAt = null;
-    }
-
-    const updatedPayment = await prisma.payment.update({
-      where: { id },
-      data,
-    });
-
     return updatedPayment;
+  }
+
+  async updatePaymentStatus(data: IUpdatePaymentStatus) {
+    const payment = await prisma.payment.findFirst({
+      where: {
+        AND: { id: data.id, order: { event: { eventOrganizerId: data.eoId } } },
+      },
+    });
+
+    if (!payment) {
+      throw new AppError(404, "Payment not found or forbidden");
+    }
+
+    if (payment.status !== "WAITING_CONFIRMATION") {
+      throw new AppError(
+        400,
+        "Payment status can only be changed after customer uploaded payment proof"
+      );
+    }
+
+    const now = new Date();
+
+    function mapPaymentStatusToOrderStatus(
+      paymentStatus: StatusPayment
+    ): StatusOrder {
+      switch (paymentStatus) {
+        case "DONE":
+          return "PAID";
+
+        case "REJECTED":
+          return "REJECTED";
+
+        case "EXPIRED":
+          return "EXPIRED";
+
+        case "PENDING":
+        case "WAITING_CONFIRMATION":
+        case "CANCELLED":
+        default:
+          return "WAITING_PAYMENT";
+      }
+    }
+
+    const orderStatus = mapPaymentStatusToOrderStatus(data.status);
+
+    const [updatedPayment, updatedOrder] = await prisma.$transaction([
+      prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: data.status,
+          paidAt: data.status === "DONE" ? now : null,
+        },
+      }),
+
+      prisma.order.update({
+        where: { id: payment.orderId },
+        data: {
+          status: orderStatus,
+          verifiedAt: now,
+        },
+      }),
+    ]);
+
+    return {
+      payment: updatedPayment,
+      order: updatedOrder,
+    };
   }
 }
