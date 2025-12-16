@@ -1,7 +1,6 @@
-import { PrismaClient } from "../generated/client.js";
 import { type ICreateOrder } from "../types/order.d.js";
-
-const prisma = new PrismaClient();
+import { prisma } from "../configs/prisma.config.js";
+import { AppError } from "../errors/app.error.js";
 
 export class OrderService {
   async createOrder(data: ICreateOrder) {
@@ -10,9 +9,11 @@ export class OrderService {
       where: { AND: { id: data.customerId, role: "CUSTOMER" } },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "CUSTOMER")
-      throw new Error("Only customers are allowed to buy event tickets");
+    if (!user || user.role !== "CUSTOMER")
+      throw new AppError(
+        403,
+        "Only customers are allowed to buy event tickets"
+      );
 
     // eventId
     const event = await prisma.event.findUnique({
@@ -35,9 +36,8 @@ export class OrderService {
       where: { id: customerId },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "CUSTOMER")
-      throw new Error("Only customers can view order history");
+    if (!user || user.role !== "CUSTOMER")
+      throw new AppError(403, "Only customers can view order history");
 
     const orders = await prisma.order.findMany({ where: { customerId } });
 
@@ -49,9 +49,11 @@ export class OrderService {
       where: { id: userId },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "EVENT_ORGANIZER")
-      throw new Error("Only Event Organizer can view order history");
+    if (!user || user.role !== "EVENT_ORGANIZER")
+      throw new AppError(
+        403,
+        "Only Event Organizer can view all order history from this event"
+      );
 
     const event = await prisma.event.findFirst({
       where: { AND: { id: eventId, eventOrganizerId: userId } },
@@ -65,6 +67,12 @@ export class OrderService {
   }
 
   async getOrderById(id: string, userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) throw new AppError(403, "Missing userId");
+
     const order = await prisma.order.findFirst({
       where: {
         AND: [
