@@ -9,4 +9,12 @@ router
   .route("/get-current-user")
   .get(AuthMiddleWare.verifyToken, userController.getCurrentUser);
 
+router
+  .route("/profile")
+  .put(AuthMiddleWare.verifyToken, userController.updateProfile);
+
+router
+  .route("/change-password")
+  .put(AuthMiddleWare.verifyToken, userController.changePassword);
+
 export default router;

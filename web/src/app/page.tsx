@@ -1,10 +1,16 @@
 "use client";
+import BannerSection from "./landing-page/banner";
+import TopThreeEvent from "./landing-page/top-three-event";
+import CategorySection from "./landing-page/category";
+import EventsSection from "./landing-page/events";
 
 export default function DashboardPage() {
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-2">Dashboard</h2>
-      <p>Selamat datang di dashboard kamu!</p>
-    </div>
+    <main className="min-h-auto pb-30">
+      <BannerSection />
+      <TopThreeEvent />
+      <CategorySection />
+      <EventsSection />
+    </main>
   );
 }

@@ -35,7 +35,7 @@ export default function LoginPage() {
 
               alert("Login Success");
               await refreshUser();
-              router.push("/");
+              router.replace("/");
               return;
             } catch (err: unknown) {
               if (axios.isAxiosError(err)) {
