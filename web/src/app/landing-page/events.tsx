@@ -6,6 +6,19 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 
 export default function EventsSection() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/events");
+      setEvents(res.data.events); // sesuaikan dengan response backend
+    } catch (error) {
+      console.error("Failed to fetch events", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section className="flex flex-col justify-center items-center pt-20 gap-y-6">
       <h2 className="self-start ml-6 md:ml-50 text-2xl tracking-wide">
