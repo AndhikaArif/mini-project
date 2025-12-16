@@ -20,6 +20,7 @@ async function seed() {
     console.info("🚮 Deleting previous data...");
     await prisma.user.deleteMany();
     await prisma.event.deleteMany();
+    await prisma.voucher.deleteMany();
     console.info("👌 All previous data deleted");
 
     /* -------------------------------------------------------------------------- */
@@ -376,6 +377,72 @@ async function seed() {
     );
 
     console.info(`✅ Created ${createdEvents.length} events`);
+
+    /* -------------------------------------------------------------------------- */
+    /*                               Create Voucher                               */
+    /* -------------------------------------------------------------------------- */
+    console.info("🎟️ Creating 1 voucher for each event, total 30 vouchers...");
+
+    const voucherCodes = [
+      "EVT-7FQ9K2",
+      "EVT-A3M8XZ",
+      "EVT-9LQW4P",
+      "EVT-XK82JM",
+      "EVT-PQ7N5A",
+      "EVT-4ZML9C",
+      "EVT-J8Q2WX",
+      "EVT-NP7A4K",
+      "EVT-5MZQ8L",
+      "EVT-X4A9PN",
+      "EVT-Q7K2M9",
+      "EVT-8PAXWL",
+      "EVT-ZN4Q5M",
+      "EVT-2J7KPX",
+      "EVT-LQZ8A4",
+      "EVT-9W5PXM",
+      "EVT-KA7ZQN",
+      "EVT-M4P2WL",
+      "EVT-XQ9A7K",
+      "EVT-8ZP4MN",
+      "EVT-W7LQKP",
+      "EVT-MQ82ZX",
+      "EVT-5AKP9L",
+      "EVT-4N7WXZ",
+      "EVT-QP8L2M",
+      "EVT-ZX9A7P",
+      "EVT-7KM4QN",
+      "EVT-PXW9LA",
+      "EVT-2ZQK8M",
+      "EVT-N4A7PX",
+    ];
+
+    const vouchersToCreate = voucherCodes.slice(0, 30).map((code, idx) => {
+      const event = createdEvents[idx % createdEvents.length];
+      const value = 10_000;
+      const validFrom = faker.date.soon({ days: 30 });
+      validFrom.setHours(
+        faker.number.int({ min: 9, max: 20 }),
+        faker.number.int({ min: 0, max: 59 })
+      );
+      const validUntil = new Date(validFrom);
+      validUntil.setHours(
+        validFrom.getHours() + faker.number.int({ min: 1, max: 4 })
+      );
+
+      return {
+        eventId: event!.id,
+        code,
+        value,
+        validFrom,
+        validUntil,
+      };
+    });
+
+    const createdVouchers = await Promise.all(
+      vouchersToCreate.map((v) => prisma.voucher.create({ data: v }))
+    );
+
+    console.info(`✅ Created ${createdVouchers.length} vouchers`);
     console.info(`🏁 Seeding finished successfully`);
   } catch (error) {
     console.error(`👎 Seeding failed:`, error);
