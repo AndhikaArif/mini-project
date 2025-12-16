@@ -7,7 +7,7 @@ export class OrderController {
   async createOrder(req: Request, res: Response) {
     try {
       const { eventId, quantity } = req.body;
-      const customerId = req.currentUser!.id;
+      const customerId = "29c2c9b2-eeb1-4ef4-acff-0b0349eb54eb";
 
       const order = await orderService.createOrder({
         eventId,
@@ -49,7 +49,7 @@ export class OrderController {
 
   async getOrderById(req: Request, res: Response) {
     try {
-      const userId = req.currentUser!.id;
+      const userId = "29c2c9b2-eeb1-4ef4-acff-0b0349eb54eb";
       const id = String(req.params.id);
 
       const order = await orderService.getOrderById(id, userId);
