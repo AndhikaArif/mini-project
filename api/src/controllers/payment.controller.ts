@@ -1,11 +1,12 @@
-import { type Request, type Response } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { PaymentService } from "../services/payment.service.js";
-import type { IUpdatePayment } from "../types/payment.d.js";
+import { AppError } from "../errors/app.error.js";
+import { StatusPayment } from "../generated/index.js";
 
 const paymentService = new PaymentService();
 
 export class PaymentController {
-  async createPayment(req: Request, res: Response) {
+  async createPayment(req: Request, res: Response, next: NextFunction) {
     try {
       const orderId = req.body;
 
@@ -13,11 +14,11 @@ export class PaymentController {
 
       res.status(201).json({ message: "Success to create payment", payment });
     } catch (error) {
-      res.status(500).json({ message: "Failed to create payment" });
+      next(error);
     }
   }
 
-  async getAllPayment(req: Request, res: Response) {
+  async getAllPayment(req: Request, res: Response, next: NextFunction) {
     try {
       const eoId = req.currentUser!.id;
       const eventId = String(req.params.id);
@@ -26,11 +27,11 @@ export class PaymentController {
 
       res.status(200).json(payments);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get all payments" });
+      next(error);
     }
   }
 
-  async getPaymentById(req: Request, res: Response) {
+  async getPaymentById(req: Request, res: Response, next: NextFunction) {
     try {
       const id = String(req.params.id);
       const userId = req.currentUser!.id;
@@ -39,28 +40,63 @@ export class PaymentController {
 
       res.status(200).json(payment);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get payment" });
+      next(error);
     }
   }
 
-  async updatePayment(req: Request, res: Response) {
+  async updatePaymentProof(req: Request, res: Response, next: NextFunction) {
     try {
       const id = String(req.params.id);
-      const userId = req.currentUser!.id;
+      const customerId = req.currentUser!.id;
 
-      const data: IUpdatePayment = req.body;
+      const paymentProof = req.file as Express.Multer.File;
 
-      const updatedPayment = await paymentService.updatePayment(
-        data,
+      if (!paymentProof) throw new AppError(400, "File missing");
+
+      const updatedPayment = await paymentService.updatePaymentProof({
         id,
-        userId
-      );
+        paymentProof,
+        customerId,
+      });
+
+      res
+        .status(200)
+        .json({ message: "Success upload payment proof", updatedPayment });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updatePaymentStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = String(req.params.id);
+      const eoId = req.currentUser!.id;
+
+      const { status } = req.body;
+
+      if (!status) {
+        return res.status(400).json({ message: "Status is required" });
+      }
+
+      const allowedStatus: StatusPayment[] = ["EXPIRED", "REJECTED", "DONE"];
+
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).json({
+          message: "Invalid payment status",
+        });
+      }
+
+      const updatedPayment = await paymentService.updatePaymentStatus({
+        id,
+        eoId,
+        status,
+      });
 
       res
         .status(200)
         .json({ message: "Success update payment", updatedPayment });
     } catch (error) {
-      res.status(500).json({ message: "Failed to update payment" });
+      next(error);
     }
   }
 }

@@ -5,8 +5,8 @@ import { AppError } from "../errors/app.error.js";
 export class OrderService {
   async createOrder(data: ICreateOrder) {
     // customerId
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: data.customerId, role: "CUSTOMER" } },
+    const user = await prisma.user.findUnique({
+      where: { id: data.customerId, role: "CUSTOMER" },
     });
 
     if (!user || user.role !== "CUSTOMER")
@@ -20,7 +20,7 @@ export class OrderService {
       where: { id: data.eventId },
     });
 
-    if (!event) throw new Error("Event not found");
+    if (!event) throw new AppError(40, "Event not found");
 
     const totalAmount = data.quantity * event!.price;
 
@@ -44,9 +44,9 @@ export class OrderService {
     return orders;
   }
 
-  async getAllEventOrders(userId: string, eventId: string) {
+  async getAllEventOrders(eoId: string, eventId: string) {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: eoId },
     });
 
     if (!user || user.role !== "EVENT_ORGANIZER")
@@ -55,11 +55,11 @@ export class OrderService {
         "Only Event Organizer can view all order history from this event"
       );
 
-    const event = await prisma.event.findFirst({
-      where: { AND: { id: eventId, eventOrganizerId: userId } },
+    const event = await prisma.event.findUnique({
+      where: { id: eventId, eventOrganizerId: eoId },
     });
 
-    if (!event) throw new Error("Event not found");
+    if (!event) throw new AppError(404, "Event not found");
 
     const orders = await prisma.order.findMany({ where: { eventId } });
 
