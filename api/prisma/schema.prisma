@@ -119,10 +119,23 @@ model Event {
 
   eventOrganizer User @relation(fields: [eventOrganizerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  orders   Order[]
-  vouchers Voucher[]
+  orders      Order[]
+  vouchers    Voucher[]
+  eventImages EventImage[]
 
   @@map("events")
+}
+
+model EventImage {
+  id      String @id @default(uuid())
+  eventId String
+
+  url       String
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("eventImages")
 }
 
 model Ticket {
@@ -133,6 +146,8 @@ model Ticket {
 
   createdAt DateTime  @default(now())
   usedAt    DateTime?
+
+  order Order @relation(fields: [orderId], references: [id])
 
   @@map("ticket")
 }
@@ -183,6 +198,7 @@ model Order {
   event    Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   payments Payment[]
+  tickets  Ticket[]
 
   @@map("order")
 }
