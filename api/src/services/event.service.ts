@@ -1,5 +1,7 @@
-import { PrismaClient } from "../generated/client.js";
-import type { IEvent } from "../types/event.d.js";
+import { Prisma, PrismaClient } from "../generated/client.js";
+import { type IEvent, type IEventSearch } from "../types/event.d.js";
+import { uploadArray } from "../utils/file-upload.util.js";
+import { AppError } from "../errors/app.error.js";
 
 const prisma = new PrismaClient();
 
@@ -15,6 +17,7 @@ export class EventService {
       availableSeats,
       startTime,
       endTime,
+      eventImage,
     }: IEvent,
     eoId: string
   ) {
@@ -22,9 +25,11 @@ export class EventService {
       where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
     });
 
-    if (!user) throw new Error("Event organizer not found");
+    if (!user) throw new AppError(400, "Event organizer not found");
     if (user.role !== "EVENT_ORGANIZER")
-      throw new Error("Only Event Organizer can create event");
+      throw new AppError(400, "Only Event Organizer can create event");
+
+    const imageUrls = await uploadArray(eventImage);
 
     const event = await prisma.event.create({
       data: {
@@ -37,7 +42,12 @@ export class EventService {
         startTime,
         endTime,
         eventOrganizer: { connect: { id: eventOrganizerId } },
+
+        eventImages: {
+          create: imageUrls.map((url: string) => ({ url })),
+        },
       },
+      include: { eventImages: true },
     });
 
     return event;
@@ -112,31 +122,84 @@ export class EventService {
     return { events, totalData, totalPages };
   }
 
-  async updateEvent(data: Partial<IEvent>, id: string) {
-    const event = await prisma.event.findUnique({ where: { id } });
+  async updateEvent(data: Partial<IEvent>, id: string, eoId: string) {
+    const user = await prisma.user.findFirst({
+      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+    });
 
-    if (!event) throw new Error("Event not found");
+    if (!user || user.role !== "EVENT_ORGANIZER") {
+      throw new AppError(403, "Only Event Organizer can update event");
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id, eventOrganizerId: eoId },
+    });
+
+    if (!event) throw new AppError(400, "Event not found");
 
     const updatedEvent = await prisma.event.update({
-      where: { id },
+      where: { id, eventOrganizerId: eoId },
       data,
     });
 
     return updatedEvent;
   }
 
-  async softDeleteEvent(id: string) {
-    const event = await prisma.event.findUnique({ where: { id } });
+  async softDeleteEvent(id: string, eoId: string) {
+    const user = await prisma.user.findFirst({
+      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+    });
 
-    if (!event) throw new Error("Event not found");
+    if (!user || user.role !== "EVENT_ORGANIZER") {
+      throw new AppError(403, "Only Event Organizer can update event");
+    }
+
+    const event = await prisma.event.findUnique({
+      where: { id, eventOrganizerId: eoId },
+    });
+
+    if (!event) throw new AppError(400, "Event not found");
 
     const updatedEvent = await prisma.event.update({
-      where: { id },
+      where: { id, eventOrganizerId: eoId },
       data: { deletedAt: new Date() },
     });
 
     return updatedEvent;
   }
-}
 
-// belum menggunakan error handling
+  async eventsSearch(query: IEventSearch) {
+    const { page = 1, limit = 8, search, category, location, sortBy } = query;
+
+    const where: Prisma.EventWhereInput = {
+      AND: [
+        search ? { name: { contains: search, mode: "insensitive" } } : {},
+        category ? { category } : {},
+        location ? { location } : {},
+      ],
+    };
+
+    const orderBy: Prisma.EventOrderByWithRelationInput =
+      sortBy === "newest" ? { createdAt: "desc" } : { createdAt: "asc" };
+
+    const [events, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        orderBy,
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      prisma.event.count({ where }),
+    ]);
+
+    return {
+      data: events,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPage: Math.ceil(total / limit),
+      },
+    };
+  }
+}

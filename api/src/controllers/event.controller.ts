@@ -1,5 +1,7 @@
 import { type Request, type Response } from "express";
 import { EventService } from "../services/event.service.js";
+import { fi } from "@faker-js/faker";
+import type { CategoryOption, LocationOption } from "../generated/index.js";
 
 const eventService = new EventService();
 
@@ -18,6 +20,8 @@ export class EventController {
         endTime,
       } = req.body;
 
+      const eventImage = req.files as Express.Multer.File[];
+
       const user = req.currentUser!.id;
 
       const event = await eventService.createEvent(
@@ -31,6 +35,7 @@ export class EventController {
           startTime,
           endTime,
           eventOrganizerId,
+          eventImage,
         },
         user
       );
@@ -97,10 +102,11 @@ export class EventController {
   async updateEvent(req: Request, res: Response) {
     try {
       const id = String(req.params.id);
+      const eoId = req.currentUser!.id;
 
       if (!id) return res.status(400).json({ message: "Id is missing" });
 
-      const updatedEvent = await eventService.updateEvent(req.body, id);
+      const updatedEvent = await eventService.updateEvent(req.body, id, eoId);
 
       res.status(201).json({ message: "Event has been updated", updatedEvent });
     } catch (error) {
@@ -108,19 +114,35 @@ export class EventController {
     }
   }
 
-  async deleteEvent(req: Request, res: Response) {
+  async softDeleteEvent(req: Request, res: Response) {
     try {
       const id = String(req.params.id);
+      const eoId = req.currentUser!.id;
 
       if (!id) return res.status(400).json({ message: "Id is missing" });
 
-      const event = await eventService.softDeleteEvent(id);
+      const event = await eventService.softDeleteEvent(id, eoId);
 
       res.status(200).json({ message: "Event has been deleted" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete event" });
     }
   }
-}
 
-// belum menggunakan error handling
+  async eventSearch(req: Request, res: Response) {
+    try {
+      const result = await eventService.eventsSearch({
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        category: req.query.category as CategoryOption,
+        location: req.query.location as LocationOption,
+        sortBy: req.query.sortBy as any,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to search event" });
+    }
+  }
+}
