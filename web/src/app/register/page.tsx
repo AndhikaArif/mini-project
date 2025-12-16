@@ -1,19 +1,18 @@
 "use client";
 
-import { useTheme } from "@/context/theme-context";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useThemeClass } from "@/components/theme";
+import { useThemeClass, useThemeButton } from "@/components/theme";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { registerSchemaFront } from "@/validation/register.validation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import AutoSave from "@/components/auto-save";
+import PasswordField from "@/components/form/passwordField";
 
 export default function RegisterPage() {
-  const { isDark } = useTheme();
+  const themeButton = useThemeButton();
   const themeClass = useThemeClass();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
 
   // Ambil sessionStorage sekali saat mount
@@ -58,7 +57,7 @@ export default function RegisterPage() {
               sessionStorage.removeItem("form");
               alert("Register success");
 
-              router.push(`/login`);
+              router.replace(`/login`);
               return;
             } catch (err: unknown) {
               if (axios.isAxiosError(err)) {
@@ -131,33 +130,11 @@ export default function RegisterPage() {
                   </div>
 
                   {/* PASSWORD */}
-                  <div className="flex flex-col gap-1">
-                    <label className="font-medium">Password</label>
-
-                    <div className="relative">
-                      <Field
-                        name="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Password"
-                        className={`border p-2 rounded w-full ${themeClass}`}
-                      />
-
-                      {/* Eye Icon */}
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((prev) => !prev)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-sm cursor-pointer"
-                      >
-                        {showPassword ? "🙈" : "👁️"}
-                      </button>
-                    </div>
-
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="text-red-500 text-sm"
-                    />
-                  </div>
+                  <PasswordField
+                    name="password"
+                    label="Password"
+                    className={themeClass}
+                  />
 
                   {/* REFERRAL */}
                   <div className="flex flex-col gap-1">
@@ -186,9 +163,7 @@ export default function RegisterPage() {
                       isSubmitting
                         ? "opacity-50 cursor-not-allowed"
                         : "hover:scale-110"
-                    } ${
-                      isDark ? "bg-white text-black" : "bg-black text-white"
-                    }`}
+                    } ${themeButton}`}
                   >
                     {isSubmitting ? "Processing..." : "Register"}
                   </button>
