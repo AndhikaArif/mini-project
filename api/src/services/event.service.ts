@@ -67,6 +67,7 @@ export class EventService {
         startTime: true,
         price: true,
         eventOrganizer: { select: { name: true } },
+        eventImages: { take: 1, select: { url: true } },
       },
       orderBy: { startTime: "asc" },
       skip,
@@ -85,6 +86,7 @@ export class EventService {
       where: { id },
       include: {
         eventOrganizer: { select: { name: true } },
+        eventImages: { select: { url: true } },
       },
     });
 
@@ -95,6 +97,7 @@ export class EventService {
     const events = await prisma.event.findMany({
       where: { availableSeats: { gt: 0 } },
       orderBy: { availableSeats: "asc" },
+      include: { eventImages: { take: 1, select: { url: true } } },
       take: 3,
     });
 
