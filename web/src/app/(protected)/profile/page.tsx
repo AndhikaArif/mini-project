@@ -13,8 +13,8 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <main>
-      <div className="max-w-xl mx-auto p-6">
+    <main className="overflow-hidden h-[calc(100vh-64px)] max-sm:h-[calc(100vh-64px-80px)]">
+      <div className="max-w-xl mx-auto p-6 h-full">
         <h1 className="text-2xl font-semibold mb-6">My Profile</h1>
 
         {/* Profile Picture */}

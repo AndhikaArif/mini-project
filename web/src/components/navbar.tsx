@@ -23,7 +23,7 @@ export default function Navbar() {
     <>
       {/* Top Navbar */}
       <nav
-        className={`flex justify-between items-center py-4 px-4 md:px-8 w-full border-b border-gray-300 transition-colors duration-300 ${
+        className={`fixed top-0 left-0 z-50 flex justify-between items-center py-4 px-4 md:px-8 w-full border-b border-gray-300 transition-colors duration-300 ${
           isDark ? "bg-black text-white" : "bg-white text-black"
         }`}
       >

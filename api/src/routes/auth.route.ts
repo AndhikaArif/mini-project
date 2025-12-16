@@ -1,6 +1,5 @@
 import express from "express";
 import { AuthController } from "../controllers/auth.controller.js";
-import { AuthMiddleWare } from "../middlewares/auth.middleware.js";
 import { resetPasswordLimiter } from "../middlewares/rate-limit.middleware.js";
 
 const router = express.Router();
