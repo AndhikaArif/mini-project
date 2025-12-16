@@ -1,13 +1,13 @@
-import { type Request, type Response } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { OrderService } from "../services/order.service.js";
 
 const orderService = new OrderService();
 
 export class OrderController {
-  async createOrder(req: Request, res: Response) {
+  async createOrder(req: Request, res: Response, next: NextFunction) {
     try {
       const { eventId, quantity } = req.body;
-      const customerId = req.currentUser.id;
+      const customerId = req.currentUser!.id;
 
       const order = await orderService.createOrder({
         eventId,
@@ -17,25 +17,25 @@ export class OrderController {
 
       res.status(201).json({ message: "Success create order", order });
     } catch (error) {
-      res.status(500).json({ message: "Failed to create order" });
+      next(error);
     }
   }
 
-  async getAllCustomerOrders(req: Request, res: Response) {
+  async getAllCustomerOrders(req: Request, res: Response, next: NextFunction) {
     try {
-      const customerId = req.currentUser.id;
+      const customerId = req.currentUser!.id;
 
       const orders = await orderService.getAllCustomerOrders(customerId);
 
       res.status(200).json(orders);
     } catch (error) {
-      res.status(500).json({ message: "Failed to show order history" });
+      next(error);
     }
   }
 
-  async getAllEventOrders(req: Request, res: Response) {
+  async getAllEventOrders(req: Request, res: Response, next: NextFunction) {
     try {
-      const eventOrganizerId = req.currentUser.id;
+      const eventOrganizerId = req.currentUser!.id;
 
       const eventId = String(req.params.id);
 
@@ -46,20 +46,20 @@ export class OrderController {
 
       res.status(200).json(orders);
     } catch (error) {
-      res.status(500).json({ message: "Failed to show order history" });
+      next(error);
     }
   }
 
-  async getOrderById(req: Request, res: Response) {
+  async getOrderById(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.currentUser.id;
+      const userId = req.currentUser!.id;
       const id = String(req.params.id);
 
       const order = await orderService.getOrderById(id, userId);
 
       res.status(200).json(order);
     } catch (error) {
-      res.status(500).json({ message: "Failed to show order detail" });
+      next(error);
     }
   }
 }
