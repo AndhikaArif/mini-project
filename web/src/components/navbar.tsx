@@ -224,7 +224,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <Link href="/Events" className="hover:scale-110 duration-300">
+        <Link href="/events" className="hover:scale-110 duration-300">
           <div className="flex flex-col items-center gap-1">
             <BsCalendar4Event className="text-lg" />
             <h3 className="text-sm">Events</h3>

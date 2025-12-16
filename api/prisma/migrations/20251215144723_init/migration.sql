@@ -2,10 +2,16 @@
 CREATE TYPE "RoleType" AS ENUM ('CUSTOMER', 'EVENT_ORGANIZER');
 
 -- CreateEnum
-CREATE TYPE "StatusOrder" AS ENUM ('WAITING_PAYMENT', 'WAITING_CONFIRMATION', 'REJECTED', 'CANCELLED', 'EXPIRED', 'DONE');
+CREATE TYPE "CategoryOption" AS ENUM ('ENTERTAINMENT', 'SPORTS_AND_COMPETITION', 'EDUCATION_AND_WORKSHOP', 'BUSSINESS_AND_NETWORKING', 'ART_AND_CULTURE');
 
 -- CreateEnum
-CREATE TYPE "categoryOption" AS ENUM ('FESTIVAL', 'MUSIC', 'CONCERT', 'THEATER', 'COMEDY_SHOW', 'MOVIE_SCREENING', 'DANCE', 'SEMINAR', 'WORKSHOP', 'CONFERENCE', 'WEBINAR', 'TRAINING', 'EXPO', 'TRADE_SHOW', 'NETWORKING_EVENT', 'PRODUCT_LAUNCH', 'SPORTS_EVENT', 'MARATHON', 'TOURNAMENT', 'FITNESS_CLASS', 'COMMUNITY_MEETUP', 'CHARITY', 'VOLUNTEER', 'SOCIAL_EVENT', 'CULTURAL_EVENT', 'FASHION_SHOW', 'FOOD_FEST', 'ART_EXHIBITION', 'BIRTHDAY', 'FAMILY_GATHERING', 'KIDS_EVENT');
+CREATE TYPE "LocationOption" AS ENUM ('JAKARTA', 'SURABAYA', 'BANDUNG', 'MEDAN', 'SEMARANG', 'YOGYAKARTA', 'MAKASSAR', 'BALI', 'PALEMBANG', 'BALIKPAPAN');
+
+-- CreateEnum
+CREATE TYPE "StatusOrder" AS ENUM ('WAITING_PAYMENT', 'REJECTED', 'EXPIRED', 'PAID');
+
+-- CreateEnum
+CREATE TYPE "StatusPayment" AS ENUM ('PENDING', 'WAITING_CONFIRMATION', 'CANCELLED', 'EXPIRED', 'REJECTED', 'DONE');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -19,6 +25,8 @@ CREATE TABLE "users" (
     "referralCode" VARCHAR(20) NOT NULL,
     "referredById" TEXT,
     "profilePicture" VARCHAR(255),
+    "resetToken" TEXT,
+    "resetTokenExp" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
@@ -30,7 +38,7 @@ CREATE TABLE "users" (
 CREATE TABLE "points" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "amount" DOUBLE PRECISION NOT NULL,
+    "amount" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expiredAt" TIMESTAMP(3) NOT NULL,
 
@@ -42,7 +50,7 @@ CREATE TABLE "coupons" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "code" TEXT NOT NULL,
-    "discount" DOUBLE PRECISION NOT NULL,
+    "discount" INTEGER NOT NULL,
     "used" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expiredAt" TIMESTAMP(3) NOT NULL,
@@ -52,21 +60,12 @@ CREATE TABLE "coupons" (
 );
 
 -- CreateTable
-CREATE TABLE "wallets" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "balance" DOUBLE PRECISION NOT NULL,
-
-    CONSTRAINT "wallets_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "events" (
     "id" TEXT NOT NULL,
     "eventOrganizerId" TEXT NOT NULL,
-    "venueId" TEXT NOT NULL,
-    "categoryId" TEXT NOT NULL,
     "name" VARCHAR(255) NOT NULL,
+    "category" "CategoryOption" NOT NULL,
+    "location" "LocationOption" NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "totalSeats" INTEGER NOT NULL,
     "availableSeats" INTEGER NOT NULL,
@@ -80,7 +79,7 @@ CREATE TABLE "events" (
 );
 
 -- CreateTable
-CREATE TABLE "Ticket" (
+CREATE TABLE "ticket" (
     "id" TEXT NOT NULL,
     "orderId" TEXT NOT NULL,
     "code" TEXT NOT NULL,
@@ -88,11 +87,11 @@ CREATE TABLE "Ticket" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "usedAt" TIMESTAMP(3),
 
-    CONSTRAINT "Ticket_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ticket_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Voucher" (
+CREATE TABLE "voucher" (
     "id" TEXT NOT NULL,
     "eventId" TEXT NOT NULL,
     "customerId" TEXT,
@@ -106,7 +105,7 @@ CREATE TABLE "Voucher" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "Voucher_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "voucher_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -114,15 +113,9 @@ CREATE TABLE "order" (
     "id" TEXT NOT NULL,
     "customerId" TEXT NOT NULL,
     "eventId" TEXT NOT NULL,
-    "voucherId" TEXT,
-    "pointId" TEXT,
-    "couponId" TEXT,
     "quantity" INTEGER NOT NULL,
     "totalAmount" DOUBLE PRECISION NOT NULL,
-    "totalPaid" DOUBLE PRECISION NOT NULL,
     "status" "StatusOrder" NOT NULL DEFAULT 'WAITING_PAYMENT',
-    "paymentProof" TEXT,
-    "paidAt" TIMESTAMP(3),
     "verifiedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -131,26 +124,20 @@ CREATE TABLE "order" (
 );
 
 -- CreateTable
-CREATE TABLE "Category" (
+CREATE TABLE "payment" (
     "id" TEXT NOT NULL,
-    "name" "categoryOption" NOT NULL,
-
-    CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Vanues" (
-    "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "city" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
-    "latitude" DOUBLE PRECISION,
-    "longitude" DOUBLE PRECISION,
+    "orderId" TEXT NOT NULL,
+    "voucherId" TEXT,
+    "pointId" TEXT,
+    "couponId" TEXT,
+    "totalPaid" DOUBLE PRECISION NOT NULL,
+    "status" "StatusPayment" NOT NULL DEFAULT 'PENDING',
+    "paymentProof" TEXT,
+    "paidAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "Vanues_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "payment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -165,9 +152,6 @@ CREATE UNIQUE INDEX "users_referralCode_key" ON "users"("referralCode");
 -- CreateIndex
 CREATE UNIQUE INDEX "coupons_code_key" ON "coupons"("code");
 
--- CreateIndex
-CREATE UNIQUE INDEX "wallets_userId_key" ON "wallets"("userId");
-
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_referredById_fkey" FOREIGN KEY ("referredById") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
@@ -178,22 +162,13 @@ ALTER TABLE "points" ADD CONSTRAINT "points_userId_fkey" FOREIGN KEY ("userId") 
 ALTER TABLE "coupons" ADD CONSTRAINT "coupons_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "wallets" ADD CONSTRAINT "wallets_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "events" ADD CONSTRAINT "events_eventOrganizerId_fkey" FOREIGN KEY ("eventOrganizerId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "events" ADD CONSTRAINT "events_eventOrganizerId_fkey" FOREIGN KEY ("eventOrganizerId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "voucher" ADD CONSTRAINT "voucher_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "events" ADD CONSTRAINT "events_venueId_fkey" FOREIGN KEY ("venueId") REFERENCES "Vanues"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "events" ADD CONSTRAINT "events_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Voucher" ADD CONSTRAINT "Voucher_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Voucher" ADD CONSTRAINT "Voucher_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "voucher" ADD CONSTRAINT "voucher_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "order" ADD CONSTRAINT "order_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -202,10 +177,13 @@ ALTER TABLE "order" ADD CONSTRAINT "order_customerId_fkey" FOREIGN KEY ("custome
 ALTER TABLE "order" ADD CONSTRAINT "order_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "order" ADD CONSTRAINT "order_voucherId_fkey" FOREIGN KEY ("voucherId") REFERENCES "Voucher"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "payment" ADD CONSTRAINT "payment_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "order" ADD CONSTRAINT "order_pointId_fkey" FOREIGN KEY ("pointId") REFERENCES "points"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "payment" ADD CONSTRAINT "payment_voucherId_fkey" FOREIGN KEY ("voucherId") REFERENCES "voucher"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "order" ADD CONSTRAINT "order_couponId_fkey" FOREIGN KEY ("couponId") REFERENCES "coupons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "payment" ADD CONSTRAINT "payment_pointId_fkey" FOREIGN KEY ("pointId") REFERENCES "points"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "payment" ADD CONSTRAINT "payment_couponId_fkey" FOREIGN KEY ("couponId") REFERENCES "coupons"("id") ON DELETE CASCADE ON UPDATE CASCADE;

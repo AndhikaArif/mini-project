@@ -31,8 +31,8 @@ export default function ProfilePage() {
           />
           <div>
             <p className="font-medium">{user.name}</p>
-            <p className="text-sm text-gray-500">@{user.username}</p>
-            <p className="text-sm text-gray-500"></p>
+            <p className="text-sm text-gray-500">{user.username}</p>
+            <p className="text-sm text-gray-500">{user.email}</p>
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 mt-6 justify-between">
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -132,14 +132,6 @@ export default function ProfilePage() {
                   className="border px-4 py-2 rounded cursor-pointer hover:scale-110 duration-300"
                 >
                   Change Password
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => router.push("/reset-password")}
-                  className="border px-4 py-2 rounded text-red-600 cursor-pointer hover:scale-110 duration-300"
-                >
-                  Reset Password
                 </button>
               </div>
             </Form>

@@ -6,7 +6,10 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
+    "handlebars": "^4.7.8",
     "jsonwebtoken": "^9.0.3",
+    "resend": "^6.6.0",
     "multer": "^2.0.2",
     "zod": "^4.1.13"
   },
@@ -16,6 +19,7 @@
   "description": "",
   "main": "index.js",
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
