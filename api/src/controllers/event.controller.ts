@@ -1,13 +1,13 @@
-import { type Request, type Response } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { EventService } from "../services/event.service.js";
+import type { CategoryOption, LocationOption } from "../generated/index.js";
 
 const eventService = new EventService();
 
 export class EventController {
-  async createEvent(req: Request, res: Response) {
+  async createEvent(req: Request, res: Response, next: NextFunction) {
     try {
       const {
-        eventOrganizerId,
         name,
         category,
         location,
@@ -18,30 +18,30 @@ export class EventController {
         endTime,
       } = req.body;
 
+      const eventImage = req.files as Express.Multer.File[];
+
       const user = req.currentUser!.id;
 
-      const event = await eventService.createEvent(
-        {
-          name,
-          category,
-          location,
-          price,
-          totalSeats,
-          availableSeats,
-          startTime,
-          endTime,
-          eventOrganizerId,
-        },
-        user
-      );
+      const event = await eventService.createEvent({
+        name,
+        category,
+        location,
+        price: parseFloat(price),
+        totalSeats: +totalSeats,
+        availableSeats: Number(availableSeats),
+        startTime,
+        endTime,
+        eventOrganizerId: user,
+        eventImage,
+      });
 
       res.status(201).json({ message: "Event has been created", event });
     } catch (error) {
-      res.status(500).json({ message: "Failed to create event" });
+      next(error);
     }
   }
 
-  async getAllEvents(req: Request, res: Response) {
+  async getAllEvents(req: Request, res: Response, next: NextFunction) {
     try {
       let page = Number(req.query.page);
       if (!page || page < 1) page = 1;
@@ -53,11 +53,11 @@ export class EventController {
         .status(200)
         .json({ data: events, totalData, totalPages, currentPage: +page });
     } catch (error) {
-      res.status(500).json({ message: "Failed to get all events" });
+      next(error);
     }
   }
 
-  async getEventById(req: Request, res: Response) {
+  async getEventById(req: Request, res: Response, next: NextFunction) {
     try {
       const id = req.params.id;
 
@@ -66,21 +66,21 @@ export class EventController {
       const event = await eventService.getEventById(id);
       res.status(200).json(event);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get event" });
+      next(error);
     }
   }
 
-  async getTopThreeEvents(req: Request, res: Response) {
+  async getTopThreeEvents(req: Request, res: Response, next: NextFunction) {
     try {
       const events = await eventService.getTopThreeEvents();
 
       res.status(200).json(events);
     } catch (error) {
-      res.status(500).json({ message: "Failed to get top three events" });
+      next(error);
     }
   }
 
-  async getEventsByCategory(req: Request, res: Response) {
+  async getEventsByCategory(req: Request, res: Response, next: NextFunction) {
     try {
       let page = Number(req.query.page);
       if (!page || page < 1) page = 1;
@@ -90,37 +90,54 @@ export class EventController {
 
       res.status(200).json({ events, totalData, totalPages });
     } catch (error) {
-      res.status(500).json({ message: "Failed to get events" });
+      next(error);
     }
   }
 
-  async updateEvent(req: Request, res: Response) {
+  async updateEvent(req: Request, res: Response, next: NextFunction) {
     try {
       const id = String(req.params.id);
+      const eoId = req.currentUser!.id;
 
       if (!id) return res.status(400).json({ message: "Id is missing" });
 
-      const updatedEvent = await eventService.updateEvent(req.body, id);
+      const updatedEvent = await eventService.updateEvent(req.body, id, eoId);
 
       res.status(201).json({ message: "Event has been updated", updatedEvent });
     } catch (error) {
-      res.status(500).json({ message: "Failed to update event" });
+      next(error);
     }
   }
 
-  async deleteEvent(req: Request, res: Response) {
+  async softDeleteEvent(req: Request, res: Response, next: NextFunction) {
     try {
       const id = String(req.params.id);
+      const eoId = req.currentUser!.id;
 
       if (!id) return res.status(400).json({ message: "Id is missing" });
 
-      const event = await eventService.softDeleteEvent(id);
+      const event = await eventService.softDeleteEvent(id, eoId);
 
       res.status(200).json({ message: "Event has been deleted" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete event" });
+      next(error);
+    }
+  }
+
+  async eventSearch(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await eventService.eventsSearch({
+        page: Number(req.query.page),
+        limit: Number(req.query.limit),
+        search: req.query.search as string,
+        category: req.query.category as CategoryOption,
+        location: req.query.location as LocationOption,
+        sortBy: req.query.sortBy as any,
+      });
+
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
     }
   }
 }
-
-// belum menggunakan error handling
