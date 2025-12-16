@@ -17,15 +17,15 @@ export class FileUpload {
     return await this.uploadToCloudinary(filePath);
   }
 
-  async uploadArray(filePaths: string[]) {
+  async uploadArray(filePaths: Express.Multer.File[]) {
     return Promise.all(
       filePaths.map((file) => {
-        return this.uploadToCloudinary(file);
+        return this.uploadToCloudinary(file.path);
       })
     );
   }
 
-  async uploadFields(fields: Record<string, string[]>) {
+  async uploadFields(fields: Record<string, Express.Multer.File[]>) {
     const result: Record<string, string[]> = {};
 
     for (const fieldName in fields) {
