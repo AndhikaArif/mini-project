@@ -19,7 +19,7 @@ export class PaymentController {
 
   async getAllPayment(req: Request, res: Response) {
     try {
-      const eoId = req.currentUser.id;
+      const eoId = req.currentUser!.id;
       const eventId = String(req.params.id);
 
       const payments = await paymentService.getAllPayment(eoId, eventId);
@@ -33,7 +33,7 @@ export class PaymentController {
   async getPaymentById(req: Request, res: Response) {
     try {
       const id = String(req.params.id);
-      const userId = req.currentUser.id;
+      const userId = req.currentUser!.id;
 
       const payment = await paymentService.getPaymentById(id, userId);
 
@@ -46,7 +46,7 @@ export class PaymentController {
   async updatePayment(req: Request, res: Response) {
     try {
       const id = String(req.params.id);
-      const userId = req.currentUser.id;
+      const userId = req.currentUser!.id;
 
       const data: IUpdatePayment = req.body;
 

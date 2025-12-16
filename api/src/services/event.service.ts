@@ -1,9 +1,8 @@
-import { Prisma, PrismaClient } from "../generated/client.js";
+import { Prisma } from "../generated/client.js";
 import { type IEvent, type IEventSearch } from "../types/event.d.js";
 import { uploadArray } from "../utils/file-upload.util.js";
 import { AppError } from "../errors/app.error.js";
-
-const prisma = new PrismaClient();
+import { prisma } from "../configs/prisma.config.js";
 
 export class EventService {
   async createEvent({
