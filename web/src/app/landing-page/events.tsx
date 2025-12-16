@@ -1,5 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 export default function EventsSection() {
   return (
@@ -8,6 +12,7 @@ export default function EventsSection() {
         This Week's Events
       </h2>
 
+      {/* Event 1 */}
       <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative w-[450px] h-[180px] mb-4">
           <Image
@@ -23,6 +28,7 @@ export default function EventsSection() {
         </div>
       </div>
 
+      {/* Event 2 */}
       <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative w-[450px] h-[180px] mb-4">
           <Image
@@ -38,6 +44,7 @@ export default function EventsSection() {
         </div>
       </div>
 
+      {/* Event 3 */}
       <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative w-[450px] h-[180px] mb-4">
           <Image
