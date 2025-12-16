@@ -7,7 +7,7 @@ export class OrderController {
   async createOrder(req: Request, res: Response) {
     try {
       const { eventId, quantity } = req.body;
-      const customerId = req.currentUser.id;
+      const customerId = req.currentUser!.id;
 
       const order = await orderService.createOrder({
         eventId,
@@ -23,7 +23,7 @@ export class OrderController {
 
   async getAllCustomerOrders(req: Request, res: Response) {
     try {
-      const customerId = req.currentUser.id;
+      const customerId = req.currentUser!.id;
 
       const orders = await orderService.getAllCustomerOrders(customerId);
 
@@ -35,14 +35,11 @@ export class OrderController {
 
   async getAllEventOrders(req: Request, res: Response) {
     try {
-      const eventOrganizerId = req.currentUser.id;
+      const eoId = req.currentUser!.id;
 
       const eventId = String(req.params.id);
 
-      const orders = await orderService.getAllEventOrders(
-        eventOrganizerId,
-        eventId
-      );
+      const orders = await orderService.getAllEventOrders(eoId, eventId);
 
       res.status(200).json(orders);
     } catch (error) {
@@ -52,7 +49,7 @@ export class OrderController {
 
   async getOrderById(req: Request, res: Response) {
     try {
-      const userId = req.currentUser.id;
+      const userId = req.currentUser!.id;
       const id = String(req.params.id);
 
       const order = await orderService.getOrderById(id, userId);

@@ -1,3 +1,4 @@
+import { AppError } from "../errors/app.error.js";
 import { PrismaClient } from "../generated/index.js";
 import {
   type ICreatePayment,
@@ -13,21 +14,21 @@ export class PaymentService {
       where: { id: data.orderId },
     });
 
-    if (!order) throw new Error("Order not found");
+    if (!order) throw new AppError(404, "Order not found");
 
     // voucherId
     const voucher = await prisma.voucher.findFirst({
       where: { AND: { eventId: order.eventId, customerId: order.customerId } },
     });
 
-    if (!voucher) throw new Error("Voucher not found");
+    if (!voucher) throw new AppError(404, "Voucher not found");
 
     // couponId
     const coupon = await prisma.coupon.findFirst({
       where: { userId: order.customerId },
     });
 
-    if (!coupon) throw new Error("You dont have any coupon");
+    if (!coupon) throw new AppError(400, "You dont have any coupon");
 
     data.totalPaid = order.totalAmount - (voucher.value + coupon.discount);
 
@@ -35,13 +36,12 @@ export class PaymentService {
   }
 
   async getAllPayment(eoId: string, eventId: string) {
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: eoId, role: "EVENT_ORGANIZER" } },
+    const user = await prisma.user.findUnique({
+      where: { id: eoId, role: "EVENT_ORGANIZER" },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "EVENT_ORGANIZER")
-      throw new Error("Only EO can access this page");
+    if (!user || user.role !== "EVENT_ORGANIZER")
+      throw new AppError(403, "Only Event Organizer can access this page");
 
     const payments = await prisma.payment.findMany({
       where: {

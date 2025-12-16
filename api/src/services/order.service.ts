@@ -1,3 +1,4 @@
+import { AppError } from "../errors/app.error.js";
 import { PrismaClient } from "../generated/client.js";
 import { type ICreateOrder } from "../types/order.d.js";
 
@@ -6,20 +7,22 @@ const prisma = new PrismaClient();
 export class OrderService {
   async createOrder(data: ICreateOrder) {
     // customerId
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: data.customerId, role: "CUSTOMER" } },
+    const user = await prisma.user.findUnique({
+      where: { id: data.customerId, role: "CUSTOMER" },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "CUSTOMER")
-      throw new Error("Only customers are allowed to buy event tickets");
+    if (!user || user.role !== "CUSTOMER")
+      throw new AppError(
+        403,
+        "Only customers are allowed to buy event tickets"
+      );
 
     // eventId
     const event = await prisma.event.findUnique({
       where: { id: data.eventId },
     });
 
-    if (!event) throw new Error("Event not found");
+    if (!event) throw new AppError(40, "Event not found");
 
     const totalAmount = data.quantity * event!.price;
 
@@ -35,29 +38,27 @@ export class OrderService {
       where: { id: customerId },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "CUSTOMER")
-      throw new Error("Only customers can view order history");
+    if (!user || user.role !== "CUSTOMER")
+      throw new AppError(403, "Only customers can view order history");
 
     const orders = await prisma.order.findMany({ where: { customerId } });
 
     return orders;
   }
 
-  async getAllEventOrders(userId: string, eventId: string) {
+  async getAllEventOrders(eoId: string, eventId: string) {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: eoId },
     });
 
-    if (!user) throw new Error("User not found");
-    if (user.role !== "EVENT_ORGANIZER")
-      throw new Error("Only Event Organizer can view order history");
+    if (!user || user.role !== "EVENT_ORGANIZER")
+      throw new AppError(403, "Only Event Organizer can view order history");
 
-    const event = await prisma.event.findFirst({
-      where: { AND: { id: eventId, eventOrganizerId: userId } },
+    const event = await prisma.event.findUnique({
+      where: { id: eventId, eventOrganizerId: eoId },
     });
 
-    if (!event) throw new Error("Event not found");
+    if (!event) throw new AppError(404, "Event not found");
 
     const orders = await prisma.order.findMany({ where: { eventId } });
 
@@ -65,6 +66,12 @@ export class OrderService {
   }
 
   async getOrderById(id: string, userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) throw new AppError(404, "User not found");
+
     const order = await prisma.order.findFirst({
       where: {
         AND: [
