@@ -8,12 +8,14 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import PasswordField from "@/components/form/passwordField";
+import { useState } from "react";
 
 export default function LoginPage() {
   const themeButton = useThemeButton();
   const themeClass = useThemeClass();
   const router = useRouter();
   const { refreshUser } = useAuth();
+  const [globalError, setGlobalError] = useState<string | null>(null);
 
   return (
     <main>
@@ -24,6 +26,8 @@ export default function LoginPage() {
           initialValues={{ username: "", password: "" }}
           validationSchema={toFormikValidationSchema(loginSchemaFront)}
           onSubmit={async (values, { setSubmitting, setErrors }) => {
+            setGlobalError(null);
+
             try {
               await axios.post(
                 `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/auth/login`,
@@ -37,15 +41,35 @@ export default function LoginPage() {
               return;
             } catch (err: unknown) {
               if (axios.isAxiosError(err)) {
-                const msg = err.response?.data?.message;
+                // ❌ Tidak ada response (Supabase / API down)
+                if (!err.response) {
+                  setGlobalError(
+                    "Server sedang bermasalah. Silakan coba login lagi beberapa saat."
+                  );
+                  return;
+                }
 
-                if (msg === "Username or password is wrong") {
+                const status = err.response.status;
+                const msg = err.response.data?.message;
+
+                // ❌ Username / password salah
+                if (status === 401 && msg === "Username or password is wrong") {
                   setErrors({ username: msg, password: msg });
-                } else {
-                  console.error("Unexpected error:", err);
+                  return;
+                }
+
+                // ❌ Server error (Supabase error biasanya 500)
+                if (status >= 500) {
+                  setGlobalError(
+                    "Layanan sedang tidak tersedia. Silakan coba beberapa saat lagi."
+                  );
+                  return;
                 }
               }
 
+              // fallback
+              setGlobalError("Terjadi kesalahan. Silakan coba lagi.");
+            } finally {
               setSubmitting(false);
             }
           }}
@@ -53,6 +77,13 @@ export default function LoginPage() {
           {({ isSubmitting }) => {
             return (
               <Form className="flex flex-col gap-4">
+                {/* Error Supabase */}
+                {globalError && (
+                  <div className="bg-red-100 text-red-600 p-2 rounded text-sm mb-3">
+                    {globalError}
+                  </div>
+                )}
+
                 {/* USERNAME */}
                 <div className="flex flex-col gap-1">
                   <label className="font-medium">Username</label>

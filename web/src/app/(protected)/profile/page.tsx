@@ -5,66 +5,49 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import axios from "axios";
 import { Formik, Form, Field } from "formik";
+import { useThemeButton } from "@/components/theme";
+import { useState } from "react";
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
   const router = useRouter();
+  const themeButton = useThemeButton();
+  const [preview, setPreview] = useState<string | null>(null);
 
   if (!user) return null;
 
   return (
-    <main className="overflow-hidden h-[calc(100vh-64px)] max-sm:h-[calc(100vh-64px-80px)]">
-      <div className="max-w-xl mx-auto p-6 h-full">
+    <main className="pb-20 sm:pb-0">
+      <div className="max-w-xl mx-auto p-6">
         <h1 className="text-2xl font-semibold mb-6">My Profile</h1>
 
-        {/* Profile Picture */}
-        <div className="flex items-center gap-4 mb-6">
-          <Image
-            src={
-              user.profilePicture ||
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsaRe2zqH_BBicvUorUseeTaE4kxPL2FmOQ&s"
-            }
-            width={80}
-            height={80}
-            className="rounded-full object-cover"
-            alt="Profile"
-          />
-          <div>
-            <p className="font-medium">{user.name}</p>
-            <p className="text-sm text-gray-500">{user.username}</p>
-            <p className="text-sm text-gray-500">{user.email}</p>
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="space-y-2 mb-6 text-sm">
-          <p>
-            <strong>Role:</strong> {user.role}
-          </p>
-          <p>
-            <strong>Referral Code:</strong> {user.referralCode}
-          </p>
-          <p>
-            <strong>Joined:</strong>{" "}
-            {new Date(user.createdAt).toLocaleDateString("id-ID")}
-          </p>
-        </div>
-
-        {/* FORM */}
         <Formik
           initialValues={{
             name: user.name ?? "",
             bio: user.bio ?? "",
+            profilePicture: null as File | null,
           }}
           enableReinitialize
           onSubmit={async (values, { setSubmitting }) => {
             try {
+              const formData = new FormData();
+              formData.append("name", values.name);
+              formData.append("bio", values.bio ?? "");
+
+              if (values.profilePicture) {
+                formData.append("profilePicture", values.profilePicture);
+              }
+
               await axios.put(
                 `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/user/profile`,
-                values,
-                { withCredentials: true }
+                formData,
+                {
+                  withCredentials: true,
+                  headers: { "Content-Type": "multipart/form-data" },
+                }
               );
 
+              setPreview(null);
               await refreshUser();
               alert("Profile updated");
             } finally {
@@ -72,69 +55,139 @@ export default function ProfilePage() {
             }
           }}
         >
-          {({ isSubmitting }) => (
-            <Form>
-              {/* Name */}
-              <label className="block mb-2 font-medium">Name</label>
-              <Field name="name" className="w-full border p-2 mb-4 rounded" />
+          {({ isSubmitting, setFieldValue }) => (
+            <>
+              {/* ================= PROFILE PICTURE (PALING ATAS) ================= */}
+              <div className="flex items-center gap-6 mb-8">
+                <label className="relative cursor-pointer group">
+                  <Image
+                    src={
+                      preview ||
+                      user.profilePicture ||
+                      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgsaRe2zqH_BBicvUorUseeTaE4kxPL2FmOQ&s"
+                    }
+                    width={96}
+                    height={96}
+                    className="rounded-full object-cover border"
+                    alt="Profile"
+                  />
 
-              {/* Bio */}
-              <label className="block mb-2 font-medium">Bio</label>
-              <Field
-                as="textarea"
-                name="bio"
-                className="w-full border p-2 mb-4 rounded"
-              />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                    <span className="text-white text-xs font-medium">
+                      Change
+                    </span>
+                  </div>
 
-              {/* Point & Coupon */}
-              <div className="mt-4 space-y-1 text-sm">
-                <p>
-                  <strong>Points:</strong> {user.pointBalance}
-                </p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.currentTarget.files?.[0];
+                      if (!file) return;
 
-                <p>
-                  <strong>Coupon:</strong>{" "}
-                  {user.coupon ? (
-                    <>
-                      <span className="font-mono px-2 py-1 rounded">
-                        {user.coupon.code}
-                      </span>
-                      ({user.coupon.discount.toLocaleString("id-ID")})
-                    </>
-                  ) : (
-                    "No active coupon"
+                      setPreview(URL.createObjectURL(file));
+                      setFieldValue("profilePicture", file);
+                    }}
+                  />
+                </label>
+
+                <div>
+                  <p className="font-medium text-lg">{user.name}</p>
+                  <p className="text-sm text-gray-500">{user.username}</p>
+                  <p className="text-sm text-gray-500">{user.email}</p>
+
+                  {preview && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPreview(null);
+                        setFieldValue("profilePicture", null);
+                      }}
+                      className="mt-1 text-xs text-red-500 hover:underline cursor-pointer"
+                    >
+                      Remove selected photo
+                    </button>
                   )}
-                </p>
+                </div>
+              </div>
 
-                {user.coupon && (
-                  <p className="text-gray-500">
-                    Expires:{" "}
-                    {new Date(user.coupon.expiredAt).toLocaleDateString(
-                      "id-ID"
+              {/* Info */}
+              <div className="space-y-2 mb-6 text-sm">
+                <p>
+                  <strong>Role:</strong> {user.role}
+                </p>
+                <p>
+                  <strong>Referral Code:</strong> {user.referralCode}
+                </p>
+                <p>
+                  <strong>Joined:</strong>{" "}
+                  {new Date(user.createdAt).toLocaleDateString("id-ID")}
+                </p>
+              </div>
+
+              {/* ================= FORM ================= */}
+              <Form>
+                <label className="block mb-2 font-medium">Name</label>
+                <Field name="name" className="w-full border p-2 mb-4 rounded" />
+
+                <label className="block mb-2 font-medium">Bio</label>
+                <Field
+                  as="textarea"
+                  name="bio"
+                  className="w-full border p-2 mb-4 rounded"
+                />
+
+                <div className="mt-4 space-y-1 text-sm">
+                  <p>
+                    <strong>Points:</strong> {user.pointBalance}
+                  </p>
+
+                  <p>
+                    <strong>Coupon:</strong>{" "}
+                    {user.coupon ? (
+                      <>
+                        <span className="font-mono px-2 py-1 rounded">
+                          {user.coupon.code}
+                        </span>
+                        ({user.coupon.discount.toLocaleString("id-ID")})
+                      </>
+                    ) : (
+                      "No active coupon"
                     )}
                   </p>
-                )}
-              </div>
+                </div>
 
-              {/* Actions */}
-              <div className="flex gap-3 mt-6 justify-between">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:scale-110 duration-300"
-                >
-                  {isSubmitting ? "Saving..." : "Save Changes"}
-                </button>
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:scale-110 duration-300"
+                  >
+                    {isSubmitting ? "Saving..." : "Save Changes"}
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => router.push("/change-password")}
-                  className="border px-4 py-2 rounded cursor-pointer hover:scale-110 duration-300"
-                >
-                  Change Password
-                </button>
-              </div>
-            </Form>
+                  <button
+                    type="button"
+                    onClick={() => router.push("/change-password")}
+                    className="border px-4 py-2 rounded cursor-pointer hover:scale-110 duration-300"
+                  >
+                    Change Password
+                  </button>
+
+                  {user.role === "EVENT_ORGANIZER" && (
+                    <button
+                      type="button"
+                      onClick={() => router.push("/organizer/dashboard")}
+                      className={`px-4 py-2 rounded cursor-pointer hover:scale-110 duration-300 ${themeButton}`}
+                    >
+                      Organizer Dashboard
+                    </button>
+                  )}
+                </div>
+              </Form>
+            </>
           )}
         </Formik>
       </div>
