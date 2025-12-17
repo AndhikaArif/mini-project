@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import PasswordField from "@/components/form/passwordField";
 import { useState } from "react";
+import LoadingScreen from "@/components/loading-screen";
 
 export default function LoginPage() {
   const themeButton = useThemeButton();
@@ -35,13 +36,14 @@ export default function LoginPage() {
                 { withCredentials: true }
               );
 
-              alert("Login Success");
               await refreshUser();
+
               router.replace("/");
+
               return;
             } catch (err: unknown) {
               if (axios.isAxiosError(err)) {
-                // ❌ Tidak ada response (Supabase / API down)
+                // Tidak ada response (Supabase / API down)
                 if (!err.response) {
                   setGlobalError(
                     "Server sedang bermasalah. Silakan coba login lagi beberapa saat."
@@ -50,31 +52,36 @@ export default function LoginPage() {
                 }
 
                 const status = err.response.status;
-                const msg = err.response.data?.message;
 
-                // ❌ Username / password salah
-                if (status === 401 && msg === "Username or password is wrong") {
-                  setErrors({ username: msg, password: msg });
+                //  Username / password salah
+                if (status === 401) {
+                  setErrors({
+                    username: "Username or password is wrong",
+                    password: "Username or password is wrong",
+                  });
                   return;
                 }
 
-                // ❌ Server error (Supabase error biasanya 500)
+                //  Server error (Supabase error biasanya 500)
                 if (status >= 500) {
                   setGlobalError(
-                    "Layanan sedang tidak tersedia. Silakan coba beberapa saat lagi."
+                    "The service is currently unavailable. Please try again later."
                   );
                   return;
                 }
               }
 
               // fallback
-              setGlobalError("Terjadi kesalahan. Silakan coba lagi.");
+              setGlobalError("An error occurred. Please try again.");
             } finally {
               setSubmitting(false);
             }
           }}
         >
           {({ isSubmitting }) => {
+            if (isSubmitting) {
+              return <LoadingScreen />;
+            }
             return (
               <Form className="flex flex-col gap-4">
                 {/* Error Supabase */}

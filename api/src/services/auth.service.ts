@@ -129,7 +129,7 @@ export class AuthService {
       where: { username },
     });
 
-    if (!existingUser) throw new AppError(400, "Username or password is wrong");
+    if (!existingUser) throw new AppError(401, "Username or password is wrong");
 
     const isValidPassword = await bcrypt.compare(
       password,
@@ -137,7 +137,7 @@ export class AuthService {
     );
 
     if (!isValidPassword)
-      throw new AppError(400, "Username or password is wrong");
+      throw new AppError(401, "Username or password is wrong");
 
     const { password: _, ...safeUser } = existingUser;
     return safeUser;

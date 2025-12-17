@@ -5,6 +5,7 @@ import axios from "axios";
 import { Formik, Form, Field } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { useRouter } from "next/navigation";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -12,6 +13,7 @@ const forgotPasswordSchema = z.object({
 
 export default function ForgotPasswordPage() {
   const themeButton = useThemeButton();
+  const router = useRouter();
 
   return (
     <main className="max-w-md mx-auto p-6 mt-10 border rounded-xl">
@@ -26,10 +28,12 @@ export default function ForgotPasswordPage() {
               `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/auth/reset-password/request`,
               values
             );
+
+            router.push("/login");
           } catch {
-            // sengaja dikosongkan (anti user enumeration)
+            // sengaja dikosongkan agar user tidak tau kalau email itu ada atau tidak di database
           } finally {
-            alert("If the email exists, a reset link has been sent.");
+            alert("Reset password link has been sent to your email.");
             resetForm();
             setSubmitting(false);
           }

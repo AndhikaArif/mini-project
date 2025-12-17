@@ -9,6 +9,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import AutoSave from "@/components/auto-save";
 import PasswordField from "@/components/form/passwordField";
+import LoadingScreen from "@/components/loading-screen";
 
 export default function RegisterPage() {
   const themeButton = useThemeButton();
@@ -55,7 +56,6 @@ export default function RegisterPage() {
               );
 
               sessionStorage.removeItem("form");
-              alert("Register success");
 
               router.replace(`/login`);
               return;
@@ -79,6 +79,9 @@ export default function RegisterPage() {
           }}
         >
           {({ isSubmitting }) => {
+            if (isSubmitting) {
+              return <LoadingScreen />;
+            }
             return (
               <>
                 <AutoSave />
