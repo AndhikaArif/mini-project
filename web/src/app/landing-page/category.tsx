@@ -15,7 +15,7 @@ export default function CategorySection() {
 
       <div className="flex justify-evenly items-center w-[450px] mx-auto md:w-[1125px]">
         <Link
-          href="/events"
+          href="/events/category"
           className="flex flex-col items-center gap-2 md:gap-3 hover:scale-105 duration-300"
         >
           <HiOutlinePaintBrush className="text-5xl border rounded-xl p-2 md:text-6xl" />
@@ -23,7 +23,7 @@ export default function CategorySection() {
         </Link>
 
         <Link
-          href="/events"
+          href="/events/category"
           className="flex flex-col items-center gap-2 md:gap-3 hover:scale-105 duration-300"
         >
           <LiaBrainSolid className="text-5xl border rounded-xl p-2 md:text-6xl" />
@@ -31,7 +31,7 @@ export default function CategorySection() {
         </Link>
 
         <Link
-          href="/events"
+          href="/events/category"
           className="flex flex-col items-center gap-2 md:gap-3 hover:scale-105 duration-300"
         >
           <IoMusicalNotesOutline className="text-5xl border rounded-xl p-2 md:text-6xl" />
@@ -39,7 +39,7 @@ export default function CategorySection() {
         </Link>
 
         <Link
-          href="/events"
+          href="/events/category"
           className="flex flex-col items-center gap-2 md:gap-3 hover:scale-105 duration-300"
         >
           <FaRegChartBar className="text-5xl border rounded-xl p-2 md:text-6xl" />
@@ -47,7 +47,7 @@ export default function CategorySection() {
         </Link>
 
         <Link
-          href="/events"
+          href="/events/category"
           className="flex flex-col items-center gap-2 md:gap-3 hover:scale-105 duration-300"
         >
           <MdOutlineSportsBaseball className="text-5xl border rounded-xl p-2 md:text-6xl" />
