@@ -19,10 +19,10 @@ export default function OrganizerEventCard({ event }: Props) {
       </p>
 
       <div className="flex gap-2">
-        <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
+        <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded cursor-pointer">
           Edit
         </button>
-        <button className="px-3 py-1 text-sm bg-red-600 text-white rounded">
+        <button className="px-3 py-1 text-sm bg-red-600 text-white rounded cursor-pointer">
           Delete
         </button>
       </div>

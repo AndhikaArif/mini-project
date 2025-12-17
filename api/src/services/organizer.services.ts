@@ -1,4 +1,6 @@
 import { prisma } from "../configs/prisma.config.js";
+import { AppError } from "../errors/app.error.js";
+import type { UpdateEventDTO } from "../validations/event.validation.js";
 
 export class OrganizerService {
   async getMyEvents(organizerId: string) {
@@ -90,5 +92,48 @@ export class OrganizerService {
         byDay,
       },
     };
+  }
+
+  async updateEvent(
+    eventId: string,
+    organizerId: string,
+    data: UpdateEventDTO
+  ) {
+    const event = await prisma.event.findFirst({
+      where: {
+        id: eventId,
+        eventOrganizerId: organizerId,
+      },
+    });
+
+    if (!event) {
+      throw new AppError(404, "Event not found");
+    }
+
+    const cleanData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined)
+    );
+
+    return prisma.event.update({
+      where: { id: eventId },
+      data: cleanData,
+    });
+  }
+
+  async deleteEvent(eventId: string, organizerId: string) {
+    const event = await prisma.event.findFirst({
+      where: {
+        id: eventId,
+        eventOrganizerId: organizerId,
+      },
+    });
+
+    if (!event) {
+      throw new AppError(404, "Event not found");
+    }
+
+    await prisma.event.delete({
+      where: { id: eventId },
+    });
   }
 }
