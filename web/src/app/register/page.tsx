@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import AutoSave from "@/components/auto-save";
 import PasswordField from "@/components/form/passwordField";
 import LoadingScreen from "@/components/loading-screen";
+import { useAuth } from "@/context/auth-context";
 
 export default function RegisterPage() {
   const themeButton = useThemeButton();
@@ -35,6 +36,17 @@ export default function RegisterPage() {
 
     getSessionData();
   }, []);
+
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/");
+    }
+  }, [user, loading, router]);
+
+  if (loading) return <LoadingScreen />;
+  if (user) return null;
 
   return (
     <main>

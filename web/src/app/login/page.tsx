@@ -8,7 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import PasswordField from "@/components/form/passwordField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingScreen from "@/components/loading-screen";
 
 export default function LoginPage() {
@@ -17,6 +17,16 @@ export default function LoginPage() {
   const router = useRouter();
   const { refreshUser } = useAuth();
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/");
+    }
+  }, [user, loading, router]);
+
+  if (loading) return <LoadingScreen />;
+  if (user) return null;
 
   return (
     <main>
