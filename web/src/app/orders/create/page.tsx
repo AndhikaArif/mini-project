@@ -151,7 +151,7 @@ export default function CreateOrderPage() {
             onClick={handlePayment}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg active:scale-95"
           >
-            Pay Now & Confirm Order
+            Confirm Order
           </button>
         </div>
       </div>

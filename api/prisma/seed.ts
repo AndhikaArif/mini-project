@@ -363,6 +363,8 @@ async function seed() {
     const eventsToCreate = allEventNames.slice(0, 30).map((name, idx) => {
       const organizer =
         createdEventOrganizers[idx % createdEventOrganizers.length];
+      const description =
+        "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus.";
       const category = categories[Math.floor(idx / 6)] as CategoryOption;
       const location = locations[idx % locations.length] as LocationOption;
       const price = 50_000 + (idx % 10) * 25_000;
@@ -379,6 +381,7 @@ async function seed() {
       return {
         eventOrganizerId: organizer!.id,
         name,
+        description,
         category,
         location,
         price,
