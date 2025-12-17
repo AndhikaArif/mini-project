@@ -47,7 +47,10 @@ export class UserService {
     };
   }
 
-  async updateUser(id: string, data: { name: string; bio: string | null }) {
+  async updateUser(
+    id: string,
+    data: { name: string; bio: string | null; profilePicture?: string }
+  ) {
     const updateUser = await prisma.user.update({
       where: { id },
       data,

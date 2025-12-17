@@ -1,7 +1,7 @@
 import express from "express";
 import { OrderController } from "../controllers/order.controller.js";
 import { AuthMiddleWare } from "../middlewares/auth.middleware.js";
-import { RoleType } from "../generated/index.js";
+import { RoleType } from "../generated/client.js";
 
 const orderController = new OrderController();
 

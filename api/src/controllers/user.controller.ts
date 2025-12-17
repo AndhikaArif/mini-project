@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { UserService } from "../services/user.service.js";
+import cloudinary from "../configs/cloudinary.config.js";
+import fs from "fs";
 
 const userService = new UserService();
 
@@ -19,7 +21,29 @@ export class UserController {
       const userId = req.currentUser!.id;
       const { name, bio } = req.body;
 
-      const user = await userService.updateUser(userId, { name, bio });
+      let profilePicture: string | undefined;
+
+      if (req.file) {
+        const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+          folder: "users/profile",
+          transformation: [
+            { width: 300, height: 300, crop: "fill" },
+            { quality: "auto" },
+            { fetch_format: "auto" },
+          ],
+        });
+
+        profilePicture = uploadResult.secure_url;
+
+        // hapus file lokal
+        fs.unlinkSync(req.file.path);
+      }
+
+      const user = await userService.updateUser(userId, {
+        name,
+        bio,
+        ...(profilePicture && { profilePicture }),
+      });
 
       res.status(200).json(user);
     } catch (error) {
