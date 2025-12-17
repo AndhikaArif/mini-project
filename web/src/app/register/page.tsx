@@ -9,6 +9,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import AutoSave from "@/components/auto-save";
 import PasswordField from "@/components/form/passwordField";
+import LoadingScreen from "@/components/loading-screen";
+import { useAuth } from "@/context/auth-context";
 
 export default function RegisterPage() {
   const themeButton = useThemeButton();
@@ -35,6 +37,17 @@ export default function RegisterPage() {
     getSessionData();
   }, []);
 
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/");
+    }
+  }, [user, loading, router]);
+
+  if (loading) return <LoadingScreen />;
+  if (user) return null;
+
   return (
     <main>
       <div className="max-w-md mx-auto p-6 border rounded-xl mt-10">
@@ -55,7 +68,6 @@ export default function RegisterPage() {
               );
 
               sessionStorage.removeItem("form");
-              alert("Register success");
 
               router.replace(`/login`);
               return;
@@ -79,6 +91,9 @@ export default function RegisterPage() {
           }}
         >
           {({ isSubmitting }) => {
+            if (isSubmitting) {
+              return <LoadingScreen />;
+            }
             return (
               <>
                 <AutoSave />

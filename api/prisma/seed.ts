@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import bcrypt from "bcryptjs";
 
 import "dotenv/config";
 import {
@@ -9,6 +10,10 @@ import {
 } from "../src/generated/index.js";
 
 const prisma = new PrismaClient();
+
+const hashPassword = async (password: string) => {
+  return bcrypt.hash(password, 12);
+};
 
 async function seed() {
   try {
@@ -276,11 +281,22 @@ async function seed() {
     ];
 
     const createdEventOrganizers = await Promise.all(
-      eventOrganizers.map((u) => prisma.user.create({ data: u }))
+      eventOrganizers.map(async (u) =>
+        prisma.user.create({
+          data: {
+            ...u,
+            password: await hashPassword(u.password),
+          },
+        })
+      )
     );
 
     const createdCustomers = await Promise.all(
-      customers.map((u) => prisma.user.create({ data: u }))
+      customers.map(async (u) =>
+        prisma.user.create({
+          data: { ...u, password: await hashPassword(u.password) },
+        })
+      )
     );
 
     const allUsers = [...createdEventOrganizers, ...createdCustomers];

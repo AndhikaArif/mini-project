@@ -178,7 +178,7 @@ model Voucher {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  event Event @relation(fields: [eventId], references: [id])
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   payments Payment[]
 

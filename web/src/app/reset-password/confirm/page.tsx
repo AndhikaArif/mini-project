@@ -56,14 +56,15 @@ export default function ResetPasswordConfirmPage() {
         {({ isSubmitting }) => (
           <Form className="space-y-4">
             <PasswordField
-              name="password"
-              label="Password"
+              name="newPassword"
+              label="New Password"
+              placeholder="New Password"
               className={themeClass}
             />
 
             <PasswordField
-              name="password"
-              label="Confurm Password"
+              name="confirmPassword"
+              label="Confirm Password"
               placeholder="Confirm Password"
               className={themeClass}
             />

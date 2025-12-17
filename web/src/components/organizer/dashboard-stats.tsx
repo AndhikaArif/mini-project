@@ -22,7 +22,8 @@ export default function DashboardStats() {
           `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/organizer/dashboard/stats`,
           { withCredentials: true }
         );
-        setStats(res.data);
+
+        setStats(res.data.summary);
       } catch (error) {
         console.error(error);
       } finally {
