@@ -63,6 +63,7 @@ export class EventService {
     const events = await prisma.event.findMany({
       where: { deletedAt: null },
       select: {
+        id: true,
         name: true,
         startTime: true,
         price: true,
@@ -84,7 +85,8 @@ export class EventService {
   async getEventById(id: string) {
     const event = await prisma.event.findUnique({
       where: { id },
-      include: {
+      select: {
+        id: true,
         eventOrganizer: { select: { name: true } },
         eventImages: { select: { url: true } },
       },
@@ -97,7 +99,10 @@ export class EventService {
     const events = await prisma.event.findMany({
       where: { availableSeats: { gt: 0 } },
       orderBy: { availableSeats: "asc" },
-      include: { eventImages: { take: 1, select: { url: true } } },
+      select: {
+        id: true,
+        eventImages: { take: 1, select: { url: true } },
+      },
       take: 3,
     });
 
