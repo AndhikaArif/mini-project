@@ -12,21 +12,51 @@ export default function EventsSection() {
   const fetchEvents = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/events");
-      setEvents(res.data.events); // sesuaikan dengan response backend
+      setEvents(res.data.data);
     } catch (error) {
       console.error("Failed to fetch events", error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  if (loading) {
+    return <p className="text-center mt-20">Loading events...</p>;
+  }
   return (
     <section className="flex flex-col justify-center items-center pt-20 gap-y-6">
       <h2 className="self-start ml-6 md:ml-50 text-2xl tracking-wide">
         This Week's Events
       </h2>
 
+      {events.slice(0, 3).map((event) => (
+        <Link
+          key={event.id}
+          href={`/events/${event.id}`}
+          className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer"
+        >
+          <div className="relative w-[450px] h-[180px] mb-4">
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              fill
+              className="object-cover rounded-t-2xl"
+            />
+          </div>
+
+          <div className="flex flex-col justify-center items-start px-2">
+            <h3 className="font-semibold">{event.title}</h3>
+            <h4 className="text-sm text-gray-600">{event.description}</h4>
+          </div>
+        </Link>
+      ))}
+
       {/* Event 1 */}
-      <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
+      {/* <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative w-[450px] h-[180px] mb-4">
           <Image
             src="/dummy-banner.jpg"
@@ -39,10 +69,10 @@ export default function EventsSection() {
           <h3>Event's Title</h3>
           <h4>Event's description</h4>
         </div>
-      </div>
+      </div> */}
 
       {/* Event 2 */}
-      <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
+      {/* <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative w-[450px] h-[180px] mb-4">
           <Image
             src="/dummy-banner.jpg"
@@ -55,10 +85,10 @@ export default function EventsSection() {
           <h3>Event's Title</h3>
           <h4>Event's description</h4>
         </div>
-      </div>
+      </div> */}
 
       {/* Event 3 */}
-      <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
+      {/* <div className="flex flex-col justify-baseline items-start bg-white shadow-md border-2 border-gray-100 rounded-2xl w-[450px] h-[300px] hover:shadow-xl duration-300 cursor-pointer">
         <div className="relative w-[450px] h-[180px] mb-4">
           <Image
             src="/dummy-banner.jpg"
@@ -71,7 +101,7 @@ export default function EventsSection() {
           <h3>Event's Title</h3>
           <h4>Event's description</h4>
         </div>
-      </div>
+      </div> */}
 
       <Link
         href="/events"
