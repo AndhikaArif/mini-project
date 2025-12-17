@@ -1,4 +1,4 @@
-import { Prisma } from "../generated/client.js";
+import { CategoryOption, Prisma } from "../generated/client.js";
 import { type IEvent, type IEventSearch } from "../types/event.d.js";
 import { FileUpload } from "../utils/file-upload.util.js";
 import { AppError } from "../errors/app.error.js";
@@ -10,6 +10,7 @@ export class EventService {
   async createEvent({
     eventOrganizerId,
     name,
+    description,
     category,
     location,
     price,
@@ -32,6 +33,7 @@ export class EventService {
     const event = await prisma.event.create({
       data: {
         name,
+        description,
         category,
         location,
         price,
@@ -59,12 +61,15 @@ export class EventService {
     const totalData = await prisma.event.count({
       where: { deletedAt: null },
     });
+
     const totalPages = Math.ceil(totalData / Number(limit));
+
     const events = await prisma.event.findMany({
       where: { deletedAt: null },
       select: {
         id: true,
         name: true,
+        description: true,
         startTime: true,
         price: true,
         eventOrganizer: { select: { name: true } },
@@ -85,8 +90,7 @@ export class EventService {
   async getEventById(id: string) {
     const event = await prisma.event.findUnique({
       where: { id },
-      select: {
-        id: true,
+      include: {
         eventOrganizer: { select: { name: true } },
         eventImages: { select: { url: true } },
       },
@@ -109,16 +113,22 @@ export class EventService {
     return events;
   }
 
-  async getEventsByCategory(page: number) {
+  async getEventsByCategory(page: number, category: CategoryOption) {
     const limit: number = 8;
 
     const skip = (page - 1) * limit;
 
-    const totalData = await prisma.event.count();
+    const where: any = { deletedAt: null };
+    if (category) {
+      where.category = category;
+    }
+
+    const totalData = await prisma.event.count({ where });
 
     const totalPages = Math.ceil(totalData / limit);
 
     const events = await prisma.event.groupBy({
+      where,
       by: ["category", "startTime"],
       orderBy: { startTime: "asc" },
       skip,

@@ -9,6 +9,8 @@ export class OrderController {
       const { eventId, quantity } = req.body;
       const customerId = req.currentUser!.id;
 
+      console.log(req.body);
+
       const order = await orderService.createOrder({
         eventId,
         quantity,

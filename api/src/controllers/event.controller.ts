@@ -9,6 +9,7 @@ export class EventController {
     try {
       const {
         name,
+        description,
         category,
         location,
         price,
@@ -24,6 +25,7 @@ export class EventController {
 
       const event = await eventService.createEvent({
         name,
+        description,
         category,
         location,
         price: parseFloat(price),
@@ -49,6 +51,7 @@ export class EventController {
       const { events, totalData, totalPages } = await eventService.getAllEvents(
         page
       );
+
       res
         .status(200)
         .json({ data: events, totalData, totalPages, currentPage: +page });
@@ -85,8 +88,10 @@ export class EventController {
       let page = Number(req.query.page);
       if (!page || page < 1) page = 1;
 
+      const category = req.query.category as CategoryOption;
+
       const { events, totalData, totalPages } =
-        await eventService.getEventsByCategory(page);
+        await eventService.getEventsByCategory(page, category);
 
       res.status(200).json({ events, totalData, totalPages });
     } catch (error) {
