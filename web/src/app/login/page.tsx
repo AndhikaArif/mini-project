@@ -46,7 +46,7 @@ export default function LoginPage() {
                 // Tidak ada response (Supabase / API down)
                 if (!err.response) {
                   setGlobalError(
-                    "Server sedang bermasalah. Silakan coba login lagi beberapa saat."
+                    "The server is experiencing problems. Please try logging in again in a moment."
                   );
                   return;
                 }
