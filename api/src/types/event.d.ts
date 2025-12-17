@@ -6,6 +6,7 @@ import {
 export interface IEvent {
   eventOrganizerId: string;
   name: string;
+  description: string;
   category: CategoryOption;
   location: LocationOption;
   price: number;

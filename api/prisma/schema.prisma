@@ -117,6 +117,7 @@ model Event {
   id               String         @id @default(uuid())
   eventOrganizerId String
   name             String         @db.VarChar(255)
+  description      String?
   category         CategoryOption
   location         LocationOption
   price            Float
