@@ -7,14 +7,16 @@ import axios from "axios";
 import { Formik, Form, Field } from "formik";
 import { useThemeButton } from "@/components/theme";
 import { useState } from "react";
+import LoadingScreen from "@/components/loading-screen";
 
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
   const router = useRouter();
   const themeButton = useThemeButton();
   const [preview, setPreview] = useState<string | null>(null);
+  const [error, setError] = useState("");
 
-  if (!user) return null;
+  if (!user) return <LoadingScreen />;
 
   return (
     <main className="pb-20 sm:pb-0">
@@ -30,6 +32,8 @@ export default function ProfilePage() {
           enableReinitialize
           onSubmit={async (values, { setSubmitting }) => {
             try {
+              setError("");
+
               const formData = new FormData();
               formData.append("name", values.name);
               formData.append("bio", values.bio ?? "");
@@ -43,13 +47,23 @@ export default function ProfilePage() {
                 formData,
                 {
                   withCredentials: true,
-                  headers: { "Content-Type": "multipart/form-data" },
                 }
               );
 
               setPreview(null);
               await refreshUser();
               alert("Profile updated");
+            } catch (error) {
+              if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                  router.replace("/login");
+                  return;
+                }
+
+                setError("Failed to update profile");
+              } else {
+                setError("Unexpected error");
+              }
             } finally {
               setSubmitting(false);
             }
@@ -57,7 +71,7 @@ export default function ProfilePage() {
         >
           {({ isSubmitting, setFieldValue }) => (
             <>
-              {/* ================= PROFILE PICTURE (PALING ATAS) ================= */}
+              {/* ================= PROFILE PICTURE ================= */}
               <div className="flex items-center gap-6 mb-8">
                 <label className="relative cursor-pointer group">
                   <Image
@@ -87,6 +101,10 @@ export default function ProfilePage() {
                       const file = e.currentTarget.files?.[0];
                       if (!file) return;
 
+                      if (preview) {
+                        URL.revokeObjectURL(preview);
+                      }
+
                       setPreview(URL.createObjectURL(file));
                       setFieldValue("profilePicture", file);
                     }}
@@ -102,6 +120,10 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={() => {
+                        if (preview) {
+                          URL.revokeObjectURL(preview);
+                        }
+
                         setPreview(null);
                         setFieldValue("profilePicture", null);
                       }}
@@ -126,6 +148,12 @@ export default function ProfilePage() {
                   {new Date(user.createdAt).toLocaleDateString("id-ID")}
                 </p>
               </div>
+
+              {error && (
+                <div className="mb-4 rounded bg-red-100 text-red-700 px-3 py-2 text-sm">
+                  {error}
+                </div>
+              )}
 
               {/* ================= FORM ================= */}
               <Form>
