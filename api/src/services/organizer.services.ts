@@ -1,6 +1,7 @@
 import { prisma } from "../configs/prisma.config.js";
 import { AppError } from "../errors/app.error.js";
 import type { UpdateEventDTO } from "../validations/event.validation.js";
+import { Prisma } from "@prisma/client";
 
 export class OrganizerService {
   async getMyEvents(organizerId: string) {
@@ -112,11 +113,43 @@ export class OrganizerService {
 
     const cleanData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined)
-    );
+    ) as UpdateEventDTO;
+
+    const prismaData: Parameters<typeof prisma.event.update>[0]["data"] = {};
+
+    if (data.name !== undefined) {
+      prismaData.name = data.name;
+    }
+
+    if (data.price !== undefined) {
+      prismaData.price = data.price;
+    }
+
+    if (data.totalSeats !== undefined) {
+      const soldSeats = event.totalSeats - event.availableSeats;
+
+      if (data.totalSeats < soldSeats) {
+        throw new AppError(
+          400,
+          `Total seats cannot be less than sold seats (${soldSeats})`
+        );
+      }
+
+      prismaData.totalSeats = data.totalSeats;
+      prismaData.availableSeats = data.totalSeats - soldSeats;
+    }
+
+    if (data.startTime !== undefined) {
+      prismaData.startTime = new Date(data.startTime);
+    }
+
+    if (data.endTime !== undefined) {
+      prismaData.endTime = new Date(data.endTime);
+    }
 
     return prisma.event.update({
       where: { id: eventId },
-      data: cleanData,
+      data: prismaData,
     });
   }
 
