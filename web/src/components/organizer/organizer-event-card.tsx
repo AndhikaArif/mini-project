@@ -6,9 +6,11 @@ type Props = {
     totalSeats: number;
     availableSeats: number;
   };
+  onEdit: (event: Props["event"]) => void;
+  onDelete: (id: string) => void;
 };
 
-export default function OrganizerEventCard({ event }: Props) {
+export default function OrganizerEventCard({ event, onEdit, onDelete }: Props) {
   return (
     <div className="border rounded-lg p-4 shadow-sm space-y-2">
       <h3 className="font-semibold text-lg">{event.name}</h3>
@@ -19,10 +21,17 @@ export default function OrganizerEventCard({ event }: Props) {
       </p>
 
       <div className="flex gap-2">
-        <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
+        <button
+          onClick={() => onEdit(event)}
+          className="px-3 py-1 text-sm bg-blue-600 rounded cursor-pointer"
+        >
           Edit
         </button>
-        <button className="px-3 py-1 text-sm bg-red-600 text-white rounded">
+
+        <button
+          onClick={() => onDelete(event.id)}
+          className="px-3 py-1 text-sm bg-red-600 rounded cursor-pointer"
+        >
           Delete
         </button>
       </div>
