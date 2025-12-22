@@ -71,174 +71,188 @@ export default function CreateEvent() {
   };
 
   return (
-    <main className="min-h-auto flex flex-col justify-center items-center gap-y-4 pt-8 pb-30">
-      <h1 className="text-2xl tracking-wide mb-2 font-semibold">
-        Create Your Event
-      </h1>
+    <main className="min-h-auto flex flex-col justify-center items-center gap-y-4 pt-8 pb-30 md:pt-15 md:pb-20">
+      <div className="flex flex-col justify-center items-center md:flex-row md:justify-between md:items-start md:gap-x-40">
+        <div className="flex flex-col justify-center items-center gap-y-4">
+          <h1 className="text-2xl tracking-wide mb-2 font-semibold">
+            Create Your Event
+          </h1>
 
-      {/* Upload Event Images */}
-      <div className="flex flex-col justify-center items-center gap-y-2">
-        <label
-          htmlFor="eventImage"
-          className="flex flex-col items-center justify-center
+          {/* Upload Event Images */}
+          <div className="flex flex-col justify-center items-center gap-y-2">
+            <label
+              htmlFor="eventImage"
+              className="flex flex-col items-center justify-center
              border-2 border-dashed border-gray-300
              bg-gray-100 w-[400px] h-[100px]
              rounded-md cursor-pointer text-gray-500"
-        >
-          <span>Click or drag images here</span>
-          <span className="text-sm">(Max 5 images)</span>
+            >
+              <span>Click or drag images here</span>
+              <span className="text-sm">(Max 5 images)</span>
 
-          <input
-            id="eventImage"
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={(e) => setEventImage(Array.from(e.target.files || []))}
-            className="hidden"
-          />
-        </label>
-
-        {eventImage.length > 0 && (
-          <div className="flex gap-2 flex-wrap">
-            {eventImage.map((file, i) => (
-              <img
-                key={i}
-                src={URL.createObjectURL(file)}
-                className="w-20 h-20 object-cover rounded border"
-                alt={`event-preview-${i}`}
+              <input
+                id="eventImage"
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) =>
+                  setEventImage(Array.from(e.target.files || []))
+                }
+                className="hidden"
               />
-            ))}
+            </label>
+
+            {eventImage.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {eventImage.map((file, i) => (
+                  <img
+                    key={i}
+                    src={URL.createObjectURL(file)}
+                    className="w-20 h-20 object-cover rounded border"
+                    alt={`event-preview-${i}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* Insert Event Name */}
-      <div className="flex flex-col justify-center items-start gap-y-1">
-        <h2 className="text-md">Event Name</h2>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Event Name"
-          className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2"
-        />
-      </div>
+          {/* Insert Event Name */}
+          <div className="flex flex-col justify-center items-start gap-y-1">
+            <h2 className="text-md">Event Name</h2>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Event Name"
+              className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2"
+            />
+          </div>
 
-      {/* Insert Event Description */}
-      <div className="flex flex-col justify-center items-start gap-y-1">
-        <h2 className="text-md">Event Description</h2>
-        <textarea
-          value={description}
-          placeholder="Event Description"
-          onChange={(e) => setDescription(e.target.value)}
-          className="border-2 border-gray-200 shadow w-[400px] h-[100px] rounded-md px-2 py-1"
-        />
-      </div>
-
-      {/* Insert Event Category */}
-      <div className="flex flex-col justify-center items-start gap-y-1">
-        <h2 className="text-md">Event Category</h2>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2 text-black"
-        >
-          <option value="" disabled hidden>
-            Select Category
-          </option>
-          <option value="ENTERTAINMENT">Entertainment</option>
-          <option value="SPORTS_AND_COMPETITION">Sports and Competition</option>
-          <option value="EDUCATION_AND_WORKSHOP">Education and Workshop</option>
-          <option value="BUSSINESS_AND_NETWORKING">
-            Bussiness and Networking
-          </option>
-          <option value="ART_AND_CULTURE">Art and Culture</option>
-        </select>
-      </div>
-
-      {/* Insert Event Location */}
-      <div className="flex flex-col justify-center items-start gap-y-1">
-        <h2 className="text-md">Event Location</h2>
-        <select
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md text-black px-2"
-        >
-          <option value="" disabled hidden>
-            Select Location
-          </option>
-          <option value="JAKARTA">Jakarta</option>
-          <option value="SURABAYA">Surabaya</option>
-          <option value="BANDUNG">Bandung</option>
-          <option value="MEDAN">Medan</option>
-          <option value="SEMARANG">Semarang</option>
-          <option value="YOGYAKARTA">Yogyakarta</option>
-          <option value="MAKASSAR">Makassar</option>
-          <option value="BALI">Bali</option>
-          <option value="PALEMBANG">Palembang</option>
-          <option value="BALIKPAPAN">Balikpapan</option>
-        </select>
-      </div>
-
-      {/* Insert Event Price */}
-      <div className="flex flex-col justify-center items-start gap-y-1">
-        <h2 className="text-md">Event Price</h2>
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="Event Price"
-          className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2"
-        />
-      </div>
-
-      {/* Insert Event Total Seats */}
-      <div className="flex flex-col justify-center items-start gap-y-1">
-        <h2 className="text-md">Total Seats</h2>
-        <input
-          type="number"
-          value={totalSeats}
-          onChange={(e) => setTotalSeats(e.target.value)}
-          placeholder="Total Seats"
-          className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2"
-        />
-      </div>
-
-      {/* Insert Event Time */}
-      <div className="flex justify-between items-center w-[400px]">
-        <div className="flex flex-col justify-center items-start gap-y-1">
-          <h2 className="text-md">Start Time</h2>
-          <input
-            type="datetime-local"
-            value={startTime}
-            onChange={(e) => setStartTime(e.target.value)}
-            className="border-2 border-gray-200 shadow w-[180px] h-10 rounded-md text-gray-500 px-2"
-          />
+          {/* Insert Event Description */}
+          <div className="flex flex-col justify-center items-start gap-y-1">
+            <h2 className="text-md">Event Description</h2>
+            <textarea
+              value={description}
+              placeholder="Event Description"
+              onChange={(e) => setDescription(e.target.value)}
+              className="border-2 border-gray-200 shadow w-[400px] h-[100px] rounded-md px-2 py-1"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col justify-center items-start gap-y-1">
-          <h2 className="text-md">End Time</h2>
-          <input
-            type="datetime-local"
-            value={endTime}
-            min={startTime}
-            onChange={(e) => setEndTime(e.target.value)}
-            className="border-2 border-gray-200 shadow w-[180px] h-10 rounded-md text-gray-500 px-2"
-          />
+        <div className="flex flex-col justify-center items-center gap-y-4">
+          {/* Insert Event Category */}
+          <div className="flex flex-col justify-center items-start gap-y-1">
+            <h2 className="text-md">Event Category</h2>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2 text-black"
+            >
+              <option value="" disabled hidden>
+                Select Category
+              </option>
+              <option value="ENTERTAINMENT">Entertainment</option>
+              <option value="SPORTS_AND_COMPETITION">
+                Sports and Competition
+              </option>
+              <option value="EDUCATION_AND_WORKSHOP">
+                Education and Workshop
+              </option>
+              <option value="BUSSINESS_AND_NETWORKING">
+                Bussiness and Networking
+              </option>
+              <option value="ART_AND_CULTURE">Art and Culture</option>
+            </select>
+          </div>
+
+          {/* Insert Event Location */}
+          <div className="flex flex-col justify-center items-start gap-y-1">
+            <h2 className="text-md">Event Location</h2>
+            <select
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md text-black px-2"
+            >
+              <option value="" disabled hidden>
+                Select Location
+              </option>
+              <option value="JAKARTA">Jakarta</option>
+              <option value="SURABAYA">Surabaya</option>
+              <option value="BANDUNG">Bandung</option>
+              <option value="MEDAN">Medan</option>
+              <option value="SEMARANG">Semarang</option>
+              <option value="YOGYAKARTA">Yogyakarta</option>
+              <option value="MAKASSAR">Makassar</option>
+              <option value="BALI">Bali</option>
+              <option value="PALEMBANG">Palembang</option>
+              <option value="BALIKPAPAN">Balikpapan</option>
+            </select>
+          </div>
+
+          {/* Insert Event Price */}
+          <div className="flex flex-col justify-center items-start gap-y-1">
+            <h2 className="text-md">Event Price</h2>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Event Price"
+              className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2"
+            />
+          </div>
+
+          {/* Insert Event Total Seats */}
+          <div className="flex flex-col justify-center items-start gap-y-1">
+            <h2 className="text-md">Total Seats</h2>
+            <input
+              type="number"
+              value={totalSeats}
+              onChange={(e) => setTotalSeats(e.target.value)}
+              placeholder="Total Seats"
+              className="border-2 border-gray-200 shadow w-[400px] h-10 rounded-md px-2"
+            />
+          </div>
+
+          {/* Insert Event Time */}
+          <div className="flex justify-between items-center w-[400px]">
+            <div className="flex flex-col justify-center items-start gap-y-1">
+              <h2 className="text-md">Start Time</h2>
+              <input
+                type="datetime-local"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="border-2 border-gray-200 shadow w-[180px] h-10 rounded-md text-gray-500 px-2"
+              />
+            </div>
+
+            <div className="flex flex-col justify-center items-start gap-y-1">
+              <h2 className="text-md">End Time</h2>
+              <input
+                type="datetime-local"
+                value={endTime}
+                min={startTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="border-2 border-gray-200 shadow w-[180px] h-10 rounded-md text-gray-500 px-2"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Button Create */}
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className={`w-[400px] h-10 text-white font-semibold tracking-wide rounded-md mt-4 ${
-          loading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-400 hover:bg-blue-500 cursor-pointer"
-        }`}
-      >
-        {loading ? "Creating..." : "Create Event"}
-      </button>
+      <div className="flex flex-col justify-center items-center">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`w-[400px] h-10 text-white font-semibold tracking-wide rounded-md mt-4 md:w-[600px] md:mt-10 ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-400 hover:bg-blue-500 cursor-pointer"
+          }`}
+        >
+          {loading ? "Creating..." : "Create Event"}
+        </button>
+      </div>
     </main>
   );
 }

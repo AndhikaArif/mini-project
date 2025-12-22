@@ -137,7 +137,7 @@ export default function Navbar() {
         {/* Dekstop Navigation */}
         <div className="hidden sm:flex gap-12">
           <Link
-            href="/create"
+            href="/events/create"
             className="transition-colors duration-300 hover:text-blue-400"
           >
             Create
