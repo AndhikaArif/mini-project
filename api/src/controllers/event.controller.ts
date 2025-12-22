@@ -1,6 +1,7 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { EventService } from "../services/event.service.js";
 import type { CategoryOption, LocationOption } from "../generated/index.js";
+import { AppError } from "../errors/app.error.js";
 
 const eventService = new EventService();
 
@@ -14,14 +15,16 @@ export class EventController {
         location,
         price,
         totalSeats,
-        availableSeats,
         startTime,
         endTime,
       } = req.body;
 
-      const eventImage = req.files as Express.Multer.File[];
-
       const user = req.currentUser!.id;
+
+      const eventImage = req.files as Express.Multer.File[];
+      if (!req.files || req.files.length === 0) {
+        throw new AppError(400, "Event image is required");
+      }
 
       const event = await eventService.createEvent({
         name,
@@ -29,10 +32,9 @@ export class EventController {
         category,
         location,
         price: parseFloat(price),
-        totalSeats: +totalSeats,
-        availableSeats: Number(availableSeats),
-        startTime,
-        endTime,
+        totalSeats: Number(totalSeats),
+        startTime: new Date(startTime),
+        endTime: new Date(endTime),
         eventOrganizerId: user,
         eventImage,
       });

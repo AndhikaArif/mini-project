@@ -80,7 +80,7 @@ CREATE TABLE "events" (
     "location" "LocationOption" NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "totalSeats" INTEGER NOT NULL,
-    "availableSeats" INTEGER NOT NULL,
+    "availableSeats" INTEGER NOT NULL DEFAULT 0,
     "startTime" TIMESTAMP(3) NOT NULL,
     "endTime" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -198,7 +198,7 @@ ALTER TABLE "eventImages" ADD CONSTRAINT "eventImages_eventId_fkey" FOREIGN KEY 
 ALTER TABLE "ticket" ADD CONSTRAINT "ticket_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "voucher" ADD CONSTRAINT "voucher_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "voucher" ADD CONSTRAINT "voucher_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "order" ADD CONSTRAINT "order_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -11,7 +11,6 @@ export interface IEvent {
   location: LocationOption;
   price: number;
   totalSeats: number;
-  availableSeats: number;
   startTime: Date;
   endTime: Date;
   eventImage: Express.Multer.File[];

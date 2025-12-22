@@ -217,7 +217,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <Link href="/create" className="hover:scale-110 duration-300">
+        <Link href="events/create" className="hover:scale-110 duration-300">
           <div className="flex flex-col items-center gap-1">
             <IoCreateOutline className="text-2xl" />
             <h3 className="text-sm">Create</h3>
