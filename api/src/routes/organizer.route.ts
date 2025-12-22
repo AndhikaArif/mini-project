@@ -12,6 +12,8 @@ router.use(
 );
 
 router.get("/events", controller.getMyEvents);
+router.patch("/events/:id", controller.updateEvent);
+router.delete("/events/:id", controller.deleteEvent);
 router.get("/transactions", controller.getTransactions);
 router.get("/dashboard/stats", controller.getDashboardStats);
 

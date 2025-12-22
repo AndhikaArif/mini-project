@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import OrganizerEventCard from "./organizer-event-card";
+import EditEventModal from "./edit-event-modal";
 
 type Event = {
   id: string;
@@ -15,6 +16,7 @@ type Event = {
 export default function OrganizerEvents() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -34,6 +36,26 @@ export default function OrganizerEvents() {
     fetchEvents();
   }, []);
 
+  async function handleDelete(id: string) {
+    const ok = confirm("Are you sure you want to delete this event?");
+    if (!ok) return;
+
+    try {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/organizer/events/${id}`,
+        { withCredentials: true }
+      );
+
+      setEvents((prev) => prev.filter((e) => e.id !== id));
+    } catch {
+      alert("Failed to delete event");
+    }
+  }
+
+  function handleEdit(event: Event) {
+    setSelectedEvent(event);
+  }
+
   if (loading) return <p>Loading events...</p>;
   if (!events.length) return <p>No events yet</p>;
 
@@ -43,9 +65,26 @@ export default function OrganizerEvents() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {events.map((event) => (
-          <OrganizerEventCard key={event.id} event={event} />
+          <OrganizerEventCard
+            key={event.id}
+            event={event}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
+
+      {selectedEvent && (
+        <EditEventModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+          onSuccess={(updated) => {
+            setEvents((prev) =>
+              prev.map((e) => (e.id === updated.id ? updated : e))
+            );
+          }}
+        />
+      )}
     </section>
   );
 }
