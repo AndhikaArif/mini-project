@@ -122,7 +122,7 @@ model Event {
   location         LocationOption
   price            Float
   totalSeats       Int
-  availableSeats   Int
+  availableSeats   Int            @default(0)
   startTime        DateTime
   endTime          DateTime
 

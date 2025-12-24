@@ -7,41 +7,37 @@ import { prisma } from "../configs/prisma.config.js";
 const fileUpload = new FileUpload();
 
 export class EventService {
-  async createEvent({
-    eventOrganizerId,
-    name,
-    description,
-    category,
-    location,
-    price,
-    totalSeats,
-    availableSeats,
-    startTime,
-    endTime,
-    eventImage,
-  }: IEvent) {
-    const user = await prisma.user.findFirst({
-      where: { AND: { id: eventOrganizerId, role: "EVENT_ORGANIZER" } },
+  async createEvent(data: IEvent) {
+    const user = await prisma.user.findUnique({
+      where: { id: data.eventOrganizerId, role: "EVENT_ORGANIZER" },
     });
 
-    if (!user) throw new AppError(400, "Event organizer not found");
-    if (user.role !== "EVENT_ORGANIZER")
-      throw new AppError(400, "Only Event Organizer can create event");
+    if (!user) {
+      throw new AppError(403, "Only Event Organizer can create event");
+    }
 
-    const imageUrls = await fileUpload.uploadArray(eventImage);
+    if (data.endTime <= data.startTime) {
+      throw new AppError(400, "End time must be after start time");
+    }
+
+    if (data.totalSeats <= 0) {
+      throw new AppError(400, "Total seats must be greater than 0");
+    }
+
+    const imageUrls = await fileUpload.uploadArray(data.eventImage);
 
     const event = await prisma.event.create({
       data: {
-        name,
-        description,
-        category,
-        location,
-        price,
-        totalSeats,
-        availableSeats,
-        startTime,
-        endTime,
-        eventOrganizer: { connect: { id: eventOrganizerId } },
+        name: data.name,
+        description: data.description,
+        category: data.category,
+        location: data.location,
+        price: data.price,
+        totalSeats: data.totalSeats,
+        availableSeats: data.totalSeats,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        eventOrganizer: { connect: { id: data.eventOrganizerId } },
 
         eventImages: {
           create: imageUrls.map((url: string) => ({ url })),
