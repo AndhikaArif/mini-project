@@ -1,6 +1,7 @@
 import { prisma } from "../configs/prisma.config.js";
 import { AppError } from "../errors/app.error.js";
 import type { UpdateEventDTO } from "../validations/event.validation.js";
+import { StatusPayment, StatusOrder } from "../generated/index.js";
 
 export class OrganizerService {
   async getMyEvents(organizerId: string) {
@@ -171,11 +172,62 @@ export class OrganizerService {
     });
   }
 
-  async deleteEvent(eventId: string, organizerId: string) {
+  async updatePaymentStatus(
+    organizerId: string,
+    paymentId: string,
+    status: StatusPayment
+  ) {
+    if (status !== StatusPayment.DONE && status !== StatusPayment.REJECTED) {
+      throw new AppError(400, "Invalid payment status action");
+    }
+
+    const payment = await prisma.payment.findFirst({
+      where: {
+        id: paymentId,
+        order: {
+          event: { eventOrganizerId: organizerId },
+        },
+      },
+    });
+
+    if (!payment) {
+      throw new AppError(404, "Payment not found");
+    }
+
+    if (payment.status !== StatusPayment.WAITING_CONFIRMATION) {
+      throw new AppError(400, "Payment is not waiting for confirmation");
+    }
+
+    const orderStatus =
+      status === StatusPayment.DONE
+        ? StatusOrder.PAID
+        : StatusOrder.WAITING_PAYMENT;
+
+    return prisma.$transaction([
+      prisma.payment.update({
+        where: { id: paymentId },
+        data: {
+          status,
+          paidAt: status === StatusPayment.DONE ? new Date() : null,
+        },
+      }),
+
+      prisma.order.update({
+        where: { id: payment.orderId },
+        data: {
+          status: orderStatus,
+          verifiedAt: new Date(),
+        },
+      }),
+    ]);
+  }
+
+  async cancelEvent(eventId: string, organizerId: string) {
     const event = await prisma.event.findFirst({
       where: {
         id: eventId,
         eventOrganizerId: organizerId,
+        deletedAt: null,
       },
     });
 
@@ -183,8 +235,42 @@ export class OrganizerService {
       throw new AppError(404, "Event not found");
     }
 
-    await prisma.event.delete({
-      where: { id: eventId },
-    });
+    return prisma.$transaction([
+      // 1️⃣ Soft delete event
+      prisma.event.update({
+        where: { id: eventId },
+        data: {
+          deletedAt: new Date(),
+        },
+      }),
+
+      // 2️⃣ Cancel orders
+      prisma.order.updateMany({
+        where: {
+          eventId,
+          status: {
+            in: [StatusOrder.WAITING_PAYMENT, StatusOrder.PAID],
+          },
+        },
+        data: {
+          status: StatusOrder.CANCELLED,
+        },
+      }),
+
+      // 3️⃣ Cancel payments
+      prisma.payment.updateMany({
+        where: {
+          order: {
+            eventId,
+          },
+          status: {
+            in: [StatusPayment.PENDING, StatusPayment.WAITING_CONFIRMATION],
+          },
+        },
+        data: {
+          status: StatusPayment.CANCELLED,
+        },
+      }),
+    ]);
   }
 }
