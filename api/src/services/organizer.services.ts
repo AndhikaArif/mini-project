@@ -1,7 +1,6 @@
 import { prisma } from "../configs/prisma.config.js";
 import { AppError } from "../errors/app.error.js";
 import type { UpdateEventDTO } from "../validations/event.validation.js";
-import { Prisma } from "@prisma/client";
 
 export class OrganizerService {
   async getMyEvents(organizerId: string) {
@@ -18,16 +17,35 @@ export class OrganizerService {
   }
 
   async getTransactions(organizerId: string) {
-    return prisma.order.findMany({
+    return prisma.payment.findMany({
       where: {
-        event: { eventOrganizerId: organizerId },
+        order: {
+          event: {
+            eventOrganizerId: organizerId,
+          },
+        },
       },
       include: {
-        event: { select: { name: true } },
-        customer: { select: { name: true, email: true } },
-        payments: true,
+        order: {
+          select: {
+            quantity: true,
+            totalAmount: true,
+            createdAt: true,
+            event: {
+              select: { name: true },
+            },
+            customer: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }
 
