@@ -130,10 +130,6 @@ export class OrganizerService {
       throw new AppError(404, "Event not found");
     }
 
-    const cleanData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateEventDTO;
-
     const prismaData: Parameters<typeof prisma.event.update>[0]["data"] = {};
 
     if (data.name !== undefined) {
@@ -223,11 +219,11 @@ export class OrganizerService {
             status === StatusPayment.DONE
               ? StatusOrder.PAID
               : StatusOrder.WAITING_PAYMENT,
-          verifiedAt: new Date(),
+          verifiedAt: status === StatusPayment.DONE ? new Date() : null,
         },
       });
 
-      // 3️⃣ 🔥 KURANGI SEATS JIKA APPROVED
+      // 3️⃣ KURANGI SEATS JIKA APPROVED
       if (status === StatusPayment.DONE) {
         const event = payment.order.event;
 
@@ -245,6 +241,66 @@ export class OrganizerService {
         });
       }
     });
+  }
+
+  async getEventAttendees(organizerId: string, eventId: string) {
+    // 1️⃣ Validasi event milik organizer
+    const event = await prisma.event.findFirst({
+      where: {
+        id: eventId,
+        eventOrganizerId: organizerId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    if (!event) {
+      throw new AppError(404, "Event not found");
+    }
+
+    // 2️⃣ Ambil attendee (PAID orders)
+    const attendees = await prisma.order.findMany({
+      where: {
+        eventId,
+        status: StatusOrder.PAID,
+      },
+      select: {
+        quantity: true,
+        totalAmount: true,
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // 3️⃣ Optional: summary
+    const summary = {
+      totalAttendees: attendees.length,
+      totalTicketsSold: attendees.reduce((a, b) => a + b.quantity, 0),
+      totalRevenue: attendees.reduce((a, b) => a + b.totalAmount, 0),
+    };
+
+    return {
+      event,
+      summary,
+      attendees: attendees.map((a) => ({
+        name: a.customer.name,
+        email: a.customer.email,
+        quantity: a.quantity,
+        totalPaid: a.totalAmount,
+      })),
+    };
   }
 
   async cancelEvent(eventId: string, organizerId: string) {
