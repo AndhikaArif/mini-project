@@ -1,8 +1,9 @@
 import { CategoryOption, Prisma } from "../generated/client.js";
-import { type IEvent, type IEventSearch } from "../types/event.d.js";
+import { type IEvent } from "../types/event.d.js";
 import { FileUpload } from "../utils/file-upload.util.js";
 import { AppError } from "../errors/app.error.js";
 import { prisma } from "../configs/prisma.config.js";
+import { type IEventSearch } from "../validations/event.validation.js";
 
 const fileUpload = new FileUpload();
 
@@ -49,19 +50,38 @@ export class EventService {
     return event;
   }
 
-  async getAllEvents(page: number) {
-    const limit = 8;
+  async getAllEvents(query: IEventSearch) {
+    const { page, limit, search, category, location, sortBy } = query;
 
     const skip = (page - 1) * limit;
 
+    // Where Condition
+    const where: Prisma.EventWhereInput = {
+      deletedAt: null,
+      ...(search && {
+        name: { contains: search, mode: "insensitive" },
+      }),
+      ...(category && { category }),
+      ...(location && { location }),
+    };
+
+    // Order By
+    const orderByMap = {
+      newest: { createdAt: "desc" },
+      latest: { createdAt: "asc" },
+      startTime: { startTime: "asc" },
+    } as const;
+
+    const orderBy: Prisma.EventOrderByWithRelationInput = orderByMap[sortBy];
+
     const totalData = await prisma.event.count({
-      where: { deletedAt: null },
+      where,
     });
 
     const totalPages = Math.ceil(totalData / Number(limit));
 
     const events = await prisma.event.findMany({
-      where: { deletedAt: null },
+      where,
       select: {
         id: true,
         name: true,
@@ -71,15 +91,19 @@ export class EventService {
         eventOrganizer: { select: { name: true } },
         eventImages: { take: 1, select: { url: true } },
       },
-      orderBy: { startTime: "asc" },
+      orderBy,
       skip,
       take: limit,
     });
 
     return {
-      events,
-      totalData,
-      totalPages,
+      data: events,
+      meta: {
+        page,
+        limit,
+        totalData,
+        totalPages,
+      },
     };
   }
 
@@ -178,40 +202,5 @@ export class EventService {
     });
 
     return updatedEvent;
-  }
-
-  async eventsSearch(query: IEventSearch) {
-    const { page = 1, limit = 8, search, category, location, sortBy } = query;
-
-    const where: Prisma.EventWhereInput = {
-      AND: [
-        search ? { name: { contains: search, mode: "insensitive" } } : {},
-        category ? { category } : {},
-        location ? { location } : {},
-      ],
-    };
-
-    const orderBy: Prisma.EventOrderByWithRelationInput =
-      sortBy === "newest" ? { createdAt: "desc" } : { createdAt: "asc" };
-
-    const [events, total] = await Promise.all([
-      prisma.event.findMany({
-        where,
-        orderBy,
-        skip: (page - 1) * limit,
-        take: limit,
-      }),
-      prisma.event.count({ where }),
-    ]);
-
-    return {
-      data: events,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPage: Math.ceil(total / limit),
-      },
-    };
   }
 }

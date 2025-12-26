@@ -1,7 +1,8 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { EventService } from "../services/event.service.js";
-import type { CategoryOption, LocationOption } from "../generated/index.js";
+import type { CategoryOption } from "../generated/index.js";
 import { AppError } from "../errors/app.error.js";
+import { eventQuerySchema } from "../validations/event.validation.js";
 
 const eventService = new EventService();
 
@@ -47,16 +48,9 @@ export class EventController {
 
   async getAllEvents(req: Request, res: Response, next: NextFunction) {
     try {
-      let page = Number(req.query.page);
-      if (!page || page < 1) page = 1;
-
-      const { events, totalData, totalPages } = await eventService.getAllEvents(
-        page
-      );
-
-      res
-        .status(200)
-        .json({ data: events, totalData, totalPages, currentPage: +page });
+      const query = eventQuerySchema.parse(req.query);
+      const result = await eventService.getAllEvents(query);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
@@ -127,23 +121,6 @@ export class EventController {
       const event = await eventService.softDeleteEvent(id, eoId);
 
       res.status(200).json({ message: "Event has been deleted" });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async eventSearch(req: Request, res: Response, next: NextFunction) {
-    try {
-      const result = await eventService.eventsSearch({
-        page: Number(req.query.page),
-        limit: Number(req.query.limit),
-        search: req.query.search as string,
-        category: req.query.category as CategoryOption,
-        location: req.query.location as LocationOption,
-        sortBy: req.query.sortBy as any,
-      });
-
-      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

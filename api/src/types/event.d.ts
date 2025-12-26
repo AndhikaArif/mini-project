@@ -17,10 +17,10 @@ export interface IEvent {
 }
 
 export interface IEventSearch {
-  page?: number;
-  limit?: number;
-  search?: string;
-  category?: CategoryOption;
-  location?: LocationOption;
-  sortBy?: "newest" | "latest";
+  page?: number | undefined;
+  limit?: number | undefined;
+  search?: string | undefined;
+  category?: CategoryOption | undefined;
+  location?: LocationOption | undefined;
+  sortBy?: "newest" | "latest" | "startTime" | undefined;
 }
