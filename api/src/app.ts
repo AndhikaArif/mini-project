@@ -15,6 +15,7 @@ import voucherRoutes from "./routes/voucher.route.js";
 import orderRoutes from "./routes/order.route.js";
 import paymentRoutes from "./routes/payment.route.js";
 import organizerRoutes from "./routes/organizer.route.js";
+import ticketRoutes from "./routes/ticket.route.js";
 
 import { ErrorMiddleware } from "./middlewares/error.middleware.js";
 
@@ -62,6 +63,7 @@ class App {
     this.app.use("/api/orders", orderRoutes);
     this.app.use("/api/payment", paymentRoutes);
     this.app.use("/api/organizer", organizerRoutes);
+    this.app.use("/api/tickets", ticketRoutes);
   }
 
   private initializeErrorHandle(): void {

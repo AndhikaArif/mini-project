@@ -7,6 +7,7 @@ import {
 } from "../types/payment.d.js";
 import { FileUpload } from "../utils/file-upload.util.js";
 import { prisma } from "../configs/prisma.config.js";
+import { createTicketFromOrder } from "../utils/ticket.util.js";
 
 const fileUpload = new FileUpload();
 
@@ -124,6 +125,7 @@ export class PaymentService {
       where: {
         AND: { id: data.id, order: { event: { eventOrganizerId: data.eoId } } },
       },
+      include: { order: true },
     });
 
     if (!payment) {
@@ -162,27 +164,35 @@ export class PaymentService {
 
     const orderStatus = mapPaymentStatusToOrderStatus(data.status);
 
-    const [updatedPayment, updatedOrder] = await prisma.$transaction([
-      prisma.payment.update({
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedPayment = await tx.payment.update({
         where: { id: payment.id },
         data: {
           status: data.status,
           paidAt: data.status === "DONE" ? now : null,
         },
-      }),
+      });
 
-      prisma.order.update({
+      const updatedOrder = await tx.order.update({
         where: { id: payment.orderId },
         data: {
           status: orderStatus,
           verifiedAt: now,
         },
-      }),
-    ]);
+      });
 
-    return {
-      payment: updatedPayment,
-      order: updatedOrder,
-    };
+      let ticket = null;
+      if (data.status === "DONE") {
+        ticket = await createTicketFromOrder(tx, payment.orderId);
+      }
+
+      return {
+        payment: updatedPayment,
+        order: updatedOrder,
+        ticket,
+      };
+    });
+
+    return result;
   }
 }
