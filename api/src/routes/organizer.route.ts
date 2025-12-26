@@ -13,7 +13,8 @@ router.use(
 
 router.get("/events", controller.getMyEvents);
 router.patch("/events/:id", controller.updateEvent);
-router.delete("/events/:id", controller.deleteEvent);
+router.patch("/payments/:id/status", controller.updatePaymentStatus);
+router.patch("/events/:id/cancel", controller.cancelEvent);
 router.get("/transactions", controller.getTransactions);
 router.get("/dashboard/stats", controller.getDashboardStats);
 

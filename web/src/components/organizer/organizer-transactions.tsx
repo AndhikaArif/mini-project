@@ -6,17 +6,25 @@ import TransactionRow from "./transaction-row";
 
 type Transaction = {
   id: string;
-  quantity: number;
-  totalAmount: number;
+  order: {
+    quantity: number;
+    totalAmount: number;
+    event: { name: string };
+    customer: { name: string; email: string };
+  };
   status: string;
   createdAt: string;
-  event: {
-    name: string;
-  };
+
   customer: {
     name: string;
     email: string;
   };
+
+  payments: {
+    id: string;
+    status: "PENDING" | "DONE" | "REJECTED" | "EXPIRED";
+    paymentProof?: string;
+  }[];
 };
 
 export default function OrganizerTransactions() {
@@ -58,6 +66,7 @@ export default function OrganizerTransactions() {
               <th className="border px-3 py-2">Total</th>
               <th className="border px-3 py-2">Status</th>
               <th className="border px-3 py-2">Date</th>
+              <th className="border px-3 py-2">Action</th>
             </tr>
           </thead>
 

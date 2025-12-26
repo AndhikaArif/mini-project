@@ -191,6 +191,7 @@ enum StatusOrder {
   REJECTED
   EXPIRED
   PAID
+  CANCELLED
 }
 
 model Order {
