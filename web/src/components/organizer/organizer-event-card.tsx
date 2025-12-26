@@ -8,9 +8,15 @@ type Props = {
   };
   onEdit: (event: Props["event"]) => void;
   onDelete: (id: string) => void;
+  onViewAttendees: (event: Props["event"]) => void;
 };
 
-export default function OrganizerEventCard({ event, onEdit, onDelete }: Props) {
+export default function OrganizerEventCard({
+  event,
+  onEdit,
+  onDelete,
+  onViewAttendees,
+}: Props) {
   return (
     <div className="border rounded-lg p-4 shadow-sm space-y-2">
       <h3 className="font-semibold text-lg">{event.name}</h3>
@@ -33,6 +39,13 @@ export default function OrganizerEventCard({ event, onEdit, onDelete }: Props) {
           className="px-3 py-1 text-sm bg-red-600 rounded cursor-pointer"
         >
           Delete
+        </button>
+
+        <button
+          onClick={() => onViewAttendees(event)}
+          className="px-3 py-1 text-sm bg-emerald-600 rounded cursor-pointer"
+        >
+          Attendees
         </button>
       </div>
     </div>

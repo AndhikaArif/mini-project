@@ -14,6 +14,7 @@ router.use(
 router.get("/events", controller.getMyEvents);
 router.patch("/events/:id", controller.updateEvent);
 router.patch("/payments/:id", controller.updatePaymentStatus);
+router.get("/events/:id/attendees", controller.getEventAttendees);
 router.patch("/events/:id/cancel", controller.cancelEvent);
 router.get("/transactions", controller.getTransactions);
 router.get("/dashboard/stats", controller.getDashboardStats);

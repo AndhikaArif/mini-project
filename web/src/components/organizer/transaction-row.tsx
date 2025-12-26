@@ -101,7 +101,7 @@ export default function TransactionRow({
               onClick={() => setShowReject(true)}
               className="px-2 py-1 bg-red-600 text-white disabled:opacity-50 cursor-pointer"
             >
-              Reject
+              {loading ? "Processing..." : "Reject"}
             </button>
           </>
         ) : (
@@ -119,12 +119,18 @@ export default function TransactionRow({
               </p>
 
               <div className="flex justify-end gap-2">
-                <button onClick={() => setShowReject(false)}>Cancel</button>
                 <button
-                  onClick={() => updateStatus("REJECTED")}
-                  className="bg-red-600 text-white px-3 py-1 rounded"
+                  className=" cursor-pointer"
+                  onClick={() => setShowReject(false)}
                 >
-                  Reject
+                  Cancel
+                </button>
+                <button
+                  disabled={loading}
+                  onClick={() => updateStatus("REJECTED")}
+                  className="bg-red-600 text-white px-3 py-1 rounded cursor-pointer"
+                >
+                  {loading ? "Processing..." : "Reject"}
                 </button>
               </div>
             </div>
