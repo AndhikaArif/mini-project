@@ -188,6 +188,13 @@ export class OrganizerService {
           event: { eventOrganizerId: organizerId },
         },
       },
+      include: {
+        order: {
+          include: {
+            event: true,
+          },
+        },
+      },
     });
 
     if (!payment) {
@@ -198,28 +205,46 @@ export class OrganizerService {
       throw new AppError(400, "Payment is not waiting for confirmation");
     }
 
-    const orderStatus =
-      status === StatusPayment.DONE
-        ? StatusOrder.PAID
-        : StatusOrder.WAITING_PAYMENT;
-
-    return prisma.$transaction([
-      prisma.payment.update({
+    return prisma.$transaction(async (tx) => {
+      // 1️⃣ Update payment
+      await tx.payment.update({
         where: { id: paymentId },
         data: {
           status,
           paidAt: status === StatusPayment.DONE ? new Date() : null,
         },
-      }),
+      });
 
-      prisma.order.update({
+      // 2️⃣ Update order
+      await tx.order.update({
         where: { id: payment.orderId },
         data: {
-          status: orderStatus,
+          status:
+            status === StatusPayment.DONE
+              ? StatusOrder.PAID
+              : StatusOrder.WAITING_PAYMENT,
           verifiedAt: new Date(),
         },
-      }),
-    ]);
+      });
+
+      // 3️⃣ 🔥 KURANGI SEATS JIKA APPROVED
+      if (status === StatusPayment.DONE) {
+        const event = payment.order.event;
+
+        if (event.availableSeats < payment.order.quantity) {
+          throw new AppError(400, "Not enough available seats");
+        }
+
+        await tx.event.update({
+          where: { id: event.id },
+          data: {
+            availableSeats: {
+              decrement: payment.order.quantity,
+            },
+          },
+        });
+      }
+    });
   }
 
   async cancelEvent(eventId: string, organizerId: string) {

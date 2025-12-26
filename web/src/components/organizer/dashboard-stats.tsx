@@ -11,7 +11,7 @@ type DashboardStats = {
   totalRevenue: number;
 };
 
-export default function DashboardStats() {
+export default function DashboardStats({ refreshKey }: { refreshKey: number }) {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +32,7 @@ export default function DashboardStats() {
     }
 
     fetchStats();
-  }, []);
+  }, [refreshKey]);
 
   if (loading) return <p>Loading stats...</p>;
   if (!stats) return <p>Failed to load stats</p>;
