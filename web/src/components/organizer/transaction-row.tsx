@@ -1,96 +1,127 @@
-"use client";
-
 import axios from "axios";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import type { OrganizerPayment } from "@/types/payment";
+import StatusBadge from "./status-badge";
 
 type Props = {
-  transaction: {
-    id: string;
-    status: string;
-    paymentProof?: string;
-    createdAt: string;
-    order: {
-      quantity: number;
-      totalAmount: number;
-      event: { name: string };
-      customer: { name: string; email: string };
-    };
-  };
+  payment: OrganizerPayment;
+  onSuccess: (id: string, status: "DONE" | "REJECTED") => void;
 };
 
-export default function TransactionRow({ transaction }: Props) {
-  const updateStatus = async (status: "DONE" | "REJECTED") => {
-    if (!confirm(`Are you sure to ${status.toLowerCase()} this payment?`))
-      return;
+export default function TransactionRow({ payment, onSuccess }: Props) {
+  const [loading, setLoading] = useState(false);
+  const canAction = payment.status === "WAITING_CONFIRMATION";
+  const [showReject, setShowReject] = useState(false);
+
+  async function updateStatus(status: "DONE" | "REJECTED") {
+    if (status === "REJECTED") {
+      const ok = confirm("Reject this payment?");
+      if (!ok) return;
+    }
+
+    setLoading(true);
 
     try {
       await axios.patch(
-        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/payments/${transaction.id}/status`,
+        `${process.env.NEXT_PUBLIC_API_DOMAIN}/api/organizer/payments/${payment.id}`,
         { status },
         { withCredentials: true }
       );
 
-      window.location.reload(); // versi aman dulu
+      onSuccess(payment.id, status);
+      toast.success(
+        status === "DONE" ? "Payment approved" : "Payment rejected"
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        alert("Failed to update payment status");
+        toast.error("Failed to update payment");
       }
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <tr>
-      <td className="border px-3 py-2">{transaction.order.event.name}</td>
+    <tr
+      className={
+        payment.status === "WAITING_CONFIRMATION" ? "bg-yellow-50" : ""
+      }
+    >
+      <td>{payment.order.event.name}</td>
 
-      <td className="border px-3 py-2">
-        <p className="font-medium">{transaction.order.customer.name}</p>
-        <p className="text-sm text-gray-500">
-          {transaction.order.customer.email}
-        </p>
+      <td>
+        <p>{payment.order.customer.name}</p>
+        <p className="text-sm text-gray-500">{payment.order.customer.email}</p>
       </td>
 
-      <td className="border px-3 py-2 text-center">
-        {transaction.order.quantity}
+      <td className="text-center">{payment.order.quantity}</td>
+
+      <td>Rp {payment.order.totalAmount.toLocaleString("id-ID")}</td>
+
+      <td>
+        <StatusBadge status={payment.status} />
       </td>
 
-      <td className="border px-3 py-2">
-        Rp {transaction.order.totalAmount.toLocaleString("id-ID")}
-      </td>
-
-      <td className="border px-3 py-2">{transaction.status}</td>
-
-      <td className="border px-3 py-2">
-        {new Date(transaction.createdAt).toLocaleDateString("id-ID")}
-      </td>
-
-      <td className="border px-3 py-2 space-x-2">
-        {/* VIEW PAYMENT PROOF */}
-        {transaction.paymentProof && (
+      <td>
+        {payment.paymentProof ? (
           <a
-            href={transaction.paymentProof}
+            href={payment.paymentProof}
             target="_blank"
-            className="text-blue-600 underline text-sm"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline"
           >
-            View Proof
+            View
           </a>
+        ) : (
+          "-"
         )}
+      </td>
 
-        {/* ACTIONS */}
-        {transaction.status === "WAITING_CONFIRMATION" && (
+      <td className="space-x-2">
+        {canAction ? (
           <>
             <button
+              disabled={!canAction || loading}
               onClick={() => updateStatus("DONE")}
-              className="px-2 py-1 bg-green-600 text-white rounded text-sm"
+              className="px-2 py-1 bg-green-600 text-white disabled:opacity-50"
             >
-              Approve
+              {loading ? "Processing..." : "Approve"}
             </button>
 
             <button
-              onClick={() => updateStatus("REJECTED")}
-              className="px-2 py-1 bg-red-600 text-white rounded text-sm"
+              disabled={!canAction || loading}
+              onClick={() => setShowReject(true)}
+              className="px-2 py-1 bg-red-600 text-white disabled:opacity-50"
             >
               Reject
             </button>
           </>
+        ) : (
+          <>
+            <span className="text-sm text-gray-400 italic">No action</span>
+          </>
+        )}
+
+        {showReject && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white p-4 rounded w-80 space-y-3">
+              <h3 className="font-semibold">Reject payment?</h3>
+              <p className="text-sm text-gray-500">
+                This action cannot be undone.
+              </p>
+
+              <div className="flex justify-end gap-2">
+                <button onClick={() => setShowReject(false)}>Cancel</button>
+                <button
+                  onClick={() => updateStatus("REJECTED")}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </td>
     </tr>
