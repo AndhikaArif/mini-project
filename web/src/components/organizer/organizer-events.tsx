@@ -13,7 +13,11 @@ type Event = {
   availableSeats: number;
 };
 
-export default function OrganizerEvents() {
+export default function OrganizerEvents({
+  refreshKey,
+}: {
+  refreshKey: number;
+}) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -34,7 +38,7 @@ export default function OrganizerEvents() {
     }
 
     fetchEvents();
-  }, []);
+  }, [refreshKey]);
 
   async function handleDelete(id: string) {
     const ok = confirm("Are you sure you want to delete this event?");

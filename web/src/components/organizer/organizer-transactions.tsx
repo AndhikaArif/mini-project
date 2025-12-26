@@ -5,7 +5,11 @@ import axios from "axios";
 import TransactionRow from "./transaction-row";
 import type { OrganizerPayment, PaymentStatus } from "@/types/payment";
 
-export default function OrganizerTransactions() {
+type Props = {
+  onPaymentUpdated: () => void;
+};
+
+export default function OrganizerTransactions({ onPaymentUpdated }: Props) {
   const [payments, setPayments] = useState<OrganizerPayment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<PaymentStatus | "ALL">(
@@ -58,7 +62,7 @@ export default function OrganizerTransactions() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`px-3 py-1 rounded ${
+            className={`px-3 py-1 rounded cursor-pointer ${
               filter === s ? "bg-black text-white" : "bg-gray-200"
             }`}
           >
@@ -86,6 +90,7 @@ export default function OrganizerTransactions() {
               key={payment.id}
               payment={payment}
               onSuccess={updatePaymentLocal}
+              onPaymentUpdated={onPaymentUpdated}
             />
           ))}
         </tbody>

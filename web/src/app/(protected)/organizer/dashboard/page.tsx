@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import DashboardStats from "@/components/organizer/dashboard-stats";
 import OrganizerEvents from "@/components/organizer/organizer-events";
@@ -9,26 +10,19 @@ import Unauthorized from "@/components/error/unauthorized";
 
 export default function OrganizerDashboardPage() {
   const { user, loading } = useAuth();
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  // tunggu auth selesai
   if (loading) return null;
+  if (!user) return <Unauthorized />;
+  if (user.role !== "EVENT_ORGANIZER") return <Forbidden />;
 
-  // belum login
-  if (!user) {
-    return <Unauthorized />;
-  }
-
-  // login tapi bukan organizer
-  if (user.role !== "EVENT_ORGANIZER") {
-    return <Forbidden />;
-  }
-
-  // organizer valid
   return (
     <main className="p-6 space-y-6">
-      <DashboardStats />
-      <OrganizerEvents />
-      <OrganizerTransactions />
+      <DashboardStats refreshKey={refreshKey} />
+      <OrganizerEvents refreshKey={refreshKey} />
+      <OrganizerTransactions
+        onPaymentUpdated={() => setRefreshKey((k) => k + 1)}
+      />
     </main>
   );
 }

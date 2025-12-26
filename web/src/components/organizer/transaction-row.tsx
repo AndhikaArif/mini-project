@@ -7,9 +7,14 @@ import StatusBadge from "./status-badge";
 type Props = {
   payment: OrganizerPayment;
   onSuccess: (id: string, status: "DONE" | "REJECTED") => void;
+  onPaymentUpdated: () => void;
 };
 
-export default function TransactionRow({ payment, onSuccess }: Props) {
+export default function TransactionRow({
+  payment,
+  onSuccess,
+  onPaymentUpdated,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const canAction = payment.status === "WAITING_CONFIRMATION";
   const [showReject, setShowReject] = useState(false);
@@ -30,6 +35,8 @@ export default function TransactionRow({ payment, onSuccess }: Props) {
       );
 
       onSuccess(payment.id, status);
+      onPaymentUpdated();
+
       toast.success(
         status === "DONE" ? "Payment approved" : "Payment rejected"
       );
@@ -84,7 +91,7 @@ export default function TransactionRow({ payment, onSuccess }: Props) {
             <button
               disabled={!canAction || loading}
               onClick={() => updateStatus("DONE")}
-              className="px-2 py-1 bg-green-600 text-white disabled:opacity-50"
+              className="px-2 py-1 bg-green-600 text-white disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Processing..." : "Approve"}
             </button>
@@ -92,7 +99,7 @@ export default function TransactionRow({ payment, onSuccess }: Props) {
             <button
               disabled={!canAction || loading}
               onClick={() => setShowReject(true)}
-              className="px-2 py-1 bg-red-600 text-white disabled:opacity-50"
+              className="px-2 py-1 bg-red-600 text-white disabled:opacity-50 cursor-pointer"
             >
               Reject
             </button>
