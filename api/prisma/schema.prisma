@@ -46,6 +46,7 @@ model User {
   points              Point[]
   coupons             Coupon[]
   passwordResetTokens PasswordResetToken[]
+  reviews             Review[]
 
   @@map("users")
 }
@@ -135,6 +136,7 @@ model Event {
   orders      Order[]
   vouchers    Voucher[]
   eventImages EventImage[]
+  reviews     Review[]
 
   @@map("events")
 }
@@ -244,4 +246,17 @@ model Payment {
   coupon  Coupon?  @relation(fields: [couponId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("payment")
+}
+
+model Review {
+  id         String @id @default(cuid())
+  customerId String
+  eventId    String
+  content    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer User  @relation(fields: [customerId], references: [id])
+  event    Event @relation(fields: [eventId], references: [id])
 }
