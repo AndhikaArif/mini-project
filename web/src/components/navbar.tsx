@@ -13,6 +13,7 @@ import { IoSearch } from "react-icons/io5";
 import { GoHome } from "react-icons/go";
 import { IoCreateOutline } from "react-icons/io5";
 import { BsCalendar4Event } from "react-icons/bs";
+import { LuTicket } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
@@ -22,6 +23,8 @@ export default function Navbar() {
   const router = useRouter();
   const [keyword, setKeyword] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const isCustomer = user?.role === "CUSTOMER";
+  const isEO = user?.role === "EVENT_ORGANIZER";
 
   const handleSearch = () => {
     if (!keyword.trim()) return;
@@ -176,13 +179,33 @@ export default function Navbar() {
         )}
 
         {/* Dekstop Navigation */}
-        <div className="hidden sm:flex gap-12">
-          <Link
-            href="/events/create"
-            className="transition-colors duration-300 hover:text-blue-400"
-          >
-            Create
-          </Link>
+        <div className="hidden sm:flex items-center gap-12">
+          {!user && (
+            <Link
+              href="/events/create"
+              className="transition-colors duration-300 hover:text-blue-400"
+            >
+              Create
+            </Link>
+          )}
+
+          {user && isEO && (
+            <Link
+              href="/events/create"
+              className="transition-colors duration-300 hover:text-blue-400"
+            >
+              Create
+            </Link>
+          )}
+
+          {user && isCustomer && (
+            <Link
+              href="/tickets"
+              className="transition-colors duration-300 hover:text-blue-400"
+            >
+              My Tickets
+            </Link>
+          )}
 
           <Link
             href="./events"
@@ -191,7 +214,7 @@ export default function Navbar() {
             Events
           </Link>
 
-          <div className="hidden sm:flex gap-12 items-center">
+          <div className="flex gap-3 items-center">
             {loading ? (
               <div className="opacity-50 text-sm">...</div>
             ) : user ? (
@@ -258,12 +281,21 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <Link href="events/create" className="hover:scale-110 duration-300">
-          <div className="flex flex-col items-center gap-1">
-            <IoCreateOutline className="text-2xl" />
-            <h3 className="text-sm">Create</h3>
-          </div>
-        </Link>
+        {user && isCustomer ? (
+          <Link href="/tickets" className="hover:scale-110 duration-300">
+            <div className="flex flex-col items-center gap-1">
+              <LuTicket className="text-2xl" />
+              <h3 className="text-sm">My Tickets</h3>
+            </div>
+          </Link>
+        ) : (
+          <Link href="/events/create" className="hover:scale-110 duration-300">
+            <div className="flex flex-col items-center gap-1">
+              <IoCreateOutline className="text-2xl" />
+              <h3 className="text-sm">Create</h3>
+            </div>
+          </Link>
+        )}
 
         <Link href="/events" className="hover:scale-110 duration-300">
           <div className="flex flex-col items-center gap-1">
