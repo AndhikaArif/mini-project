@@ -54,7 +54,7 @@ export class OrganizerService {
     const paidOrders = await prisma.order.findMany({
       where: {
         event: { eventOrganizerId: organizerId },
-        status: "PAID",
+        status: StatusOrder.PAID,
       },
       select: {
         quantity: true,
@@ -141,17 +141,18 @@ export class OrganizerService {
     }
 
     if (data.totalSeats !== undefined) {
-      const soldSeats = event.totalSeats - event.availableSeats;
+      // hitung seats yang SUDAH TERPAKAI
+      const usedSeats = event.totalSeats - event.availableSeats;
 
-      if (data.totalSeats < soldSeats) {
+      if (data.totalSeats < usedSeats) {
         throw new AppError(
           400,
-          `Total seats cannot be less than sold seats (${soldSeats})`
+          `Total seats cannot be less than already sold seats (${usedSeats})`
         );
       }
 
+      // JANGAN SENTUH availableSeats
       prismaData.totalSeats = data.totalSeats;
-      prismaData.availableSeats = data.totalSeats - soldSeats;
     }
 
     if (data.startTime !== undefined) {
@@ -225,21 +226,28 @@ export class OrganizerService {
 
       // 3️⃣ KURANGI SEATS JIKA APPROVED
       if (status === StatusPayment.DONE) {
-        const event = payment.order.event;
-
-        if (event.availableSeats < payment.order.quantity) {
-          throw new AppError(400, "Not enough available seats");
-        }
-
-        await tx.event.update({
-          where: { id: event.id },
+        const result = await tx.event.updateMany({
+          where: {
+            id: payment.order.event.id,
+            availableSeats: {
+              gte: payment.order.quantity,
+            },
+          },
           data: {
             availableSeats: {
               decrement: payment.order.quantity,
             },
           },
         });
+
+        if (result.count === 0) {
+          throw new AppError(400, "Not enough available seats");
+        }
       }
+
+      return tx.payment.findUnique({
+        where: { id: paymentId },
+      });
     });
   }
 
@@ -286,7 +294,8 @@ export class OrganizerService {
 
     // 3️⃣ Optional: summary
     const summary = {
-      totalAttendees: attendees.length,
+      totalOrders: attendees.length,
+      totalAttendees: attendees.reduce((a, b) => a + b.quantity, 0),
       totalTicketsSold: attendees.reduce((a, b) => a + b.quantity, 0),
       totalRevenue: attendees.reduce((a, b) => a + b.totalAmount, 0),
     };
