@@ -15,9 +15,6 @@ export class TicketService {
       },
     });
 
-    if (tickets.length === 0)
-      throw new AppError(404, "You dont have any tickets");
-
     return tickets;
   }
 
