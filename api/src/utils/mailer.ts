@@ -11,10 +11,18 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: process.env.EMAIL_FROM as string,
     to,
     subject,
     html,
   });
+
+  if (result.error) {
+    console.error("EMAIL_FAILED", result.error);
+  } else {
+    console.log("EMAIL_SENT", result.data.id);
+  }
+
+  return result;
 }
