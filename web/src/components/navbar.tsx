@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "@/context/theme-context";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
 import Image from "next/image";
@@ -13,11 +13,37 @@ import { IoSearch } from "react-icons/io5";
 import { GoHome } from "react-icons/go";
 import { IoCreateOutline } from "react-icons/io5";
 import { BsCalendar4Event } from "react-icons/bs";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const { user, loading, logout, userImage } = useAuth();
+  const router = useRouter();
+  const [keyword, setKeyword] = useState("");
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const handleSearch = () => {
+    if (!keyword.trim()) return;
+
+    router.push(`/events?search=${encodeURIComponent(keyword)}`);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
     <>
@@ -34,18 +60,32 @@ export default function Navbar() {
 
         {/* Search bar */}
         <div
-          className={`flex justify-between items-center w-[250px] md:w-[500px]  border  rounded-2xl pl-4 pr-2 py-1.5 transition-colors duration-300 ${
+          className={`flex items-center w-[250px] md:w-[500px] border rounded-2xl pl-4 pr-2 py-1.5 transition-colors duration-300 ${
             isDark
               ? "bg-gray-700 border-gray-500 text-white"
               : "bg-gray-100 border-gray-300 text-gray-500"
           }`}
         >
-          <h2 className="text-sm">Search Event</h2>
-          <IoSearch
-            className={`text-xl transition-colors duration-300 ${
-              isDark ? "text-white" : "text-black"
+          <input
+            type="text"
+            placeholder="Search event..."
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
+            className={`flex-1 bg-transparent outline-none text-sm ${
+              isDark ? "placeholder-gray-300" : "placeholder-gray-500"
             }`}
           />
+
+          <button onClick={handleSearch}>
+            <IoSearch
+              className={`text-xl cursor-pointer transition-colors duration-300 ${
+                isDark ? "text-white" : "text-black"
+              }`}
+            />
+          </button>
         </div>
 
         {/* Hamburger (mobile only) */}
@@ -63,6 +103,7 @@ export default function Navbar() {
         {/* Mobile dropdown menu */}
         {isOpen && (
           <div
+            ref={menuRef}
             className={`absolute top-16 right-4 px-4 py-4 w-[200px] sm:hidden flex flex-col gap-4 shadow-xl transition duration-300 ${
               isDark ? "bg-gray-800 text-white" : "bg-gray-100 text-black"
             }`}

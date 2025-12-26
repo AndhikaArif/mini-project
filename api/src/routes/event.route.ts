@@ -9,10 +9,7 @@ const upload = fileUpload();
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(eventController.getAllEvents)
-  .get(eventController.eventSearch);
+router.route("/").get(eventController.getAllEvents);
 router.route("/top-3").get(eventController.getTopThreeEvents);
 router.route("/category").get(eventController.getEventsByCategory);
 router
