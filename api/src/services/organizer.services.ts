@@ -2,6 +2,9 @@ import { prisma } from "../configs/prisma.config.js";
 import { AppError } from "../errors/app.error.js";
 import type { UpdateEventDTO } from "../validations/event.validation.js";
 import { StatusPayment, StatusOrder } from "../generated/index.js";
+import { EmailUtil } from "../utils/email.util.js";
+
+const emailUtil = new EmailUtil();
 
 export class OrganizerService {
   async getMyEvents(organizerId: string) {
@@ -189,6 +192,7 @@ export class OrganizerService {
         order: {
           include: {
             event: true,
+            customer: true,
           },
         },
       },
@@ -202,7 +206,7 @@ export class OrganizerService {
       throw new AppError(400, "Payment is not waiting for confirmation");
     }
 
-    return prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       // 1️⃣ Update payment
       await tx.payment.update({
         where: { id: paymentId },
@@ -226,9 +230,9 @@ export class OrganizerService {
 
       // 3️⃣ KURANGI SEATS JIKA APPROVED
       if (status === StatusPayment.DONE) {
-        const result = await tx.event.updateMany({
+        const seatUpdate = await tx.event.updateMany({
           where: {
-            id: payment.order.event.id,
+            id: payment.order.eventId,
             availableSeats: {
               gte: payment.order.quantity,
             },
@@ -240,15 +244,40 @@ export class OrganizerService {
           },
         });
 
-        if (result.count === 0) {
+        if (seatUpdate.count === 0) {
           throw new AppError(400, "Not enough available seats");
         }
       }
 
-      return tx.payment.findUnique({
-        where: { id: paymentId },
-      });
+      return true;
     });
+
+    // Email (After commit)
+    if (status === StatusPayment.DONE) {
+      try {
+        await emailUtil.sendPaymentApprovedEmail({
+          to: payment.order.customer.email,
+          name: payment.order.customer.name,
+          eventName: payment.order.event.name,
+          quantity: payment.order.quantity,
+          totalAmount: payment.order.totalAmount,
+        });
+      } catch (error) {
+        console.error("EMAIL_FAILED", error);
+      }
+    }
+
+    if (status === StatusPayment.REJECTED) {
+      try {
+        await emailUtil.sendPaymentRejectedEmail({
+          to: payment.order.customer.email,
+          name: payment.order.customer.name,
+          eventName: payment.order.event.name,
+        });
+      } catch (error) {
+        console.error("EMAIL_FAILED", error);
+      }
+    }
   }
 
   async getEventAttendees(organizerId: string, eventId: string) {

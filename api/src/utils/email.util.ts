@@ -26,4 +26,36 @@ export class EmailUtil {
       html,
     });
   }
+
+  // PAYMENT APPROVED
+  async sendPaymentApprovedEmail(data: {
+    to: string;
+    name: string;
+    eventName: string;
+    quantity: number;
+    totalAmount: number;
+  }) {
+    const html = await this.renderTemplate("payment-approved", data);
+
+    await sendEmail({
+      to: data.to,
+      subject: "Payment Approved",
+      html,
+    });
+  }
+
+  // PAYMENT REJECTED
+  async sendPaymentRejectedEmail(data: {
+    to: string;
+    name: string;
+    eventName: string;
+  }) {
+    const html = await this.renderTemplate("payment-rejected", data);
+
+    await sendEmail({
+      to: data.to,
+      subject: "Payment Rejected",
+      html,
+    });
+  }
 }
