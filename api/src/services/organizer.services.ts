@@ -130,10 +130,6 @@ export class OrganizerService {
       throw new AppError(404, "Event not found");
     }
 
-    const cleanData = Object.fromEntries(
-      Object.entries(data).filter(([, value]) => value !== undefined)
-    ) as UpdateEventDTO;
-
     const prismaData: Parameters<typeof prisma.event.update>[0]["data"] = {};
 
     if (data.name !== undefined) {
@@ -188,6 +184,13 @@ export class OrganizerService {
           event: { eventOrganizerId: organizerId },
         },
       },
+      include: {
+        order: {
+          include: {
+            event: true,
+          },
+        },
+      },
     });
 
     if (!payment) {
@@ -198,28 +201,106 @@ export class OrganizerService {
       throw new AppError(400, "Payment is not waiting for confirmation");
     }
 
-    const orderStatus =
-      status === StatusPayment.DONE
-        ? StatusOrder.PAID
-        : StatusOrder.WAITING_PAYMENT;
-
-    return prisma.$transaction([
-      prisma.payment.update({
+    return prisma.$transaction(async (tx) => {
+      // 1️⃣ Update payment
+      await tx.payment.update({
         where: { id: paymentId },
         data: {
           status,
           paidAt: status === StatusPayment.DONE ? new Date() : null,
         },
-      }),
+      });
 
-      prisma.order.update({
+      // 2️⃣ Update order
+      await tx.order.update({
         where: { id: payment.orderId },
         data: {
-          status: orderStatus,
-          verifiedAt: new Date(),
+          status:
+            status === StatusPayment.DONE
+              ? StatusOrder.PAID
+              : StatusOrder.WAITING_PAYMENT,
+          verifiedAt: status === StatusPayment.DONE ? new Date() : null,
         },
-      }),
-    ]);
+      });
+
+      // 3️⃣ KURANGI SEATS JIKA APPROVED
+      if (status === StatusPayment.DONE) {
+        const event = payment.order.event;
+
+        if (event.availableSeats < payment.order.quantity) {
+          throw new AppError(400, "Not enough available seats");
+        }
+
+        await tx.event.update({
+          where: { id: event.id },
+          data: {
+            availableSeats: {
+              decrement: payment.order.quantity,
+            },
+          },
+        });
+      }
+    });
+  }
+
+  async getEventAttendees(organizerId: string, eventId: string) {
+    // 1️⃣ Validasi event milik organizer
+    const event = await prisma.event.findFirst({
+      where: {
+        id: eventId,
+        eventOrganizerId: organizerId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    if (!event) {
+      throw new AppError(404, "Event not found");
+    }
+
+    // 2️⃣ Ambil attendee (PAID orders)
+    const attendees = await prisma.order.findMany({
+      where: {
+        eventId,
+        status: StatusOrder.PAID,
+      },
+      select: {
+        quantity: true,
+        totalAmount: true,
+        customer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        createdAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // 3️⃣ Optional: summary
+    const summary = {
+      totalAttendees: attendees.length,
+      totalTicketsSold: attendees.reduce((a, b) => a + b.quantity, 0),
+      totalRevenue: attendees.reduce((a, b) => a + b.totalAmount, 0),
+    };
+
+    return {
+      event,
+      summary,
+      attendees: attendees.map((a) => ({
+        name: a.customer.name,
+        email: a.customer.email,
+        quantity: a.quantity,
+        totalPaid: a.totalAmount,
+      })),
+    };
   }
 
   async cancelEvent(eventId: string, organizerId: string) {

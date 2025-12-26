@@ -93,6 +93,23 @@ export class OrganizerController {
     }
   }
 
+  async getEventAttendees(req: Request, res: Response, next: NextFunction) {
+    try {
+      const organizerId = req.currentUser!.id;
+      const { id } = req.params; // eventId
+
+      if (!id) {
+        throw new AppError(400, "Event id is required");
+      }
+
+      const result = await organizerService.getEventAttendees(organizerId, id);
+
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async cancelEvent(req: Request, res: Response, next: NextFunction) {
     try {
       const organizerId = req.currentUser!.id;

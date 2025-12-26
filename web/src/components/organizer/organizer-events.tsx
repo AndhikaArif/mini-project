@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import OrganizerEventCard from "./organizer-event-card";
 import EditEventModal from "./edit-event-modal";
+import AttendeeListModal from "./attendee-list-modal";
 
 type Event = {
   id: string;
@@ -13,10 +14,15 @@ type Event = {
   availableSeats: number;
 };
 
-export default function OrganizerEvents() {
+export default function OrganizerEvents({
+  refreshKey,
+}: {
+  refreshKey: number;
+}) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [attendeeEvent, setAttendeeEvent] = useState<Event | null>(null);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -34,7 +40,7 @@ export default function OrganizerEvents() {
     }
 
     fetchEvents();
-  }, []);
+  }, [refreshKey]);
 
   async function handleDelete(id: string) {
     const ok = confirm("Are you sure you want to delete this event?");
@@ -70,8 +76,16 @@ export default function OrganizerEvents() {
             event={event}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onViewAttendees={(event) => setAttendeeEvent(event)}
           />
         ))}
+
+        {attendeeEvent && (
+          <AttendeeListModal
+            event={attendeeEvent}
+            onClose={() => setAttendeeEvent(null)}
+          />
+        )}
       </div>
 
       {selectedEvent && (
