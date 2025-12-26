@@ -15,8 +15,8 @@ export async function createTicketFromOrder(tx: PrismaTx, orderId: string) {
 
   if (!order) throw new AppError(404, "Order not found");
 
-  const existing = await tx.ticket.findUnique({
-    where: { id: orderId },
+  const existing = await tx.ticket.findFirst({
+    where: { orderId },
   });
 
   if (existing) return existing;

@@ -165,6 +165,8 @@ export class PaymentService {
     const orderStatus = mapPaymentStatusToOrderStatus(data.status);
 
     const result = await prisma.$transaction(async (tx) => {
+      console.log("🚀 TRANSACTION START");
+
       const updatedPayment = await tx.payment.update({
         where: { id: payment.id },
         data: {
@@ -172,6 +174,8 @@ export class PaymentService {
           paidAt: data.status === "DONE" ? now : null,
         },
       });
+
+      console.log("✅ PAYMENT UPDATED");
 
       const updatedOrder = await tx.order.update({
         where: { id: payment.orderId },
@@ -181,8 +185,12 @@ export class PaymentService {
         },
       });
 
+      console.log("✅ ORDER UPDATED");
+      console.log("🎫 Ticket created for order:", payment.orderId);
+
       let ticket = null;
-      if (data.status === "DONE") {
+      if (data.status === StatusPayment.DONE) {
+        console.log("🎫 CREATE TICKET CALLED");
         ticket = await createTicketFromOrder(tx, payment.orderId);
       }
 
